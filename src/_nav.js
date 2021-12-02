@@ -1,38 +1,39 @@
 import React from 'react'
-import CIcon from '@coreui/icons-react'
+import { CNavGroup, CNavItem } from '@coreui/react'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  cilBell,
-  cilChartPie,
-  cilCursor,
-  cilNotes,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
-} from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+  faTachometerAlt,
+  faCodeBranch,
+  faWarehouse,
+  faShoppingCart,
+  faUserTie,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons'
+import { faProductHunt } from '@fortawesome/free-brands-svg-icons'
 
 const _nav = [
   {
     component: CNavItem,
     name: 'Dashboard',
     to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faTachometerAlt} className="nav-icon" />,
   },
   {
     component: CNavGroup,
     name: 'Chi nhánh',
-    to: '/base',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    to: '/branches',
+    icon: <FontAwesomeIcon icon={faCodeBranch} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Danh sách chi nhánh',
-        to: '/base/accordion',
+        to: '/branches',
       },
       {
         component: CNavItem,
         name: 'Thùng rác',
-        to: '/base/breadcrumbs',
+        to: '/branches/trash',
       },
     ],
   },
@@ -40,110 +41,110 @@ const _nav = [
     component: CNavGroup,
     name: 'Kho',
     to: '/buttons',
-    icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faWarehouse} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Tồn kho',
-        to: '/base/accordion',
+        to: '/warehouses/inventory',
       },
       {
         component: CNavItem,
         name: 'Nhập kho',
-        to: '/base/breadcrumbs',
+        to: '/warehouses/import',
       },
       {
         component: CNavItem,
         name: 'Nhập kho (thùng rác)',
-        to: '/base/breadcrumbs',
+        to: '/warehouses/import/trash',
       },
       {
         component: CNavItem,
         name: 'Xuất kho',
-        to: '/base/breadcrumbs',
+        to: '/warehouses/export',
       },
       {
         component: CNavItem,
         name: 'Xuất kho (thùng rác)',
-        to: '/base/breadcrumbs',
+        to: '/warehouses/export/trash',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Sản phẩm',
-    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faProductHunt} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Danh sách sản phẩm',
-        to: '/forms/form-control',
+        to: '/products',
       },
       {
         component: CNavItem,
         name: 'Thùng rác',
-        to: '/forms/select',
+        to: '/products/trash',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Đơn hàng',
-    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faShoppingCart} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Đơn bán hàng',
-        to: '/forms/form-control',
+        to: '/orders/sell',
       },
       {
         component: CNavItem,
         name: 'Đơn trả hàng',
-        to: '/forms/select',
+        to: '/orders/refund',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Nhân viên',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faUserTie} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Danh sách nhân viên',
-        to: '/icons/flags',
+        to: '/users',
       },
       {
         component: CNavItem,
         name: 'Thùng rác',
-        to: '/icons/brands',
+        to: '/users/trash',
       },
       {
         component: CNavItem,
         name: 'Bảng lương',
-        to: '/icons/brands',
+        to: '/users/salary',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Khách hàng',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    icon: <FontAwesomeIcon icon={faUsers} className="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Danh sách khách hàng',
-        to: '/icons/flags',
+        to: '/customers',
       },
       {
         component: CNavItem,
         name: 'Thùng rác',
-        to: '/icons/brands',
+        to: '/customers/trash',
       },
       {
         component: CNavItem,
         name: 'Công nợ',
-        to: '/icons/brands',
+        to: '/customers/debt',
       },
     ],
   },
