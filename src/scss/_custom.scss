@@ -1,0 +1,13 @@
+// Here you can add other styles
+
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: #F1F1F1;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: #C0C0C0;
+}
