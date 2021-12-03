@@ -20,10 +20,11 @@ import {
   CFormInput,
   CFormSelect,
   CImage,
+  CButton,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faSearch, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import sampleImage from 'src/assets/images/vue.jpg'
@@ -155,6 +156,11 @@ const Trash = () => {
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
                       <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                 </CForm>

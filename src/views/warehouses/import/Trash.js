@@ -23,7 +23,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUndo, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faUndo, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
@@ -129,6 +129,11 @@ const Trash = () => {
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
                       <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                 </CForm>

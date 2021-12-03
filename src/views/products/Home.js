@@ -24,7 +24,15 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEdit, faCheck, faTrash, faPlus, faLock } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEye,
+  faEdit,
+  faCheck,
+  faTrash,
+  faPlus,
+  faLock,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import sampleImage from 'src/assets/images/vue.jpg'
@@ -172,6 +180,11 @@ const Home = () => {
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
                       <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                 </CForm>

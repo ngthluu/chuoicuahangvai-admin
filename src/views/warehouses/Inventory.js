@@ -18,7 +18,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
+import { faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import sampleImage from 'src/assets/images/vue.jpg'
 
@@ -95,6 +95,11 @@ const Inventory = () => {
                     <div className="p-1">
                       <CFormLabel>Kho</CFormLabel>
                       <CFormSelect options={['Chọn kho']}></CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                 </CForm>
