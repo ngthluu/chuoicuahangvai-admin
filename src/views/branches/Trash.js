@@ -16,6 +16,7 @@ import {
   CDropdownItem,
   CBadge,
 } from '@coreui/react'
+import { Link } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
 
@@ -106,10 +107,10 @@ const Trash = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <a href="/">{item.name}</a>
+                      <Link to="#">{item.name}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <a href="/">{item.manager}</a>
+                      <Link to="#">{item.manager}</Link>
                     </CTableDataCell>
                     <CTableDataCell> {item.address} </CTableDataCell>
                     <CTableDataCell>

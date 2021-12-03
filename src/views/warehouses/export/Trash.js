@@ -161,12 +161,12 @@ const Trash = () => {
                       <Link to={`/warehouses/export/view?id=${index}`}>{item.code}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/branches/view?id=${index}`}>{item.warehouse}</Link>
+                      <Link to="#">{item.warehouse}</Link>
                     </CTableDataCell>
                     <CTableDataCell> {item.total_cost} </CTableDataCell>
                     <CTableDataCell> {item.import_date} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/export/view?id=${index}`}>{item.import_user}</Link>
+                      <Link to="#">{item.import_user}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <Status status={item.status} />

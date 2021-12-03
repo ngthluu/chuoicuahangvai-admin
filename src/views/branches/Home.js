@@ -142,7 +142,7 @@ const Home = () => {
                       <Link to={`/branches/view?id=${index}`}>{item.name}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <a href="/">{item.manager}</a>
+                      <Link to="#">{item.manager}</Link>
                     </CTableDataCell>
                     <CTableDataCell> {item.address} </CTableDataCell>
                     <CTableDataCell>
