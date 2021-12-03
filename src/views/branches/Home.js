@@ -15,6 +15,7 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
+  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -25,51 +26,85 @@ import {
   faCheck,
   faTrash,
   faPlus,
+  faLock,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+
+import PropTypes from 'prop-types'
 
 const branchesList = [
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 0,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 0,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
 ]
+
+const Status = (props) => {
+  if (props.status === 0) {
+    return <CBadge color="danger">Tạm khóa</CBadge>
+  }
+  return <CBadge color="success">Đang hoạt động</CBadge>
+}
+Status.propTypes = { status: PropTypes.number }
+
+const StatusAction = (props) => {
+  if (props.status === 0) {
+    return (
+      <>
+        <FontAwesomeIcon icon={faCheck} /> Kích hoạt
+      </>
+    )
+  }
+  return (
+    <>
+      <FontAwesomeIcon icon={faLock} /> Khóa
+    </>
+  )
+}
+StatusAction.propTypes = { status: PropTypes.number }
 
 const Home = () => {
   return (
     <CRow>
-      <CCol xs={12}>
+      <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
             <div className="d-flex justify-content-between">
@@ -85,7 +120,7 @@ const Home = () => {
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol xs={12}>
+      <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
             <CTable align="middle" responsive bordered>
@@ -110,7 +145,9 @@ const Home = () => {
                       <a href="/">{item.manager}</a>
                     </CTableDataCell>
                     <CTableDataCell> {item.address} </CTableDataCell>
-                    <CTableDataCell> </CTableDataCell>
+                    <CTableDataCell>
+                      <Status status={item.status} />
+                    </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">
@@ -127,7 +164,7 @@ const Home = () => {
                             <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                           </CDropdownItem>
                           <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faCheck} /> Kích hoạt
+                            <StatusAction status={item.status} />
                           </CDropdownItem>
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faTrash} /> Xóa

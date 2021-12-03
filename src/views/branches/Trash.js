@@ -14,54 +14,71 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
+  CBadge,
 } from '@coreui/react'
+
+import PropTypes from 'prop-types'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
 
 const branchesList = [
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 0,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 0,
   },
   {
     name: 'Chi nhánh A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
+    status: 1,
   },
 ]
+
+const Status = (props) => {
+  if (props.status === 0) {
+    return <CBadge color="danger">Tạm khóa</CBadge>
+  }
+  return <CBadge color="success">Đang hoạt động</CBadge>
+}
+Status.propTypes = { status: PropTypes.number }
 
 const Trash = () => {
   return (
     <CRow>
-      <CCol xs={12}>
+      <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
             <div className="d-flex justify-content-between">
@@ -70,7 +87,7 @@ const Trash = () => {
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol xs={12}>
+      <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
             <CTable align="middle" responsive bordered>
@@ -95,7 +112,9 @@ const Trash = () => {
                       <a href="/">{item.manager}</a>
                     </CTableDataCell>
                     <CTableDataCell> {item.address} </CTableDataCell>
-                    <CTableDataCell> </CTableDataCell>
+                    <CTableDataCell>
+                      <Status status={item.status} />
+                    </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">
