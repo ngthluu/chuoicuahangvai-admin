@@ -55,13 +55,13 @@ const Add = () => {
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={6}>
+            <CRow>
+              <CCol md={6} className="mb-3">
                 <CFormLabel>Quận / Huyện</CFormLabel>
                 <CFormSelect options={['Chọn quận / huyện']} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
-              <CCol md={6}>
+              <CCol md={6} className="mb-3">
                 <CFormLabel>Phường / Xã</CFormLabel>
                 <CFormSelect options={['Chọn phường / xã']} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
@@ -87,7 +87,7 @@ const Add = () => {
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
-            <CButton color="secondary" type="button" className="text-white ml-3">
+            <CButton href="/branches" color="secondary" type="button" className="text-white ml-3">
               <strong>Hủy bỏ</strong>
             </CButton>
           </CCardFooter>

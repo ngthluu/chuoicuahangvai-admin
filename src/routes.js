@@ -5,6 +5,7 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const BranchHome = React.lazy(() => import('./views/branches/Home'))
 const BranchTrash = React.lazy(() => import('./views/branches/Trash'))
 const BranchAdd = React.lazy(() => import('./views/branches/Add'))
+const BranchView = React.lazy(() => import('./views/branches/View'))
 
 const WarehouseInventory = React.lazy(() => import('./views/warehouses/Inventory'))
 const WarehouseImport = React.lazy(() => import('./views/warehouses/import/Home'))
@@ -30,16 +31,28 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
 
-  { path: '/branches/trash', name: 'Thùng rác', component: BranchTrash },
-  { path: '/branches/add', name: 'Thêm chi nhánh', component: BranchAdd },
-  { path: '/branches', name: 'Chi nhánh', component: BranchHome },
+  { path: '/branches', exact: true, name: 'Chi nhánh', component: BranchHome },
+  { path: '/branches/trash', exact: true, name: 'Thùng rác', component: BranchTrash },
+  { path: '/branches/add', exact: true, name: 'Thêm chi nhánh', component: BranchAdd },
+  { path: '/branches/view', exact: true, name: 'Xem chi nhánh', component: BranchView },
+  { path: '/branches/edit', exact: true, name: 'Chỉnh sửa chi nhánh', component: BranchAdd },
 
-  { path: '/warehouses/inventory', name: 'Tồn kho', component: WarehouseInventory },
-  { path: '/warehouses/import', name: 'Nhập kho', component: WarehouseImport },
-  { path: '/warehouses/import/trash', name: 'Thùng rác', component: WarehouseImportTrash },
-  { path: '/warehouses/export', name: 'Xuất kho', component: WarehouseExport },
-  { path: '/warehouses/export/trash', name: 'Thùng rác', component: WarehouseExportTrash },
   { path: '/warehouses', exact: true, name: 'Kho hàng' },
+  { path: '/warehouses/inventory', exact: true, name: 'Tồn kho', component: WarehouseInventory },
+  { path: '/warehouses/import', exact: true, name: 'Nhập kho', component: WarehouseImport },
+  {
+    path: '/warehouses/import/trash',
+    exact: true,
+    name: 'Thùng rác',
+    component: WarehouseImportTrash,
+  },
+  { path: '/warehouses/export', exact: true, name: 'Xuất kho', component: WarehouseExport },
+  {
+    path: '/warehouses/export/trash',
+    exact: true,
+    name: 'Thùng rác',
+    component: WarehouseExportTrash,
+  },
 
   { path: '/products/trash', name: 'Thùng rác', component: ProductTrash },
   { path: '/products', name: 'Sản phẩm', component: ProductHome },

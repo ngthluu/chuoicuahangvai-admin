@@ -139,7 +139,7 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <a href="/">{item.name}</a>
+                      <Link to={`/branches/view?id=${index}`}>{item.name}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <a href="/">{item.manager}</a>
@@ -154,10 +154,10 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href="#">
+                          <CDropdownItem href={`/branches/view?id=${index}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href="#">
+                          <CDropdownItem href={`/branches/edit?id=${index}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                           <CDropdownItem href="#">
