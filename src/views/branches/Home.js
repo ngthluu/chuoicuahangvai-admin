@@ -107,15 +107,15 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <div className="d-flex justify-content-between">
-              <h4>Quản lý chi nhánh</h4>
-              <div>
-                <Link to="/branches/add">
-                  <CButton color="info" className="text-white">
-                    <FontAwesomeIcon icon={faPlus} /> <strong>Chi nhánh</strong>
-                  </CButton>
-                </Link>
+            <div className="d-block d-md-flex justify-content-between">
+              <div className="mb-2">
+                <h4 className="mb-3">Quản lý chi nhánh</h4>
               </div>
+              <Link to="/branches/add">
+                <CButton color="info" className="text-white w-100">
+                  <FontAwesomeIcon icon={faPlus} /> <strong>Chi nhánh</strong>
+                </CButton>
+              </Link>
             </div>
           </CCardBody>
         </CCard>
