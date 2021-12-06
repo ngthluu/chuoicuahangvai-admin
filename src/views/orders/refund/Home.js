@@ -155,16 +155,19 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100 mb-2">
-                  <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
-                </CButton>
-              </Link>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
-                </CButton>
-              </Link>
+              <div className="d-block d-md-flex justify-content-between">
+                <Link to="#">
+                  <CButton color="info" className="text-white w-100 mb-2">
+                    <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                  </CButton>
+                </Link>
+                <div className="p-1"></div>
+                <Link to="/orders/refund/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
+                  </CButton>
+                </Link>
+              </div>
             </div>
           </CCardBody>
         </CCard>
@@ -189,7 +192,7 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/orders/sell/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/orders/refund/view?id=${index}`}>{item.code}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <div>
@@ -213,10 +216,10 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/orders/sell/view?id=${index}`}>
+                          <CDropdownItem href={`/orders/refund/view?id=${index}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/orders/sell/edit?id=${index}`}>
+                          <CDropdownItem href={`/orders/refund/edit?id=${index}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                         </CDropdownMenu>

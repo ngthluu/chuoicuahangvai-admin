@@ -25,7 +25,11 @@ const ProductView = React.lazy(() => import('./views/products/View'))
 const ProductTrash = React.lazy(() => import('./views/products/Trash'))
 
 const OrderSell = React.lazy(() => import('./views/orders/sell/Home'))
+const OrderSellAdd = React.lazy(() => import('./views/orders/sell/Add'))
+const OrderSellView = React.lazy(() => import('./views/orders/sell/View'))
 const OrderRefund = React.lazy(() => import('./views/orders/refund/Home'))
+const OrderRefundAdd = React.lazy(() => import('./views/orders/refund/Add'))
+const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
 
 const UserHome = React.lazy(() => import('./views/users/Home'))
 const UserTrash = React.lazy(() => import('./views/users/Trash'))
@@ -124,9 +128,39 @@ const routes = [
     component: ProductTrash,
   },
 
-  { path: '/orders/sell', name: 'Đơn hàng bán', component: OrderSell },
-  { path: '/orders/refund', name: 'Đơn hàng trả', component: OrderRefund },
   { path: '/orders', exact: true, name: 'Đơn hàng' },
+  { path: '/orders/sell', exact: true, name: 'Đơn hàng bán', component: OrderSell },
+  {
+    path: '/orders/sell/edit',
+    exact: true,
+    name: 'Chỉnh sửa đơn hàng (bán)',
+    component: OrderSellAdd,
+  },
+  {
+    path: '/orders/sell/view',
+    exact: true,
+    name: 'Xem đơn hàng (bán)',
+    component: OrderSellView,
+  },
+  { path: '/orders/refund', exact: true, name: 'Đơn hàng trả', component: OrderRefund },
+  {
+    path: '/orders/refund/edit',
+    exact: true,
+    name: 'Chỉnh sửa đơn hàng (trả)',
+    component: OrderRefundAdd,
+  },
+  {
+    path: '/orders/refund/add',
+    exact: true,
+    name: 'Thêm đơn hàng (trả)',
+    component: OrderRefundAdd,
+  },
+  {
+    path: '/orders/refund/view',
+    exact: true,
+    name: 'Xem đơn hàng (trả)',
+    component: OrderRefundView,
+  },
 
   { path: '/users/trash', name: 'Thùng rác', component: UserTrash },
   { path: '/users/salary', name: 'Bảng lương', component: UserSalary },
