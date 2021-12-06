@@ -8,8 +8,12 @@ const BranchAdd = React.lazy(() => import('./views/branches/Add'))
 const BranchView = React.lazy(() => import('./views/branches/View'))
 
 const WarehouseInventory = React.lazy(() => import('./views/warehouses/Inventory'))
+
 const WarehouseImport = React.lazy(() => import('./views/warehouses/import/Home'))
+const WarehouseImportAdd = React.lazy(() => import('./views/warehouses/import/Add'))
+const WarehouseImportView = React.lazy(() => import('./views/warehouses/import/View'))
 const WarehouseImportTrash = React.lazy(() => import('./views/warehouses/import/Trash'))
+
 const WarehouseExport = React.lazy(() => import('./views/warehouses/export/Home'))
 const WarehouseExportTrash = React.lazy(() => import('./views/warehouses/export/Trash'))
 
@@ -40,6 +44,24 @@ const routes = [
   { path: '/warehouses', exact: true, name: 'Kho hàng' },
   { path: '/warehouses/inventory', exact: true, name: 'Tồn kho', component: WarehouseInventory },
   { path: '/warehouses/import', exact: true, name: 'Nhập kho', component: WarehouseImport },
+  {
+    path: '/warehouses/import/add',
+    exact: true,
+    name: 'Thêm phiếu nhập kho',
+    component: WarehouseImportAdd,
+  },
+  {
+    path: '/warehouses/import/add',
+    exact: true,
+    name: 'Xem phiếu nhập kho',
+    component: WarehouseImportView,
+  },
+  {
+    path: '/warehouses/import/add',
+    exact: true,
+    name: 'Chỉnh sửa phiếu nhập kho',
+    component: WarehouseImportAdd,
+  },
   {
     path: '/warehouses/import/trash',
     exact: true,
