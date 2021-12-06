@@ -51,13 +51,13 @@ const routes = [
     component: WarehouseImportAdd,
   },
   {
-    path: '/warehouses/import/add',
+    path: '/warehouses/import/view',
     exact: true,
     name: 'Xem phiếu nhập kho',
     component: WarehouseImportView,
   },
   {
-    path: '/warehouses/import/add',
+    path: '/warehouses/import/edit',
     exact: true,
     name: 'Chỉnh sửa phiếu nhập kho',
     component: WarehouseImportAdd,

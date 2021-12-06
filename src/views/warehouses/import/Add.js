@@ -19,34 +19,12 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
-  CDropdownItem,
-  CBadge,
+  CTableFoot,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSave, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Chưa nhập</CBadge>
-  }
-  return <CBadge color="success">Đã nhập</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faCheck} /> Nhập vào kho
-      </CDropdownItem>
-    )
-  }
-  return <></>
-}
-StatusAction.propTypes = { status: PropTypes.number }
 
 const Add = () => {
   const [productsList, setProductsList] = useState([])
@@ -85,6 +63,14 @@ const Add = () => {
       })
     }
     setProductsList(newProductsList)
+  }
+
+  const calculateTotalPrice = () => {
+    let totalPrice = 0
+    productsList.forEach((item) => {
+      totalPrice += item.total_price
+    })
+    return totalPrice
   }
 
   return (
@@ -185,6 +171,13 @@ const Add = () => {
                       </CTableRow>
                     ))}
                   </CTableBody>
+                  <CTableFoot align="middle">
+                    <CTableRow>
+                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> {calculateTotalPrice()} </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
+                    </CTableRow>
+                  </CTableFoot>
                 </CTable>
               </CCol>
             </CRow>
