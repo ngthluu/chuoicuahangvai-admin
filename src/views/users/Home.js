@@ -154,7 +154,7 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
+              <Link to="/users/add">
                 <CButton color="info" className="text-white w-100">
                   <FontAwesomeIcon icon={faPlus} /> <strong>Nhân viên</strong>
                 </CButton>

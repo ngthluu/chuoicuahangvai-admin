@@ -34,6 +34,8 @@ const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
 const UserHome = React.lazy(() => import('./views/users/Home'))
 const UserTrash = React.lazy(() => import('./views/users/Trash'))
 const UserSalary = React.lazy(() => import('./views/users/Salary'))
+const UserAdd = React.lazy(() => import('./views/users/Add'))
+const UserView = React.lazy(() => import('./views/users/View'))
 
 const CustomerHome = React.lazy(() => import('./views/customers/Home'))
 const CustomerTrash = React.lazy(() => import('./views/customers/Trash'))
@@ -162,9 +164,12 @@ const routes = [
     component: OrderRefundView,
   },
 
-  { path: '/users/trash', name: 'Thùng rác', component: UserTrash },
-  { path: '/users/salary', name: 'Bảng lương', component: UserSalary },
-  { path: '/users', name: 'Nhân viên', component: UserHome },
+  { path: '/users', exact: true, name: 'Nhân viên', component: UserHome },
+  { path: '/users/view', exact: true, name: 'Xem nhân viên', component: UserView },
+  { path: '/users/add', exact: true, name: 'Thêm nhân viên', component: UserAdd },
+  { path: '/users/edit', exact: true, name: 'Chỉnh sửa nhân viên', component: UserAdd },
+  { path: '/users/trash', exact: true, name: 'Thùng rác', component: UserTrash },
+  { path: '/users/salary', exact: true, name: 'Bảng lương', component: UserSalary },
 
   { path: '/customers/trash', name: 'Thùng rác', component: CustomerTrash },
   { path: '/customers/debt', name: 'Công nợ', component: CustomerDebt },
