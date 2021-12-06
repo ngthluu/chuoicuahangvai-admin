@@ -15,6 +15,8 @@ const WarehouseImportView = React.lazy(() => import('./views/warehouses/import/V
 const WarehouseImportTrash = React.lazy(() => import('./views/warehouses/import/Trash'))
 
 const WarehouseExport = React.lazy(() => import('./views/warehouses/export/Home'))
+const WarehouseExportAdd = React.lazy(() => import('./views/warehouses/export/Add'))
+const WarehouseExportView = React.lazy(() => import('./views/warehouses/export/View'))
 const WarehouseExportTrash = React.lazy(() => import('./views/warehouses/export/Trash'))
 
 const ProductHome = React.lazy(() => import('./views/products/Home'))
@@ -69,6 +71,24 @@ const routes = [
     component: WarehouseImportTrash,
   },
   { path: '/warehouses/export', exact: true, name: 'Xuất kho', component: WarehouseExport },
+  {
+    path: '/warehouses/export/add',
+    exact: true,
+    name: 'Thêm phiếu xuất kho',
+    component: WarehouseExportAdd,
+  },
+  {
+    path: '/warehouses/export/view',
+    exact: true,
+    name: 'Xem phiếu xuất kho',
+    component: WarehouseExportView,
+  },
+  {
+    path: '/warehouses/export/edit',
+    exact: true,
+    name: 'Chỉnh sửa phiếu xuất kho',
+    component: WarehouseExportAdd,
+  },
   {
     path: '/warehouses/export/trash',
     exact: true,
