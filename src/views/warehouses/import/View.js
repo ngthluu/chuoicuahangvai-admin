@@ -135,7 +135,12 @@ const Add = () => {
           </CRow>
         </CCardBody>
         <CCardFooter className="d-flex">
-          <CButton href="/branches" color="secondary" type="button" className="text-white ml-3">
+          <CButton
+            href="/warehouses/import"
+            color="secondary"
+            type="button"
+            className="text-white ml-3"
+          >
             <strong>Hủy bỏ</strong>
           </CButton>
         </CCardFooter>
