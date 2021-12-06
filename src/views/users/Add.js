@@ -13,11 +13,13 @@ import {
   CButton,
   CFormFeedback,
   CFormCheck,
+  CImage,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
+import sampleImage from 'src/assets/images/vue.jpg'
 
 const ShiftComponent = (props) => {
   return (
@@ -44,6 +46,11 @@ const Add = () => {
             <h5>Thông tin nhân viên</h5>
           </CCardHeader>
           <CCardBody>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CImage width="200" src={sampleImage}></CImage>
+              </CCol>
+            </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Mã số</CFormLabel>

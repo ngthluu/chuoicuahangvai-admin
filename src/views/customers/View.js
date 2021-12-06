@@ -41,7 +41,7 @@ const View = () => {
       <CCol md={7}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thông tin nhân viên</h5>
+            <h5>Thông tin khách hàng</h5>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
@@ -59,12 +59,17 @@ const View = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Họ và tên</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tên nhân viên" />
+                <CFormInput type="text" placeholder="Nhập tên khách hàng" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
+            <CRow>
+              <CCol md={6} className="mb-3">
+                <CFormLabel>Email</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập email" />
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              </CCol>
+              <CCol md={6} className="mb-3">
                 <CFormLabel>Số điện thoại</CFormLabel>
                 <CFormInput type="text" placeholder="Nhập số điện thoại" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
@@ -72,45 +77,34 @@ const View = () => {
             </CRow>
             <CRow>
               <CCol md={6} className="mb-3">
-                <CFormLabel>Chi nhánh</CFormLabel>
-                <CFormSelect options={['Chọn chi nhánh']} required></CFormSelect>
+                <CFormLabel>Tỉnh / thành phố</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập tỉnh / thành phố" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={6} className="mb-3">
-                <CFormLabel>Chức vụ</CFormLabel>
-                <CFormSelect options={['Chọn chức vụ']} required></CFormSelect>
+                <CFormLabel>Quận / huyện</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập quận / huyện" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mức lương (theo ca)</CFormLabel>
-                <CFormInput type="number" placeholder="Nhập mức lương" />
+            <CRow>
+              <CCol md={6} className="mb-3">
+                <CFormLabel>Phường / xã</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập phường / xã" />
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              </CCol>
+              <CCol md={6} className="mb-3">
+                <CFormLabel>Địa chỉ</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập địa chỉ" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton href="/users" color="secondary" type="button" className="text-white ml-3">
+            <CButton href="/customers" color="secondary" type="button" className="text-white ml-3">
               <strong>Hủy bỏ</strong>
             </CButton>
           </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol md={5}>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <h5>Ca trực</h5>
-          </CCardHeader>
-          <CCardBody>
-            <ShiftComponent title="Thứ hai" />
-            <ShiftComponent title="Thứ ba" />
-            <ShiftComponent title="Thứ tư" />
-            <ShiftComponent title="Thứ năm" />
-            <ShiftComponent title="Thứ sáu" />
-            <ShiftComponent title="Thứ bảy" />
-            <ShiftComponent title="Chủ nhật" />
-          </CCardBody>
         </CCard>
       </CCol>
     </CForm>

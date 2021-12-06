@@ -40,6 +40,7 @@ const UserView = React.lazy(() => import('./views/users/View'))
 const CustomerHome = React.lazy(() => import('./views/customers/Home'))
 const CustomerTrash = React.lazy(() => import('./views/customers/Trash'))
 const CustomerDebt = React.lazy(() => import('./views/customers/Debt'))
+const CustomerView = React.lazy(() => import('./views/customers/View'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -171,9 +172,10 @@ const routes = [
   { path: '/users/trash', exact: true, name: 'Thùng rác', component: UserTrash },
   { path: '/users/salary', exact: true, name: 'Bảng lương', component: UserSalary },
 
-  { path: '/customers/trash', name: 'Thùng rác', component: CustomerTrash },
-  { path: '/customers/debt', name: 'Công nợ', component: CustomerDebt },
-  { path: '/customers', name: 'Khách hàng', component: CustomerHome },
+  { path: '/customers', exact: true, name: 'Khách hàng', component: CustomerHome },
+  { path: '/customers/view', exact: true, name: 'Xem khách hàng', component: CustomerView },
+  { path: '/customers/trash', exact: true, name: 'Thùng rác', component: CustomerTrash },
+  { path: '/customers/debt', exact: true, name: 'Công nợ', component: CustomerDebt },
 ]
 
 export default routes
