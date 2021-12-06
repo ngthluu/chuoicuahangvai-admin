@@ -20,6 +20,8 @@ const WarehouseExportView = React.lazy(() => import('./views/warehouses/export/V
 const WarehouseExportTrash = React.lazy(() => import('./views/warehouses/export/Trash'))
 
 const ProductHome = React.lazy(() => import('./views/products/Home'))
+const ProductAdd = React.lazy(() => import('./views/products/Add'))
+const ProductView = React.lazy(() => import('./views/products/View'))
 const ProductTrash = React.lazy(() => import('./views/products/Trash'))
 
 const OrderSell = React.lazy(() => import('./views/orders/sell/Home'))
@@ -96,8 +98,31 @@ const routes = [
     component: WarehouseExportTrash,
   },
 
-  { path: '/products/trash', name: 'Thùng rác', component: ProductTrash },
-  { path: '/products', name: 'Sản phẩm', component: ProductHome },
+  { path: '/products', exact: true, name: 'Sản phẩm', component: ProductHome },
+  {
+    path: '/products/add',
+    exact: true,
+    name: 'Thêm sản phẩm',
+    component: ProductAdd,
+  },
+  {
+    path: '/products/view',
+    exact: true,
+    name: 'Xem sản phẩm',
+    component: ProductView,
+  },
+  {
+    path: '/products/edit',
+    exact: true,
+    name: 'Chỉnh sửa sản phẩm',
+    component: ProductAdd,
+  },
+  {
+    path: '/products/trash',
+    exact: true,
+    name: 'Thùng rác',
+    component: ProductTrash,
+  },
 
   { path: '/orders/sell', name: 'Đơn hàng bán', component: OrderSell },
   { path: '/orders/refund', name: 'Đơn hàng trả', component: OrderRefund },
