@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import {
   CCard,
   CCardBody,
@@ -32,51 +33,6 @@ import { Link } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
 
-const branchesList = [
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 1,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 0,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 1,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 1,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 1,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 0,
-  },
-  {
-    name: 'Cửa hàng A',
-    manager: 'Nguyễn Văn A',
-    address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-    status: 1,
-  },
-]
-
 const Status = (props) => {
   if (props.status === 0) {
     return <CBadge color="danger">Tạm khóa</CBadge>
@@ -102,6 +58,16 @@ const StatusAction = (props) => {
 StatusAction.propTypes = { status: PropTypes.number }
 
 const Home = () => {
+  const [branchesList, setBranchesList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await axios('http://localhost:1337/api/branches')
+      setBranchesList(result.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
