@@ -40,57 +40,57 @@ const ordersList = [
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 1,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 0,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 1,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 1,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 0,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 1,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 0,
   },
   {
     code: '#USR000101',
     name: 'Nguyễn Văn A',
-    role_name: 'Quản lý chi nhánh',
-    branch_name: 'Chi nhánh Q.10',
+    role_name: 'Quản lý cửa hàng',
+    branch_name: 'Cửa hàng Q.10',
     status: 0,
   },
 ]
@@ -135,8 +135,8 @@ const Home = () => {
                       <CFormInput type="text" placeholder="Họ và tên..." />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Chi nhánh</CFormLabel>
-                      <CFormSelect options={['Chọn chi nhánh']}></CFormSelect>
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <CFormSelect options={['Chọn cửa hàng']}></CFormSelect>
                     </div>
                     <div className="p-1">
                       <CFormLabel>Chức vụ</CFormLabel>
@@ -173,7 +173,7 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Mã số </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Tên nhân viên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Chức vụ </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chi nhánh </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>

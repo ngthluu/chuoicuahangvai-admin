@@ -72,8 +72,8 @@ const View = () => {
             </CRow>
             <CRow>
               <CCol md={6} className="mb-3">
-                <CFormLabel>Chi nhánh</CFormLabel>
-                <CFormSelect options={['Chọn chi nhánh']} required></CFormSelect>
+                <CFormLabel>Cửa hàng</CFormLabel>
+                <CFormSelect options={['Chọn cửa hàng']} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={6} className="mb-3">

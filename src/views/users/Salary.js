@@ -40,56 +40,56 @@ import PropTypes from 'prop-types'
 const ordersList = [
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 1,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 0,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 0,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 1,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 0,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 1,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 1,
   },
   {
     name: 'Nguyễn Văn A',
-    branch_name: 'Chi nhánh Q.10',
+    branch_name: 'Cửa hàng Q.10',
     salary: '10.000.000đ',
     time: 'Tháng 11, 2011',
     status: 1,
@@ -128,8 +128,8 @@ const Salary = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Chi nhánh</CFormLabel>
-                      <CFormSelect options={['Chọn chi nhánh']}></CFormSelect>
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <CFormSelect options={['Chọn cửa hàng']}></CFormSelect>
                     </div>
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
@@ -163,7 +163,7 @@ const Salary = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chi nhánh </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Số tiền </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>

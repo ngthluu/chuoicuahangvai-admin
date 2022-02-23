@@ -34,43 +34,43 @@ import PropTypes from 'prop-types'
 
 const branchesList = [
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 0,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 0,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
@@ -109,11 +109,11 @@ const Home = () => {
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Quản lý chi nhánh</h4>
+                <h4 className="mb-3">Quản lý cửa hàng</h4>
               </div>
               <Link to="/branches/add">
                 <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Chi nhánh</strong>
+                  <FontAwesomeIcon icon={faPlus} /> <strong>Cửa hàng</strong>
                 </CButton>
               </Link>
             </div>
@@ -127,7 +127,7 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên chi nhánh </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Tên cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Quản lý </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>

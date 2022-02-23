@@ -31,7 +31,7 @@ import PropTypes from 'prop-types'
 const importsList = [
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -39,7 +39,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -47,7 +47,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -55,7 +55,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -63,7 +63,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -71,7 +71,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -79,7 +79,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',
@@ -87,7 +87,7 @@ const importsList = [
   },
   {
     code: '#EXP21091001',
-    warehouse: 'Chi nhánh A',
+    warehouse: 'Cửa hàng A',
     total_cost: '1.000.000đ',
     import_date: '25/09/2021',
     import_user: 'Nhân viên A',

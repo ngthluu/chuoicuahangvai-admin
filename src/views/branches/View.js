@@ -18,13 +18,13 @@ const View = (props) => {
       <CCol md={6}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm chi nhánh</h5>
+            <h5>Thêm cửa hàng</h5>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CFormLabel>Tên chi nhánh</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tên chi nhánh" readOnly />
+                <CFormLabel>Tên cửa hàng</CFormLabel>
+                <CFormInput type="text" placeholder="Nhập tên cửa hàng" readOnly />
               </CCol>
             </CRow>
             <CRow className="mb-3">

@@ -25,43 +25,43 @@ import { faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
 
 const branchesList = [
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 0,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 0,
   },
   {
-    name: 'Chi nhánh A',
+    name: 'Cửa hàng A',
     manager: 'Nguyễn Văn A',
     address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
     status: 1,
@@ -83,7 +83,7 @@ const Trash = () => {
         <CCard className="mb-4">
           <CCardBody>
             <div className="d-flex justify-content-between">
-              <h4>Quản lý chi nhánh (thùng rác)</h4>
+              <h4>Quản lý cửa hàng (thùng rác)</h4>
             </div>
           </CCardBody>
         </CCard>
@@ -95,7 +95,7 @@ const Trash = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên chi nhánh </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Tên cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Quản lý </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>

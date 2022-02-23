@@ -9,8 +9,12 @@ import {
   faShoppingCart,
   faUserTie,
   faUsers,
+  faTrash,
+  faCircle,
+  faCircleNotch,
+  faMoneyBill,
 } from '@fortawesome/free-solid-svg-icons'
-import { faProductHunt } from '@fortawesome/free-brands-svg-icons'
+import { faGgCircle, faProductHunt } from '@fortawesome/free-brands-svg-icons'
 
 const _nav = [
   {
@@ -20,22 +24,10 @@ const _nav = [
     icon: <FontAwesomeIcon icon={faTachometerAlt} className="nav-icon" />,
   },
   {
-    component: CNavGroup,
-    name: 'Chi nhánh',
+    component: CNavItem,
+    name: 'Cửa hàng',
     to: '/branches',
     icon: <FontAwesomeIcon icon={faCodeBranch} className="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Danh sách chi nhánh',
-        to: '/branches',
-      },
-      {
-        component: CNavItem,
-        name: 'Thùng rác',
-        to: '/branches/trash',
-      },
-    ],
   },
   {
     component: CNavGroup,
@@ -55,37 +47,16 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Nhập kho (thùng rác)',
-        to: '/warehouses/import/trash',
-      },
-      {
-        component: CNavItem,
         name: 'Xuất kho',
         to: '/warehouses/export',
-      },
-      {
-        component: CNavItem,
-        name: 'Xuất kho (thùng rác)',
-        to: '/warehouses/export/trash',
       },
     ],
   },
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Sản phẩm',
+    to: '/products',
     icon: <FontAwesomeIcon icon={faProductHunt} className="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Danh sách sản phẩm',
-        to: '/products',
-      },
-      {
-        component: CNavItem,
-        name: 'Thùng rác',
-        to: '/products/trash',
-      },
-    ],
   },
   {
     component: CNavGroup,
@@ -116,15 +87,16 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Thùng rác',
-        to: '/users/trash',
-      },
-      {
-        component: CNavItem,
         name: 'Bảng lương',
         to: '/users/salary',
       },
     ],
+  },
+  {
+    component: CNavItem,
+    name: 'Voucher/Coupon',
+    icon: <FontAwesomeIcon icon={faMoneyBill} className="nav-icon" />,
+    to: '/voucher',
   },
   {
     component: CNavGroup,
@@ -138,15 +110,16 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Thùng rác',
-        to: '/customers/trash',
-      },
-      {
-        component: CNavItem,
         name: 'Công nợ',
         to: '/customers/debt',
       },
     ],
+  },
+  {
+    component: CNavItem,
+    name: 'Thùng rác',
+    to: '/trash',
+    icon: <FontAwesomeIcon icon={faTrash} className="nav-icon" />,
   },
 ]
 

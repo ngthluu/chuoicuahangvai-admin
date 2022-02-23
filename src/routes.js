@@ -46,11 +46,11 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
 
-  { path: '/branches', exact: true, name: 'Chi nhánh', component: BranchHome },
+  { path: '/branches', exact: true, name: 'Cửa hàng', component: BranchHome },
   { path: '/branches/trash', exact: true, name: 'Thùng rác', component: BranchTrash },
-  { path: '/branches/add', exact: true, name: 'Thêm chi nhánh', component: BranchAdd },
-  { path: '/branches/view', exact: true, name: 'Xem chi nhánh', component: BranchView },
-  { path: '/branches/edit', exact: true, name: 'Chỉnh sửa chi nhánh', component: BranchAdd },
+  { path: '/branches/add', exact: true, name: 'Thêm cửa hàng', component: BranchAdd },
+  { path: '/branches/view', exact: true, name: 'Xem cửa hàng', component: BranchView },
+  { path: '/branches/edit', exact: true, name: 'Chỉnh sửa cửa hàng', component: BranchAdd },
 
   { path: '/warehouses', exact: true, name: 'Kho hàng' },
   { path: '/warehouses/inventory', exact: true, name: 'Tồn kho', component: WarehouseInventory },

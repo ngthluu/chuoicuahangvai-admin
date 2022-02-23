@@ -293,7 +293,7 @@ const WidgetsDropdown = () => {
               </span>
             </>
           }
-          title="Chi nhánh"
+          title="Cửa hàng"
           chart={
             <CChartBar
               className="mt-3 mx-3"
