@@ -62,7 +62,7 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios('http://localhost:1337/api/branches')
+      const result = await axios(`${process.env.REACT_APP_API_ENDPOINT}/branches`)
       setBranchesList(result.data)
     }
     fetchData()

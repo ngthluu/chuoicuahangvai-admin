@@ -35,12 +35,12 @@ const ForgotPassword = () => {
                       <CFormInput placeholder="Username" autoComplete="username" />
                     </CInputGroup>
                     <CRow>
-                      <CCol xs={6}>
+                      <CCol xs={7}>
                         <CButton color="primary" className="px-4">
                           Lấy lại mật khẩu
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
+                      <CCol xs={5} className="text-right">
                         <Link to="/signin">
                           <CButton color="link" className="px-0">
                             Đăng nhập ?

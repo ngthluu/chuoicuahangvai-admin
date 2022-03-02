@@ -1,10 +1,13 @@
 import { React, Component } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 
+import { useCookies } from 'react-cookie'
+
 AuthenticatedRoute.propTypes = { component: Component }
 
 function AuthenticatedRoute({ ...restOfProps }) {
-  const isAuthenticated = false
+  const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+  const isAuthenticated = process.env.REACT_APP_COOKIE_NAME in cookies
   return isAuthenticated ? <Route {...restOfProps} /> : <Redirect to="/signin" />
 }
 
