@@ -66,7 +66,7 @@ const Home = () => {
     async function fetchData() {
       const result = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
         params: {
-          populate: 'address',
+          populate: ['address', 'manager'],
         },
         headers: {
           Authorization: `Bearer ${cookies[process.env.REACT_APP_COOKIE_NAME]}`,
@@ -118,7 +118,9 @@ const Home = () => {
                       <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.manager}</Link>
+                      <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>
+                        {item.attributes.manager.data.attributes.email}
+                      </Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       {item.attributes.address.address}
