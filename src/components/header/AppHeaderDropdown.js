@@ -24,7 +24,14 @@ import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
 
+import { useCookies } from 'react-cookie'
+
 const AppHeaderDropdown = () => {
+  const [cookies, removeCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+  const handleLogout = () => {
+    removeCookie(process.env.REACT_APP_COOKIE_NAME)
+  }
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -84,9 +91,9 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="#">
+        <CDropdownItem href="#" onClick={handleLogout}>
           <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+          Đăng xuất
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>
