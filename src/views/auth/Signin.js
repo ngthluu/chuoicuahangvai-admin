@@ -23,6 +23,7 @@ const Signin = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [invalidLogin, setInvalidLogin] = useState(false)
+  const [loginMessage, setLoginMessage] = useState('Đăng nhập thất bại')
   const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
 
   const handleUsernameChange = (e) => {
@@ -50,7 +51,13 @@ const Signin = () => {
         })
       })
       .catch((error) => {
-        setInvalidLogin(true)
+        try {
+          setLoginMessage(error.response.data.error.message)
+        } catch (e) {
+          setLoginMessage('Đăng nhập thất bại')
+        } finally {
+          setInvalidLogin(true)
+        }
       })
   }
 
@@ -71,7 +78,7 @@ const Signin = () => {
                       visible={invalidLogin}
                       onClose={() => setInvalidLogin(false)}
                     >
-                      Sai tên đăng nhập hoặc mật khẩu
+                      {loginMessage}
                     </CAlert>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>

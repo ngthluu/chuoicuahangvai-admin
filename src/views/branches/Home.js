@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useCookies } from 'react-cookie'
 import {
   CCard,
   CCardBody,
@@ -59,11 +60,20 @@ StatusAction.propTypes = { status: PropTypes.number }
 
 const Home = () => {
   const [branchesList, setBranchesList] = useState([])
+  const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios(`${process.env.REACT_APP_API_ENDPOINT}/branches`)
-      setBranchesList(result.data)
+      const result = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
+        params: {
+          populate: 'address',
+        },
+        headers: {
+          Authorization: `Bearer ${cookies[process.env.REACT_APP_COOKIE_NAME]}`,
+        },
+      })
+      console.log(result.data.data)
+      setBranchesList(result.data.data)
     }
     fetchData()
   }, [])
@@ -89,7 +99,7 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <CTable align="middle" responsive bordered>
+            <CTable align="middle" bordered>
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
@@ -101,16 +111,24 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {branchesList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
+                {branchesList.map((item) => (
+                  <CTableRow key={item.id}>
+                    <CTableDataCell> {item.id} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/branches/view?id=${index}`}>{item.name}</Link>
+                      <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.manager}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.address} </CTableDataCell>
+                    <CTableDataCell>
+                      {item.attributes.address.address}
+                      <span>, </span>
+                      {item.attributes.address.ward}
+                      <span>, </span>
+                      {item.attributes.address.district}
+                      <span>, </span>
+                      {item.attributes.address.city}
+                    </CTableDataCell>
                     <CTableDataCell>
                       <Status status={item.status} />
                     </CTableDataCell>
@@ -120,13 +138,13 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/branches/view?id=${index}`}>
+                          <CDropdownItem href={`/branches/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/branches/edit?id=${index}`}>
+                          <CDropdownItem href={`/branches/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <CDropdownItem href="#">
+                          <CDropdownItem href={`/warehouses/inventory?warehouse=${item.id}`}>
                             <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                           </CDropdownItem>
                           <CDropdownItem href="#">
