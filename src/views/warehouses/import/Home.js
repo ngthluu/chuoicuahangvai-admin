@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useCookies } from 'react-cookie'
 import {
   CCard,
   CCardBody,
@@ -15,7 +17,6 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
   CForm,
   CFormLabel,
   CFormInput,
@@ -26,104 +27,34 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faEye,
   faEdit,
-  faCheck,
   faTrash,
   faPlus,
   faFilePdf,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-
-import PropTypes from 'prop-types'
-
-const importsList = [
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#IMP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Chưa nhập</CBadge>
-  }
-  return <CBadge color="success">Đã nhập</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faCheck} /> Nhập vào kho
-      </CDropdownItem>
-    )
-  }
-  return <></>
-}
-StatusAction.propTypes = { status: PropTypes.number }
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
 
 const Home = () => {
+  const [importsList, setImportsList] = useState([])
+  const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
+        params: {
+          populate: ['address', 'manager'],
+        },
+        headers: {
+          Authorization: `Bearer ${cookies[process.env.REACT_APP_COOKIE_NAME]}`,
+        },
+      })
+      setImportsList(result.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -176,7 +107,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Kho hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tổng giá trị </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày nhập </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên nhập </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
@@ -193,13 +123,12 @@ const Home = () => {
                     <CTableDataCell>
                       <Link to="#">{item.warehouse}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.total_cost} </CTableDataCell>
                     <CTableDataCell> {item.import_date} </CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.import_user}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>

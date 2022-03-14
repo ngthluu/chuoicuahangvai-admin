@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useCookies } from 'react-cookie'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -17,46 +21,11 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faWarehouse,
-  faEye,
-  faEdit,
-  faCheck,
-  faTrash,
-  faPlus,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import { faWarehouse, faEye, faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-
-import PropTypes from 'prop-types'
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Tạm khóa</CBadge>
-  }
-  return <CBadge color="success">Đang hoạt động</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <>
-        <FontAwesomeIcon icon={faCheck} /> Kích hoạt
-      </>
-    )
-  }
-  return (
-    <>
-      <FontAwesomeIcon icon={faLock} /> Khóa
-    </>
-  )
-}
-StatusAction.propTypes = { status: PropTypes.number }
 
 const Home = () => {
   const [branchesList, setBranchesList] = useState([])
@@ -72,7 +41,6 @@ const Home = () => {
           Authorization: `Bearer ${cookies[process.env.REACT_APP_COOKIE_NAME]}`,
         },
       })
-      console.log(result.data.data)
       setBranchesList(result.data.data)
     }
     fetchData()
@@ -132,7 +100,7 @@ const Home = () => {
                       {item.attributes.address.city}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -149,9 +117,7 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/inventory?warehouse=${item.id}`}>
                             <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                           </CDropdownItem>
-                          <CDropdownItem href="#">
-                            <StatusAction status={item.status} />
-                          </CDropdownItem>
+                          <StatusAction status={item.status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
