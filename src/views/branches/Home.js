@@ -75,9 +75,9 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {branchesList.map((item) => (
+                {branchesList.map((item, index) => (
                   <CTableRow key={item.id}>
-                    <CTableDataCell> {item.id} </CTableDataCell>
+                    <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
                       <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
                     </CTableDataCell>

@@ -4,44 +4,36 @@ import qs from 'qs'
 import { CRow, CCol, CFormLabel, CFormInput, CFormSelect, CFormFeedback } from '@coreui/react'
 
 const Address = () => {
-  const defaultCityValue = 'Chọn tỉnh/thành phố'
-  const defaultDistrictValue = 'Chọn quận/huyện'
-  const defaultWardValue = 'Chọn phường/xã'
-
   const [cities, setCities] = useState([])
   const [districts, setDistricts] = useState([])
   const [wards, setWards] = useState([])
   const fetchCitiesData = async () => {
     const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/cities`)
-    let data = [defaultCityValue]
+    let data = []
     response.data.data.forEach((item) => {
       data.push({ label: item, value: item })
     })
     setCities(data)
-    setDistricts([defaultDistrictValue])
-    setWards([defaultWardValue])
+    setDistricts([])
+    setWards([])
   }
   const fetchDistrictsData = async (city) => {
-    let data = [defaultDistrictValue]
-    if (city !== defaultCityValue) {
-      const query = qs.stringify({ city: city }, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/districts?${query}`)
-      response.data.data.forEach((item) => {
-        data.push({ label: item, value: item })
-      })
-    }
+    let data = []
+    const query = qs.stringify({ city: city }, { encodeValuesOnly: true })
+    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/districts?${query}`)
+    response.data.data.forEach((item) => {
+      data.push({ label: item, value: item })
+    })
     setDistricts(data)
-    setWards([defaultWardValue])
+    setWards([])
   }
   const fetchWardsData = async (district, city) => {
-    let data = [defaultWardValue]
-    if (district !== defaultDistrictValue) {
-      const query = qs.stringify({ city: city, district: district }, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/wards?${query}`)
-      response.data.data.forEach((item) => {
-        data.push({ label: item, value: item })
-      })
-    }
+    let data = []
+    const query = qs.stringify({ city: city, district: district }, { encodeValuesOnly: true })
+    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/wards?${query}`)
+    response.data.data.forEach((item) => {
+      data.push({ label: item.label, value: item.value })
+    })
     setWards(data)
   }
 
@@ -70,37 +62,48 @@ const Address = () => {
       <CRow className="mb-3">
         <CCol md={12}>
           <CFormLabel>Tỉnh / Thành phố (*)</CFormLabel>
-          <CFormSelect
-            name="city"
-            onChange={handleChangeCity}
-            options={cities}
-            required
-          ></CFormSelect>
-          <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+          <CFormSelect name="city" onChange={handleChangeCity} required>
+            <option disabled>Chọn tỉnh/thành phố</option>
+            {cities.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </CFormSelect>
+          <CFormFeedback invalid>Vui lòng chọn tỉnh/thành phố!</CFormFeedback>
         </CCol>
       </CRow>
       <CRow>
         <CCol md={6} className="mb-3">
           <CFormLabel>Quận / Huyện (*)</CFormLabel>
-          <CFormSelect
-            name="district"
-            onChange={handleChangeDistrict}
-            options={districts}
-            required
-          ></CFormSelect>
-          <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+          <CFormSelect name="district" onChange={handleChangeDistrict} required>
+            <option disabled>Chọn quận/huyện</option>
+            {districts.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </CFormSelect>
+          <CFormFeedback invalid>Vui lòng chọn quận/huyện!</CFormFeedback>
         </CCol>
         <CCol md={6} className="mb-3">
           <CFormLabel>Phường / Xã (*)</CFormLabel>
-          <CFormSelect name="ward" options={wards} required></CFormSelect>
-          <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+          <CFormSelect name="ward" required>
+            <option disabled>Chọn phường/xã</option>
+            {wards.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </CFormSelect>
+          <CFormFeedback invalid>Vui lòng chọn phường/xã!</CFormFeedback>
         </CCol>
       </CRow>
       <CRow className="mb-3">
         <CCol md={12}>
-          <CFormLabel>Địa chỉ</CFormLabel>
-          <CFormInput type="text" placeholder="Nhập địa chỉ" required />
-          <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+          <CFormLabel>Địa chỉ (*)</CFormLabel>
+          <CFormInput name="address" type="text" placeholder="Nhập địa chỉ" required />
+          <CFormFeedback invalid>Vui lòng nhập địa chỉ !</CFormFeedback>
         </CCol>
       </CRow>
     </>

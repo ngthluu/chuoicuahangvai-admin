@@ -20,15 +20,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import Address from '../template/Address'
 
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Add = () => {
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
+    e.preventDefault()
     const form = e.currentTarget
     if (form.checkValidity() === false) {
-      e.preventDefault()
       e.stopPropagation()
+      return
     }
     setValidated(true)
+    const formData = Object.fromEntries(new FormData(form).entries())
+    axios
+      .post(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
+        data: {
+          name: formData.name,
+          address: {
+            address: formData.address,
+            address_three_levels: formData.ward,
+          },
+          manager: formData.manager,
+        },
+      })
+      .then((response) => toast.success('Thao tác thành công'))
+      .catch((error) => toast.error('Thao tác thất bại. Có lỗi xảy ra !!'))
   }
 
   // Fetch managers data
@@ -38,11 +56,6 @@ const Add = () => {
       {
         fields: ['id', 'username'],
         filters: {
-          branch: {
-            name: {
-              $null: true,
-            },
-          },
           role: {
             name: 'Branch Manager',
           },
@@ -51,7 +64,7 @@ const Add = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/users?${query}`)
-    const data = ['Chọn nhân viên quản lý']
+    const data = []
     response.data.forEach((item) => {
       data.push({ value: item.id, label: item.username })
     })
@@ -69,6 +82,7 @@ const Add = () => {
       validated={validated}
       onSubmit={handleSubmit}
     >
+      <ToastContainer />
       <CCol md={6}>
         <CCard className="mb-4">
           <CCardHeader>
@@ -78,16 +92,23 @@ const Add = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Tên cửa hàng (*)</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tên cửa hàng" required />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+                <CFormInput name="name" type="text" placeholder="Nhập tên cửa hàng" required />
+                <CFormFeedback invalid>Hãy nhập tên cửa hàng!</CFormFeedback>
               </CCol>
             </CRow>
             <Address></Address>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Nhân viên quản lý</CFormLabel>
-                <CFormSelect options={managers} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+                <CFormSelect name="manager" required>
+                  <option disabled>Chọn nhân viên quản lý</option>
+                  {managers.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </CFormSelect>
+                <CFormFeedback invalid>Hãy chọn quản lý chi nhánh!</CFormFeedback>
               </CCol>
             </CRow>
           </CCardBody>
