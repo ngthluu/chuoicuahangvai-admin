@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
 import {
   CCard,
   CCardBody,
@@ -16,17 +18,49 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
+import Address from '../template/Address'
 
 const Add = () => {
   const [validated, setValidated] = useState(false)
-  const handleSubmit = (event) => {
-    const form = event.currentTarget
+  const handleSubmit = (e) => {
+    const form = e.currentTarget
     if (form.checkValidity() === false) {
-      event.preventDefault()
-      event.stopPropagation()
+      e.preventDefault()
+      e.stopPropagation()
     }
     setValidated(true)
   }
+
+  // Fetch managers data
+  const [managers, setManagers] = useState([])
+  const fetchManagersData = async () => {
+    const query = qs.stringify(
+      {
+        fields: ['id', 'username'],
+        filters: {
+          branch: {
+            name: {
+              $null: true,
+            },
+          },
+          role: {
+            name: 'Branch Manager',
+          },
+        },
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/users?${query}`)
+    const data = ['Chọn nhân viên quản lý']
+    response.data.forEach((item) => {
+      data.push({ value: item.id, label: item.username })
+    })
+    setManagers(data)
+  }
+
+  useEffect(() => {
+    fetchManagersData()
+  }, [])
 
   return (
     <CForm
@@ -43,41 +77,16 @@ const Add = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CFormLabel>Tên cửa hàng</CFormLabel>
+                <CFormLabel>Tên cửa hàng (*)</CFormLabel>
                 <CFormInput type="text" placeholder="Nhập tên cửa hàng" required />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Tỉnh / Thành phố</CFormLabel>
-                <CFormSelect options={['Chọn tỉnh / thành phố']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Quận / Huyện</CFormLabel>
-                <CFormSelect options={['Chọn quận / huyện']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Phường / Xã</CFormLabel>
-                <CFormSelect options={['Chọn phường / xã']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Địa chỉ</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập địa chỉ" required />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
+            <Address></Address>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Nhân viên quản lý</CFormLabel>
-                <CFormSelect options={['Chọn nhân viên quản lý']} required></CFormSelect>
+                <CFormSelect options={managers} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>

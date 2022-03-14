@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import qs from 'qs'
 
 import StatusLabel from 'src/views/template/StatusLabel'
 import StatusAction from 'src/views/template/StatusAction'
@@ -31,11 +32,11 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
-        params: {
-          populate: ['address', 'manager'],
-        },
-      })
+      const query = qs.stringify(
+        { populate: ['address', 'address.address_three_levels', 'manager'] },
+        { encodeValuesOnly: true },
+      )
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches?${query}`)
       setBranchesList(response.data.data)
     }
     fetchData()
@@ -88,11 +89,11 @@ const Home = () => {
                     <CTableDataCell>
                       {item.attributes.address.address}
                       <span>, </span>
-                      {item.attributes.address.ward}
+                      {item.attributes.address.address_three_levels.data.attributes.ward}
                       <span>, </span>
-                      {item.attributes.address.district}
+                      {item.attributes.address.address_three_levels.data.attributes.district}
                       <span>, </span>
-                      {item.attributes.address.city}
+                      {item.attributes.address.address_three_levels.data.attributes.city}
                     </CTableDataCell>
                     <CTableDataCell>
                       <StatusLabel status={item.status} />
