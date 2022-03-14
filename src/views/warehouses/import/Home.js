@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useCookies } from 'react-cookie'
 import {
   CCard,
   CCardBody,
@@ -38,16 +37,12 @@ import StatusAction from 'src/views/template/StatusAction'
 
 const Home = () => {
   const [importsList, setImportsList] = useState([])
-  const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
 
   useEffect(() => {
     async function fetchData() {
       const result = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
         params: {
           populate: ['address', 'manager'],
-        },
-        headers: {
-          Authorization: `Bearer ${cookies[process.env.REACT_APP_COOKIE_NAME]}`,
         },
       })
       setImportsList(result.data.data)
