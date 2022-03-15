@@ -25,22 +25,25 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const Add = () => {
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
+
   const [name, setName] = useState('')
   const [city, setCity] = useState('')
   const [district, setDistrict] = useState('')
-  const [ward, setWard] = useState('')
+  const [ward, setWard] = useState(0)
   const [address, setAddress] = useState('')
   const [manager, setManager] = useState('')
 
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
     e.preventDefault()
+    setValidated(true)
     const form = e.currentTarget
     if (form.checkValidity() === false) {
       e.stopPropagation()
       return
     }
-    setValidated(true)
 
     const formData = Object.fromEntries(new FormData(form).entries())
     const data = {
@@ -92,6 +95,7 @@ const Add = () => {
     setManagers(data)
   }
 
+  // For edit
   const fetchBranchData = async () => {
     if (id === null) return
     const query = qs.stringify(
@@ -104,18 +108,18 @@ const Add = () => {
     setName(data.attributes.name)
     setCity(data.attributes.address.address_three_levels.data.attributes.city)
     setDistrict(data.attributes.address.address_three_levels.data.attributes.district)
-    setWard(data.attributes.address.address_three_levels.data.attributes.ward)
+    setWard(data.attributes.address.address_three_levels.data.id)
     setAddress(data.attributes.address.address)
     setManager(data.attributes.manager.data.id)
   }
 
-  const query = useLocation().search
-  const id = new URLSearchParams(query).get('id')
-
   useEffect(() => {
-    fetchManagersData()
-    fetchBranchData()
-  }, [manager])
+    async function fetchData() {
+      fetchManagersData()
+      fetchBranchData()
+    }
+    fetchData()
+  }, [])
 
   return (
     <CForm

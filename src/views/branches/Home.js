@@ -106,9 +106,6 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/branches/view?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
                           <CDropdownItem href={`/branches/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>

@@ -4,7 +4,6 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const BranchHome = React.lazy(() => import('./views/branches/Home'))
 const BranchAdd = React.lazy(() => import('./views/branches/Add'))
-const BranchView = React.lazy(() => import('./views/branches/View'))
 
 const WarehouseInventory = React.lazy(() => import('./views/warehouses/Inventory'))
 
@@ -42,7 +41,6 @@ const routes = [
 
   { path: '/branches', exact: true, name: 'Cửa hàng', component: BranchHome },
   { path: '/branches/add', exact: true, name: 'Thêm cửa hàng', component: BranchAdd },
-  { path: '/branches/view', exact: true, name: 'Xem cửa hàng', component: BranchView },
   { path: '/branches/edit', exact: true, name: 'Chỉnh sửa cửa hàng', component: BranchAdd },
 
   { path: '/warehouses', exact: true, name: 'Kho hàng' },
