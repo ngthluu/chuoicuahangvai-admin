@@ -3,7 +3,9 @@ import axios from 'axios'
 import qs from 'qs'
 import { CRow, CCol, CFormLabel, CFormInput, CFormSelect, CFormFeedback } from '@coreui/react'
 
-const Address = () => {
+import PropTypes from 'prop-types'
+
+const Address = (props) => {
   const [cities, setCities] = useState([])
   const [districts, setDistricts] = useState([])
   const [wards, setWards] = useState([])
@@ -54,15 +56,20 @@ const Address = () => {
   }
 
   useEffect(() => {
-    fetchCitiesData()
-  }, [])
+    async function fetchData() {
+      await fetchCitiesData()
+      await fetchDistrictsData(props.city)
+      await fetchWardsData(props.district, props.city)
+    }
+    fetchData()
+  }, [props.address])
 
   return (
     <>
       <CRow className="mb-3">
         <CCol md={12}>
           <CFormLabel>Tỉnh / Thành phố (*)</CFormLabel>
-          <CFormSelect name="city" onChange={handleChangeCity} required>
+          <CFormSelect name="city" onChange={handleChangeCity} required value={props.city}>
             <option disabled>Chọn tỉnh/thành phố</option>
             {cities.map((item) => (
               <option key={item.value} value={item.value}>
@@ -76,7 +83,12 @@ const Address = () => {
       <CRow>
         <CCol md={6} className="mb-3">
           <CFormLabel>Quận / Huyện (*)</CFormLabel>
-          <CFormSelect name="district" onChange={handleChangeDistrict} required>
+          <CFormSelect
+            name="district"
+            onChange={handleChangeDistrict}
+            required
+            value={props.district}
+          >
             <option disabled>Chọn quận/huyện</option>
             {districts.map((item) => (
               <option key={item.value} value={item.value}>
@@ -88,7 +100,7 @@ const Address = () => {
         </CCol>
         <CCol md={6} className="mb-3">
           <CFormLabel>Phường / Xã (*)</CFormLabel>
-          <CFormSelect name="ward" required>
+          <CFormSelect name="ward" required defaultValue={props.ward}>
             <option disabled>Chọn phường/xã</option>
             {wards.map((item) => (
               <option key={item.value} value={item.value}>
@@ -102,12 +114,25 @@ const Address = () => {
       <CRow className="mb-3">
         <CCol md={12}>
           <CFormLabel>Địa chỉ (*)</CFormLabel>
-          <CFormInput name="address" type="text" placeholder="Nhập địa chỉ" required />
+          <CFormInput
+            name="address"
+            type="text"
+            placeholder="Nhập địa chỉ"
+            required
+            defaultValue={props.address}
+          />
           <CFormFeedback invalid>Vui lòng nhập địa chỉ !</CFormFeedback>
         </CCol>
       </CRow>
     </>
   )
+}
+
+Address.propTypes = {
+  city: PropTypes.string,
+  district: PropTypes.string,
+  ward: PropTypes.string,
+  address: PropTypes.string,
 }
 
 export default Address
