@@ -1,4 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -15,7 +21,6 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
   CForm,
   CFormLabel,
   CFormInput,
@@ -23,103 +28,21 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEye,
-  faEdit,
-  faSearch,
-  faPlus,
-  faTrash,
-  faUnlock,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
-
-const ordersList = [
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 1,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 0,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 1,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 1,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 0,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 1,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 0,
-  },
-  {
-    code: '#USR000101',
-    name: 'Nguyễn Văn A',
-    role_name: 'Quản lý cửa hàng',
-    branch_name: 'Cửa hàng Q.10',
-    status: 0,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Bị khóa</CBadge>
-  }
-  return <CBadge color="success">Đang hoạt động</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faUnlock} /> Mở khóa
-      </CDropdownItem>
-    )
-  }
-  return (
-    <CDropdownItem href="#">
-      <FontAwesomeIcon icon={faLock} /> Khóa
-    </CDropdownItem>
-  )
-}
-StatusAction.propTypes = { status: PropTypes.number }
-
 const Home = () => {
+  const [usersList, setUsersList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const query = qs.stringify({ populate: ['role', 'branches'] }, { encodeValuesOnly: true })
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/users?${query}`)
+      setUsersList(response.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -170,7 +93,7 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Mã số </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Email </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Tên nhân viên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Chức vụ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
@@ -179,19 +102,17 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {ordersList.map((item, index) => (
-                  <CTableRow key={index}>
+                {usersList.map((item, index) => (
+                  <CTableRow key={item.id}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/users/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.name} </CTableDataCell>
-                    <CTableDataCell> {item.role_name} </CTableDataCell>
+                    <CTableDataCell> {item.username} </CTableDataCell>
+                    <CTableDataCell> {item.role.name} </CTableDataCell>
+                    <CTableDataCell>{item.branches.map((el) => el.name).join(', ')}</CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.branch_name}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.blocked} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -199,10 +120,10 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/users/view?id=${index}`}>
+                          <CDropdownItem href={`/users/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/users/edit?id=${index}`}>
+                          <CDropdownItem href={`/users/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                           <StatusAction status={item.status} />

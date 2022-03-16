@@ -89,7 +89,7 @@ const Add = () => {
     )
     const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/users?${query}`)
     const data = []
-    response.data.forEach((item) => {
+    response.data.data.forEach((item) => {
       data.push({ value: item.id, label: item.username })
     })
     setManagers(data)

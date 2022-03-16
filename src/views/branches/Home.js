@@ -24,7 +24,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWarehouse, faEye, faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faWarehouse, faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
