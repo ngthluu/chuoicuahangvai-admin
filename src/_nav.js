@@ -86,6 +86,11 @@ const _nav = [
             name: 'Co giãn',
             to: '/product-stretch',
           },
+          {
+            component: CNavItem,
+            name: 'Xuất xứ',
+            to: '/product-origin',
+          },
         ],
       },
       {

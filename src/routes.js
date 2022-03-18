@@ -15,6 +15,10 @@ const WarehouseExport = React.lazy(() => import('./views/warehouses/export/Home'
 const WarehouseExportAdd = React.lazy(() => import('./views/warehouses/export/Add'))
 const WarehouseExportView = React.lazy(() => import('./views/warehouses/export/View'))
 
+const WarehouseCatalogue = React.lazy(() => import('./views/warehouses/catalogue/Home'))
+const WarehouseCatalogueAdd = React.lazy(() => import('./views/warehouses/catalogue/Add'))
+const WarehouseCatalogueView = React.lazy(() => import('./views/warehouses/catalogue/View'))
+
 const CategoryHome = React.lazy(() => import('./views/categories/Home'))
 const CategoryAdd = React.lazy(() => import('./views/categories/Add'))
 const ProductPatternHome = React.lazy(() => import('./views/products/pattern/Home'))
@@ -23,6 +27,9 @@ const ProductWidthHome = React.lazy(() => import('./views/products/width/Home'))
 const ProductWidthAdd = React.lazy(() => import('./views/products/width/Add'))
 const ProductStretchHome = React.lazy(() => import('./views/products/stretch/Home'))
 const ProductStretchAdd = React.lazy(() => import('./views/products/stretch/Add'))
+const ProductOriginHome = React.lazy(() => import('./views/products/origin/Home'))
+const ProductOriginAdd = React.lazy(() => import('./views/products/origin/Add'))
+
 const ProductHome = React.lazy(() => import('./views/products/Home'))
 const ProductAdd = React.lazy(() => import('./views/products/Add'))
 const ProductView = React.lazy(() => import('./views/products/View'))
@@ -91,6 +98,25 @@ const routes = [
     name: 'Chỉnh sửa phiếu xuất kho',
     component: WarehouseExportAdd,
   },
+  { path: '/warehouses/catalogue', exact: true, name: 'Kiểm kho', component: WarehouseCatalogue },
+  {
+    path: '/warehouses/catalogue/add',
+    exact: true,
+    name: 'Thêm phiếu kiểm kho',
+    component: WarehouseCatalogueAdd,
+  },
+  {
+    path: '/warehouses/catalogue/view',
+    exact: true,
+    name: 'Xem phiếu kiểm kho',
+    component: WarehouseCatalogueView,
+  },
+  {
+    path: '/warehouses/catalogue/edit',
+    exact: true,
+    name: 'Chỉnh sửa phiếu kiểm kho',
+    component: WarehouseCatalogueAdd,
+  },
 
   { path: '/categories', exact: true, name: 'Danh mục sản phẩm', component: CategoryHome },
   {
@@ -143,6 +169,19 @@ const routes = [
     exact: true,
     name: 'Chỉnh sửa co giãn',
     component: ProductStretchAdd,
+  },
+  { path: '/product-origin', exact: true, name: 'Xuất xứ', component: ProductOriginHome },
+  {
+    path: '/product-origin/add',
+    exact: true,
+    name: 'Thêm xuất xứ',
+    component: ProductOriginAdd,
+  },
+  {
+    path: '/product-origin/edit',
+    exact: true,
+    name: 'Chỉnh sửa xuất xứ',
+    component: ProductOriginAdd,
   },
   { path: '/products', exact: true, name: 'Sản phẩm', component: ProductHome },
   {
