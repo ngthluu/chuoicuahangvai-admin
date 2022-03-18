@@ -15,6 +15,14 @@ const WarehouseExport = React.lazy(() => import('./views/warehouses/export/Home'
 const WarehouseExportAdd = React.lazy(() => import('./views/warehouses/export/Add'))
 const WarehouseExportView = React.lazy(() => import('./views/warehouses/export/View'))
 
+const CategoryHome = React.lazy(() => import('./views/categories/Home'))
+const CategoryAdd = React.lazy(() => import('./views/categories/Add'))
+const ProductPatternHome = React.lazy(() => import('./views/products/pattern/Home'))
+const ProductPatternAdd = React.lazy(() => import('./views/products/pattern/Add'))
+const ProductWidthHome = React.lazy(() => import('./views/products/width/Home'))
+const ProductWidthAdd = React.lazy(() => import('./views/products/width/Add'))
+const ProductStretchHome = React.lazy(() => import('./views/products/stretch/Home'))
+const ProductStretchAdd = React.lazy(() => import('./views/products/stretch/Add'))
 const ProductHome = React.lazy(() => import('./views/products/Home'))
 const ProductAdd = React.lazy(() => import('./views/products/Add'))
 const ProductView = React.lazy(() => import('./views/products/View'))
@@ -84,6 +92,58 @@ const routes = [
     component: WarehouseExportAdd,
   },
 
+  { path: '/categories', exact: true, name: 'Danh mục sản phẩm', component: CategoryHome },
+  {
+    path: '/categories/add',
+    exact: true,
+    name: 'Thêm danh mục',
+    component: CategoryAdd,
+  },
+  {
+    path: '/categories/edit',
+    exact: true,
+    name: 'Chỉnh sửa danh mục',
+    component: CategoryAdd,
+  },
+  { path: '/product-pattern', exact: true, name: 'Kiểu mẫu', component: ProductPatternHome },
+  {
+    path: '/product-pattern/add',
+    exact: true,
+    name: 'Thêm kiểu mẫu',
+    component: ProductPatternAdd,
+  },
+  {
+    path: '/product-pattern/edit',
+    exact: true,
+    name: 'Chỉnh sửa kiểu mẫu',
+    component: ProductPatternAdd,
+  },
+  { path: '/product-width', exact: true, name: 'Chiều rộng', component: ProductWidthHome },
+  {
+    path: '/product-width/add',
+    exact: true,
+    name: 'Thêm chiều rộng',
+    component: ProductWidthAdd,
+  },
+  {
+    path: '/product-width/edit',
+    exact: true,
+    name: 'Chỉnh sửa chiều rộng',
+    component: ProductWidthAdd,
+  },
+  { path: '/product-stretch', exact: true, name: 'Co giãn', component: ProductStretchHome },
+  {
+    path: '/product-stretch/add',
+    exact: true,
+    name: 'Thêm co giãn',
+    component: ProductStretchAdd,
+  },
+  {
+    path: '/product-stretch/edit',
+    exact: true,
+    name: 'Chỉnh sửa co giãn',
+    component: ProductStretchAdd,
+  },
   { path: '/products', exact: true, name: 'Sản phẩm', component: ProductHome },
   {
     path: '/products/add',

@@ -50,13 +50,50 @@ const _nav = [
         name: 'Xuất kho',
         to: '/warehouses/export',
       },
+      {
+        component: CNavItem,
+        name: 'Kiểm kho',
+        to: '/warehouses/catalogue',
+      },
     ],
   },
   {
-    component: CNavItem,
+    component: CNavGroup,
     name: 'Sản phẩm',
-    to: '/products',
     icon: <FontAwesomeIcon icon={faProductHunt} className="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Danh mục sản phẩm',
+        to: '/categories',
+      },
+      {
+        component: CNavGroup,
+        name: 'Thuộc tính',
+        items: [
+          {
+            component: CNavItem,
+            name: 'Kiểu mẫu',
+            to: '/product-pattern',
+          },
+          {
+            component: CNavItem,
+            name: 'Chiều rộng',
+            to: '/product-width',
+          },
+          {
+            component: CNavItem,
+            name: 'Co giãn',
+            to: '/product-stretch',
+          },
+        ],
+      },
+      {
+        component: CNavItem,
+        name: 'Sản phẩm',
+        to: '/products',
+      },
+    ],
   },
   {
     component: CNavGroup,
@@ -114,12 +151,6 @@ const _nav = [
         to: '/customers/debt',
       },
     ],
-  },
-  {
-    component: CNavItem,
-    name: 'Thùng rác',
-    to: '/trash',
-    icon: <FontAwesomeIcon icon={faTrash} className="nav-icon" />,
   },
 ]
 
