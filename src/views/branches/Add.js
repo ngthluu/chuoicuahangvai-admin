@@ -87,7 +87,7 @@ const Add = () => {
       },
       { encodeValuesOnly: true },
     )
-    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/users?${query}`)
+    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/user?${query}`)
     const data = []
     response.data.data.forEach((item) => {
       data.push({ value: item.id, label: item.username })

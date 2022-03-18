@@ -1,4 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -15,7 +21,6 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
   CForm,
   CFormLabel,
   CFormInput,
@@ -23,104 +28,25 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEye,
-  faEdit,
-  faSearch,
-  faPlus,
-  faTrash,
-  faUnlock,
-  faLock,
-  faFilePdf,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEye, faSearch, faTrash, faFilePdf } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
-
-const ordersList = [
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    address: '************************************',
-    phone: '*********',
-    status: 1,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Bị khóa</CBadge>
-  }
-  return <CBadge color="success">Đang hoạt động</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faUnlock} /> Mở khóa
-      </CDropdownItem>
-    )
-  }
-  return (
-    <CDropdownItem href="#">
-      <FontAwesomeIcon icon={faLock} /> Khóa
-    </CDropdownItem>
-  )
-}
-StatusAction.propTypes = { status: PropTypes.number }
-
 const Home = () => {
+  const [customersList, setCustomersList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const query = qs.stringify(
+        { populate: ['name', 'address', 'address.address_three_levels'] },
+        { encodeValuesOnly: true },
+      )
+      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/customer?${query}`)
+      console.log(response.data.data)
+      setCustomersList(response.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -163,7 +89,6 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Họ và tên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Số điện thoại </CTableHeaderCell>
@@ -172,17 +97,26 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {ordersList.map((item, index) => (
-                  <CTableRow key={index}>
+                {customersList.map((item, index) => (
+                  <CTableRow key={item.id}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/customers/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/customers/view?id=${item.id}`}>
+                        {item.name.firstname} {item.name.lastname}
+                      </Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.name} </CTableDataCell>
-                    <CTableDataCell> {item.address} </CTableDataCell>
+                    <CTableDataCell>
+                      {item.address.address}
+                      <span>, </span>
+                      {item.address.address_three_levels.ward}
+                      <span>, </span>
+                      {item.address.address_three_levels.district}
+                      <span>, </span>
+                      {item.address.address_three_levels.city}
+                    </CTableDataCell>
                     <CTableDataCell> {item.phone} </CTableDataCell>
                     <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -190,7 +124,7 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/customers/view?id=${index}`}>
+                          <CDropdownItem href={`/customers/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
                           <StatusAction status={item.status} />
