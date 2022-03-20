@@ -1,4 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -34,96 +39,21 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
-
-const importsList = [
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Chưa xuất</CBadge>
-  }
-  return <CBadge color="success">Đã xuất</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faCheck} /> Xuất khỏi kho
-      </CDropdownItem>
-    )
-  }
-  return <></>
-}
-StatusAction.propTypes = { status: PropTypes.number }
-
 const Home = () => {
+  const [exportsList, setExportsList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
+        params: {
+          populate: ['branch', 'submit_user'],
+        },
+      })
+      setExportsList(result.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -175,8 +105,7 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Kho hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tổng giá trị </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày xuất </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên xuất </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
@@ -184,22 +113,25 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {importsList.map((item, index) => (
+                {exportsList.map((item, index) => (
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/export/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/warehouses/export/view?id=${item.id}`}>
+                        {item.attributes.code}
+                      </Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.warehouse}</Link>
+                      <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.total_cost} </CTableDataCell>
-                    <CTableDataCell> {item.import_date} </CTableDataCell>
+                    <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.import_user}</Link>
+                      {item.attributes.submit_user.data
+                        ? item.attributes.submit_user.data.attributes.username
+                        : ''}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.attributes.submit_status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -207,10 +139,10 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/warehouses/export/view?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/export/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/export/edit?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/export/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                           <StatusAction status={item.status} />

@@ -40,9 +40,9 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/branches`, {
+      const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
         params: {
-          populate: ['address', 'manager'],
+          populate: ['branch', 'submit_user'],
         },
       })
       setImportsList(result.data.data)
@@ -101,7 +101,7 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Kho hàng </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày nhập </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên nhập </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
@@ -113,17 +113,21 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/import/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/warehouses/import/view?id=${item.id}`}>
+                        {item.attributes.code}
+                      </Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.warehouse}</Link>
+                      <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.import_date} </CTableDataCell>
+                    <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.import_user}</Link>
+                      {item.attributes.submit_user.data
+                        ? item.attributes.submit_user.data.attributes.username
+                        : ''}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.status} />
+                      <StatusLabel status={item.attributes.submit_status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -131,10 +135,10 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/warehouses/import/view?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/import/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/import/edit?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                           <StatusAction status={item.status} />
