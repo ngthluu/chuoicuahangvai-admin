@@ -64,7 +64,7 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/products/add">
+              <Link to="/product-stretch/add">
                 <CButton color="info" className="text-white w-100">
                   <FontAwesomeIcon icon={faPlus} /> <strong>Co giãn</strong>
                 </CButton>
@@ -95,10 +95,7 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/products/view?id=${index}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem href={`/products/edit?id=${index}`}>
+                          <CDropdownItem href={`/product-stretch/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
                           <CDropdownItem href="#">

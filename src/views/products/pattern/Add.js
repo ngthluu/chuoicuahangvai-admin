@@ -77,7 +77,7 @@ const Add = () => {
   const [name, setName] = useState('')
   const fetchPatternData = async () => {
     if (id === null) return
-    const query = qs.stringify({ populate: ['parent'] }, { encodeValuesOnly: true })
+    const query = qs.stringify({}, { encodeValuesOnly: true })
     const response = await axios.get(`
       ${process.env.REACT_APP_API_ENDPOINT}/product-patterns/${id}?${query}`)
     const data = response.data.data
@@ -95,7 +95,7 @@ const Add = () => {
       <CCol md={6}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm kiểu mẫu</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow>

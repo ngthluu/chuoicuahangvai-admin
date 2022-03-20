@@ -1,4 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import qs from 'qs'
 import {
   CCard,
   CCardBody,
@@ -12,110 +15,99 @@ import {
   CCardFooter,
   CButton,
   CFormFeedback,
-  CFormTextarea,
-  CImage,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSave } from '@fortawesome/free-solid-svg-icons'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
 
-import sampleImage from 'src/assets/images/vue.jpg'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Add = () => {
-  const [imagesList, setImagesList] = useState([sampleImage, sampleImage, sampleImage])
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
 
-  const addProductImage = () => {
-    console.log(sampleImage)
-    let newImagesList = [...imagesList]
-    newImagesList.push(sampleImage)
-    setImagesList(newImagesList)
+  useEffect(() => {
+    async function fetchData() {
+      fetchOriginData()
+    }
+    fetchData()
+  }, [])
+
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+
+    const formData = Object.fromEntries(new FormData(form).entries())
+    const data = {
+      name: formData.name,
+    }
+
+    if (id === null) {
+      // Add
+      axios
+        .post(`${process.env.REACT_APP_API_ENDPOINT}/product-origins`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    } else {
+      axios
+        .put(`${process.env.REACT_APP_API_ENDPOINT}/product-origins/${id}`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    }
+  }
+
+  // Edit stuffs
+  const [name, setName] = useState('')
+  const fetchOriginData = async () => {
+    if (id === null) return
+    const query = qs.stringify({}, { encodeValuesOnly: true })
+    const response = await axios.get(`
+      ${process.env.REACT_APP_API_ENDPOINT}/product-origins/${id}?${query}`)
+    const data = response.data.data
+    setName(data.attributes.name)
   }
 
   return (
-    <CForm className="row g-3 needs-validation">
-      <CCol md={12}>
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
+      <CCol md={6}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm sản phẩm</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow>
-              {imagesList.map((item, index) => (
-                <CCol key={index} md={2} className="mb-3">
-                  <CImage src={item} height="90px"></CImage>
-                </CCol>
-              ))}
-              <CCol
-                md={2}
-                className="mb-3 border d-flex justify-content-center align-items-center"
-                onClick={addProductImage}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Mã sản phẩm</CFormLabel>
-                <CFormInput type="text" readOnly />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Tên sản phẩm</CFormLabel>
-                <CFormInput type="text" placeholder="Tên sản phẩm" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Màu sắc</CFormLabel>
-                <CFormSelect options={['Chọn màu sắc']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Kiểu mẫu</CFormLabel>
-                <CFormSelect options={['Chọn kiểu mẫu']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Chiều rộng</CFormLabel>
-                <CFormSelect options={['Chọn chiều rộng']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Co giãn</CFormLabel>
-                <CFormSelect options={['Chọn co giãn']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Chất liệu</CFormLabel>
-                <CFormSelect options={['Chọn chất liệu']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Xuất xứ</CFormLabel>
-                <CFormSelect options={['Chọn xuất xứ']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Cân nặng</CFormLabel>
-                <CFormSelect options={['Chọn cân nặng']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3}></CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Đơn giá</CFormLabel>
-                <CFormInput type="number" placeholder="Nhập đơn giá" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mô tả</CFormLabel>
-                <CFormTextarea placeholder="Nhập mô tả" rows="5"></CFormTextarea>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Tên (*)</CFormLabel>
+                <CFormInput
+                  defaultValue={name}
+                  name="name"
+                  type="text"
+                  placeholder="Tên"
+                  required
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
@@ -125,7 +117,12 @@ const Add = () => {
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
-            <CButton href="/products" color="secondary" type="button" className="text-white ml-3">
+            <CButton
+              href="/product-origin"
+              color="secondary"
+              type="button"
+              className="text-white ml-3"
+            >
               <strong>Hủy bỏ</strong>
             </CButton>
           </CCardFooter>
