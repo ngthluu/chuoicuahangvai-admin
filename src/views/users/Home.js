@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import qs from 'qs'
 
-import StatusLabel from 'src/views/template/StatusLabel'
-import StatusAction from 'src/views/template/StatusAction'
-
 import {
   CCard,
   CCardBody,
@@ -66,10 +63,6 @@ const Home = () => {
                       <CFormSelect options={['Chọn chức vụ']}></CFormSelect>
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
                         <FontAwesomeIcon icon={faSearch} />
                       </CButton>
@@ -97,7 +90,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Tên nhân viên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Chức vụ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -112,9 +104,6 @@ const Home = () => {
                     <CTableDataCell> {item.role.name} </CTableDataCell>
                     <CTableDataCell>{item.branches.map((el) => el.name).join(', ')}</CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.blocked} />
-                    </CTableDataCell>
-                    <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">
                           Hành động
@@ -126,7 +115,6 @@ const Home = () => {
                           <CDropdownItem href={`/users/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>

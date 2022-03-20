@@ -34,6 +34,12 @@ const Add = () => {
   const [ward, setWard] = useState(0)
   const [address, setAddress] = useState('')
   const [manager, setManager] = useState('')
+  const handleChangeManager = (e) => {
+    e.preventDefault()
+    let manager = document.getElementsByName('manager')[0]
+    manager = manager.options[manager.selectedIndex].value
+    setManager(manager)
+  }
 
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
@@ -152,7 +158,7 @@ const Add = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Nhân viên quản lý</CFormLabel>
-                <CFormSelect name="manager" required value={manager} onChange={() => {}}>
+                <CFormSelect name="manager" required value={manager} onChange={handleChangeManager}>
                   <option disabled>Chọn nhân viên quản lý</option>
                   {managers.map((item) => (
                     <option key={item.value} value={item.value}>

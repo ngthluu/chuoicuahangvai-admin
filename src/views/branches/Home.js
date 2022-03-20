@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import qs from 'qs'
 
-import StatusLabel from 'src/views/template/StatusLabel'
-import StatusAction from 'src/views/template/StatusAction'
-
 import {
   CCard,
   CCardBody,
@@ -70,7 +67,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Tên cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Quản lý </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -98,9 +94,6 @@ const Home = () => {
                       {item.attributes.address.address_three_levels.data.attributes.city}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.status} />
-                    </CTableDataCell>
-                    <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">
                           Hành động
@@ -112,7 +105,6 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/inventory?warehouse=${item.id}`}>
                             <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
