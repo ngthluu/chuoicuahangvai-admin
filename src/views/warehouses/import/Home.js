@@ -40,7 +40,7 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
+      const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/branches`, {
         params: {
           populate: ['address', 'manager'],
         },

@@ -38,7 +38,7 @@ const Signin = () => {
     e.preventDefault()
     setInvalidLogin(false)
     axios
-      .post(`${process.env.REACT_APP_API_ENDPOINT}/auth/local`, {
+      .post(`${process.env.REACT_APP_STRAPI_URL}/api/auth/local`, {
         identifier: username,
         password: password,
       })

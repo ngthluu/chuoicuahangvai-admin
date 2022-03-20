@@ -31,7 +31,7 @@ const Add = () => {
   const fetchParentCategoriesData = async () => {
     const query = qs.stringify({}, { encodeValuesOnly: true })
     const response = await axios.get(
-      `${process.env.REACT_APP_API_ENDPOINT}/product-categories?${query}`,
+      `${process.env.REACT_APP_STRAPI_URL}/api/product-categories?${query}`,
     )
     setParentCategories(response.data.data)
   }
@@ -62,14 +62,14 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_API_ENDPOINT}/product-categories`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/product-categories`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
         .catch((error) => toast.error('Thao tác thất bại. Có lỗi xảy ra !!'))
     } else {
       axios
-        .put(`${process.env.REACT_APP_API_ENDPOINT}/product-categories/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/product-categories/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -90,7 +90,7 @@ const Add = () => {
     if (id === null) return
     const query = qs.stringify({ populate: ['parent'] }, { encodeValuesOnly: true })
     const response = await axios.get(`
-      ${process.env.REACT_APP_API_ENDPOINT}/product-categories/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/product-categories/${id}?${query}`)
     const data = response.data.data
     setName(data.attributes.name)
     setParent(data.attributes.parent.data !== null ? data.attributes.parent.data.id : '')

@@ -13,7 +13,7 @@ const Address = (props) => {
   const [district, setDistrict] = useState('')
   const [ward, setWard] = useState(0)
   const fetchCitiesData = async () => {
-    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/cities`)
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cities`)
     let data = []
     response.data.data.forEach((item) => {
       data.push({ label: item, value: item })
@@ -26,7 +26,7 @@ const Address = (props) => {
     if (city === '') return
     let data = []
     const query = qs.stringify({ city: city }, { encodeValuesOnly: true })
-    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/districts?${query}`)
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/districts?${query}`)
     response.data.data.forEach((item) => {
       data.push({ label: item, value: item })
     })
@@ -37,7 +37,7 @@ const Address = (props) => {
     if (district === '' || city === '') return
     let data = []
     const query = qs.stringify({ city: city, district: district }, { encodeValuesOnly: true })
-    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/wards?${query}`)
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/wards?${query}`)
     response.data.data.forEach((item) => {
       data.push({ label: item.label, value: item.value })
     })

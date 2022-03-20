@@ -64,14 +64,14 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_API_ENDPOINT}/branches`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/branches`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
         .catch((error) => toast.error('Thao tác thất bại. Có lỗi xảy ra !!'))
     } else {
       axios
-        .put(`${process.env.REACT_APP_API_ENDPOINT}/branches/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/branches/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -93,7 +93,7 @@ const Add = () => {
       },
       { encodeValuesOnly: true },
     )
-    const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/user?${query}`)
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
     const data = []
     response.data.data.forEach((item) => {
       data.push({ value: item.id, label: item.username })
@@ -109,7 +109,7 @@ const Add = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_API_ENDPOINT}/branches/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/branches/${id}?${query}`)
     const data = response.data.data
     setName(data.attributes.name)
     setCity(data.attributes.address.address_three_levels.data.attributes.city)

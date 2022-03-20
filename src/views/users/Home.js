@@ -34,7 +34,7 @@ const Home = () => {
   useEffect(() => {
     async function fetchData() {
       const query = qs.stringify({ populate: ['role', 'branches'] }, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/user?${query}`)
+      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
       setUsersList(response.data.data)
     }
     fetchData()

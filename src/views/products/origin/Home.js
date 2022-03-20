@@ -35,7 +35,7 @@ const Home = () => {
     async function fetchData() {
       const query = qs.stringify({}, { encodeValuesOnly: true })
       const response = await axios.get(
-        `${process.env.REACT_APP_API_ENDPOINT}/product-origins?${query}`,
+        `${process.env.REACT_APP_STRAPI_URL}/api/product-origins?${query}`,
       )
       setOriginList(response.data.data)
     }

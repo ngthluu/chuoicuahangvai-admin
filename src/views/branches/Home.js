@@ -33,7 +33,7 @@ const Home = () => {
         { populate: ['address', 'address.address_three_levels', 'manager'] },
         { encodeValuesOnly: true },
       )
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/branches?${query}`)
+      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/branches?${query}`)
       setBranchesList(response.data.data)
     }
     fetchData()

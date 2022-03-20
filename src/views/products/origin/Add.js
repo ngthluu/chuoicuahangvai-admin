@@ -52,7 +52,7 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_API_ENDPOINT}/product-origins`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/product-origins`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -62,7 +62,7 @@ const Add = () => {
         })
     } else {
       axios
-        .put(`${process.env.REACT_APP_API_ENDPOINT}/product-origins/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/product-origins/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -79,7 +79,7 @@ const Add = () => {
     if (id === null) return
     const query = qs.stringify({}, { encodeValuesOnly: true })
     const response = await axios.get(`
-      ${process.env.REACT_APP_API_ENDPOINT}/product-origins/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/product-origins/${id}?${query}`)
     const data = response.data.data
     setName(data.attributes.name)
   }

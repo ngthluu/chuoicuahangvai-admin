@@ -40,7 +40,7 @@ const Home = () => {
         { populate: ['name', 'address', 'address.address_three_levels'] },
         { encodeValuesOnly: true },
       )
-      const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}/customer?${query}`)
+      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/customer?${query}`)
       console.log(response.data.data)
       setCustomersList(response.data.data)
     }

@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -15,7 +18,6 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
   CForm,
   CFormLabel,
   CFormInput,
@@ -24,137 +26,27 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEye,
-  faEdit,
-  faCheck,
-  faTrash,
-  faPlus,
-  faLock,
-  faSearch,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEdit, faTrash, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import sampleImage from 'src/assets/images/vue.jpg'
-
-import PropTypes from 'prop-types'
-
-const productsList = [
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 1,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 1,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 0,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 0,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 1,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 1,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 0,
-  },
-  {
-    code: '#PRO001',
-    image: sampleImage,
-    name: 'Sản phẩm A',
-    color: 'Đỏ',
-    pattern: 'Hoa',
-    width: '0-5m',
-    stretch: '2 hướng',
-    source: 'Trung Quốc',
-    status: 1,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Bị khóa</CBadge>
-  }
-  return <CBadge color="success">Hoạt động</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faCheck} /> Kích hoạt
-      </CDropdownItem>
-    )
-  }
-  return (
-    <CDropdownItem href="#">
-      <FontAwesomeIcon icon={faLock} /> Khóa
-    </CDropdownItem>
-  )
-}
-StatusAction.propTypes = { status: PropTypes.number }
-
 const Home = () => {
+  const [productsList, setProductsList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const query = qs.stringify(
+        { populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'] },
+        { encodeValuesOnly: true },
+      )
+      const response = await axios.get(
+        `${process.env.REACT_APP_STRAPI_URL}/api/product-skus?${query}`,
+      )
+      console.log(response.data.data)
+      setProductsList(response.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -176,10 +68,6 @@ const Home = () => {
                     <div className="p-1">
                       <CFormLabel>Kiểu mẫu</CFormLabel>
                       <CFormSelect options={['Chọn kiểu mẫu']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -206,10 +94,10 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hình ảnh </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Mã sản phẩm </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên sản phẩm </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Tên </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> SKU </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Giá </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thông tin </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -218,31 +106,30 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <CImage src={item.image} width="200"></CImage>
+                      <CImage
+                        src={`${process.env.REACT_APP_STRAPI_URL}${item.attributes.images.data[0].attributes.url}`}
+                        width="200"
+                      ></CImage>
                     </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/products/view?id=${index}`}>{item.code}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.name} </CTableDataCell>
+                    <CTableDataCell>{item.attributes.product.data.attributes.name}</CTableDataCell>
+                    <CTableDataCell> {item.attributes.sku} </CTableDataCell>
+                    <CTableDataCell> {item.attributes.price} </CTableDataCell>
                     <CTableDataCell align="left">
                       <div>
-                        <strong>Màu sắc: </strong> {item.color}
+                        <strong>Màu sắc: </strong> {}
                       </div>
                       <div>
-                        <strong>Kiểu mẫu: </strong> {item.pattern}
+                        <strong>Kiểu mẫu: </strong> {item.attributes.pattern.data.attributes.name}
                       </div>
                       <div>
-                        <strong>Chiều rộng: </strong> {item.width}
+                        <strong>Chiều rộng: </strong> {item.attributes.width.data.attributes.name}
                       </div>
                       <div>
-                        <strong>Co giãn: </strong> {item.stretch}
+                        <strong>Co giãn: </strong> {item.attributes.stretch.data.attributes.name}
                       </div>
                       <div>
-                        <strong>Xuất xứ: </strong> {item.source}
+                        <strong>Xuất xứ: </strong> {item.attributes.origin.data.attributes.name}
                       </div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <Status status={item.status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -250,13 +137,16 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/products/view?id=${index}`}>
+                          <CDropdownItem
+                            href={`/products/view?id=${item.attributes.product.data.id}`}
+                          >
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/products/edit?id=${index}`}>
+                          <CDropdownItem
+                            href={`/products/edit?id=${item.attributes.product.data.id}`}
+                          >
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
