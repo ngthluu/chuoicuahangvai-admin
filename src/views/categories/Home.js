@@ -54,7 +54,7 @@ const Home = () => {
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Tên SP, Mã SP,..." />
+                      <CFormInput type="text" placeholder="Tìm kiếm theo từ khóa..." />
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
