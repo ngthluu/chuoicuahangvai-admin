@@ -33,6 +33,7 @@ const TextEditor = (props) => {
   return (
     <div className="text-editor">
       <ReactQuill
+        value={props.value}
         onChange={props.setValue}
         theme="snow"
         modules={modules}
@@ -43,6 +44,7 @@ const TextEditor = (props) => {
 }
 
 TextEditor.propTypes = {
+  value: PropTypes.string,
   setValue: PropTypes.func,
 }
 

@@ -1,4 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import qs from 'qs'
 import {
   CCard,
   CCardBody,
@@ -22,12 +25,31 @@ import SkuBox from './SkuBox'
 import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Add = () => {
-  const [skus, setSkus] = useState([])
-  const addSKU = () => {
-    setSkus([...skus, ''])
-  }
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
+
+  const [name, setName] = useState('')
   const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
+  const [skus, setSkus] = useState([])
+  const addSKU = () => {
+    setSkus([
+      ...skus,
+      {
+        id: null,
+        attributes: {
+          sku: '',
+          price: '',
+          color: '',
+          origin: { data: null },
+          width: { data: null },
+          stretch: { data: null },
+          pattern: { data: null },
+          images: { data: null },
+        },
+      },
+    ])
+  }
 
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
@@ -39,6 +61,34 @@ const Add = () => {
       return
     }
   }
+
+  const fetchData = async () => {
+    if (id === null) return
+    const query = qs.stringify(
+      {
+        populate: [
+          'category',
+          'product_skus',
+          'product_skus.images',
+          'product_skus.pattern',
+          'product_skus.stretch',
+          'product_skus.width',
+          'product_skus.origin',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`
+      ${process.env.REACT_APP_STRAPI_URL}/api/products/${id}?${query}`)
+    const data = response.data.data
+    setName(data.attributes.name)
+    setCategory(`${data.attributes.category.data.id}`)
+    setDescription(data.attributes.description)
+    setSkus(data.attributes.product_skus.data)
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <CForm
@@ -56,7 +106,7 @@ const Add = () => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Tên sản phẩm</CFormLabel>
-                <CFormInput type="text" placeholder="Tên sản phẩm" required />
+                <CFormInput defaultValue={name} type="text" placeholder="Tên sản phẩm" required />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
@@ -74,12 +124,22 @@ const Add = () => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Mô tả</CFormLabel>
-                <TextEditor setValue={setDescription}></TextEditor>
+                <TextEditor value={description} setValue={setDescription}></TextEditor>
               </CCol>
             </CRow>
             <CRow>
               {skus.map((item, index) => (
-                <SkuBox key={index}></SkuBox>
+                <SkuBox
+                  key={item.id}
+                  sku={item.attributes.sku}
+                  price={item.attributes.price}
+                  color={item.attributes.color}
+                  origin={item.attributes.origin.data ? item.attributes.origin.data.id : ''}
+                  width={item.attributes.width.data ? item.attributes.width.data.id : ''}
+                  stretch={item.attributes.stretch.data ? item.attributes.stretch.data.id : ''}
+                  pattern={item.attributes.pattern.data ? item.attributes.pattern.data.id : ''}
+                  images={item.attributes.images.data ? item.attributes.images.data : []}
+                ></SkuBox>
               ))}
               <CCol md={12} className="mb-3">
                 <CCard

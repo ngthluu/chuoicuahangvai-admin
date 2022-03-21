@@ -5,7 +5,9 @@ import dumbImage from 'src/assets/images/upload-image.jpg'
 import PropTypes from 'prop-types'
 
 const ImageUpload = (props) => {
-  const [image, setImage] = useState(dumbImage)
+  const [image, setImage] = useState(
+    props.default ? `${process.env.REACT_APP_STRAPI_URL}${props.default}` : dumbImage,
+  )
   const fileInputRef = useRef(null)
 
   const handleClickImage = (e) => {
@@ -18,7 +20,7 @@ const ImageUpload = (props) => {
 
   return (
     <>
-      <CImage width="180" src={image} onClick={handleClickImage}></CImage>
+      <CImage className="mb-3" width="180" src={image} onClick={handleClickImage}></CImage>
       <CFormInput
         name={props.name}
         type="file"
@@ -32,6 +34,7 @@ const ImageUpload = (props) => {
 
 ImageUpload.propTypes = {
   name: PropTypes.string,
+  default: PropTypes.string,
 }
 
 export default ImageUpload
