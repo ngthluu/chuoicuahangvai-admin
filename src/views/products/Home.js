@@ -118,18 +118,26 @@ const Home = () => {
                       <div>
                         <strong>Màu sắc: </strong> {}
                       </div>
-                      <div>
-                        <strong>Kiểu mẫu: </strong> {item.attributes.pattern.data.attributes.name}
-                      </div>
-                      <div>
-                        <strong>Chiều rộng: </strong> {item.attributes.width.data.attributes.name}
-                      </div>
-                      <div>
-                        <strong>Co giãn: </strong> {item.attributes.stretch.data.attributes.name}
-                      </div>
-                      <div>
-                        <strong>Xuất xứ: </strong> {item.attributes.origin.data.attributes.name}
-                      </div>
+                      {item.attributes.pattern.data != null && (
+                        <div>
+                          <strong>Kiểu mẫu: </strong> {item.attributes.pattern.data.attributes.name}
+                        </div>
+                      )}
+                      {item.attributes.width.data != null && (
+                        <div>
+                          <strong>Chiều rộng: </strong> {item.attributes.width.data.attributes.name}
+                        </div>
+                      )}
+                      {item.attributes.stretch.data != null && (
+                        <div>
+                          <strong>Co giãn: </strong> {item.attributes.stretch.data.attributes.name}
+                        </div>
+                      )}
+                      {item.attributes.origin.data != null && (
+                        <div>
+                          <strong>Xuất xứ: </strong> {item.attributes.origin.data.attributes.name}
+                        </div>
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
