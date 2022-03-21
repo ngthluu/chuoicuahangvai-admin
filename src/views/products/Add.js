@@ -13,13 +13,11 @@ import {
   CButton,
   CFormFeedback,
   CFormTextarea,
-  CImage,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSave } from '@fortawesome/free-solid-svg-icons'
-
-import ImageUpload from 'src/views/template/ImageUpload'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
+import TextEditor from 'src/views/template/TextEditor'
 
 const Add = () => {
   const [imagesList, setImagesList] = useState(['', ''])
@@ -30,79 +28,35 @@ const Add = () => {
     setImagesList(newImagesList)
   }
 
+  const [description, setDescription] = useState('')
+
   return (
     <CForm className="row g-3 needs-validation">
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm sản phẩm</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow>
-              {imagesList.map((item, index) => (
-                <CCol key={index} md={2} className="mb-3">
-                  <ImageUpload name={index}></ImageUpload>
-                </CCol>
-              ))}
-              <CCol
-                md={2}
-                className="mb-3 border d-flex justify-content-center align-items-center"
-                onClick={addProductImage}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Mã sản phẩm</CFormLabel>
-                <CFormInput type="text" readOnly />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
+              <CCol md={12} className="mb-3">
                 <CFormLabel>Tên sản phẩm</CFormLabel>
                 <CFormInput type="text" placeholder="Tên sản phẩm" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
             <CRow>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Màu sắc</CFormLabel>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Danh mục</CFormLabel>
                 <CFormSelect options={['Chọn màu sắc']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Kiểu mẫu</CFormLabel>
-                <CFormSelect options={['Chọn kiểu mẫu']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Chiều rộng</CFormLabel>
-                <CFormSelect options={['Chọn chiều rộng']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Co giãn</CFormLabel>
-                <CFormSelect options={['Chọn co giãn']} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
             <CRow>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Chất liệu</CFormLabel>
-                <CFormSelect options={['Chọn chất liệu']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Mô tả</CFormLabel>
+                <TextEditor setValue={setDescription}></TextEditor>
               </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Xuất xứ</CFormLabel>
-                <CFormSelect options={['Chọn xuất xứ']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3} className="mb-3">
-                <CFormLabel>Cân nặng</CFormLabel>
-                <CFormSelect options={['Chọn cân nặng']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3}></CCol>
             </CRow>
             <CRow className="mb-3">
               <CCol md={12}>

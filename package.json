@@ -50,6 +50,7 @@
     "react-app-polyfill": "^2.0.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
+    "react-quill": "^2.0.0-beta.4",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
     "react-toastify": "^8.2.0",
