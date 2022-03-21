@@ -27,7 +27,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faTrash, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import Modal from '../template/Modal'
+
+import Modal from 'src/views/template/Modal'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'

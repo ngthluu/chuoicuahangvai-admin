@@ -28,22 +28,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faTrash, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Home = () => {
   const [stretchList, setStretchList] = useState([])
 
+  const fetchData = async () => {
+    const query = qs.stringify({}, { encodeValuesOnly: true })
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/product-stretches?${query}`,
+    )
+    setStretchList(response.data.data)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const query = qs.stringify({}, { encodeValuesOnly: true })
-      const response = await axios.get(
-        `${process.env.REACT_APP_STRAPI_URL}/api/product-stretches?${query}`,
-      )
-      setStretchList(response.data.data)
-    }
     fetchData()
   }, [])
 
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa co giãn thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa co giãn"
+        content={`Bạn có muốn xóa co giãn ${deleteModalTargetName} không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -98,7 +133,12 @@ const Home = () => {
                           <CDropdownItem href={`/product-stretch/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <CDropdownItem href="#">
+                          <CDropdownItem
+                            href="#"
+                            onClick={handleClickDelete}
+                            data-id={item.id}
+                            data-name={item.attributes.name}
+                          >
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
                         </CDropdownMenu>
