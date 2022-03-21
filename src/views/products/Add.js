@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
 import TextEditor from 'src/views/template/TextEditor'
 import SkuBox from './SkuBox'
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Add = () => {
   const [skus, setSkus] = useState([])
@@ -26,6 +27,7 @@ const Add = () => {
     setSkus([...skus, ''])
   }
 
+  const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
 
   return (
@@ -46,8 +48,12 @@ const Add = () => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Danh mục</CFormLabel>
-                <CFormSelect options={['Chọn màu sắc']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+                <SelectFetchData
+                  name="category"
+                  url={`${process.env.REACT_APP_STRAPI_URL}/api/product-categories`}
+                  value={category}
+                  setValue={setCategory}
+                ></SelectFetchData>
               </CCol>
             </CRow>
             <CRow>

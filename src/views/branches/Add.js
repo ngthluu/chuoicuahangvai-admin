@@ -24,6 +24,8 @@ import Address from '../template/Address'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SelectFetchData from 'src/views/template/SelectFetchData'
+
 const Add = () => {
   const query = useLocation().search
   const id = new URLSearchParams(query).get('id')
@@ -34,12 +36,6 @@ const Add = () => {
   const [ward, setWard] = useState(0)
   const [address, setAddress] = useState('')
   const [manager, setManager] = useState('')
-  const handleChangeManager = (e) => {
-    e.preventDefault()
-    let manager = document.getElementsByName('manager')[0]
-    manager = manager.options[manager.selectedIndex].value
-    setManager(manager)
-  }
 
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
@@ -79,28 +75,6 @@ const Add = () => {
     }
   }
 
-  // Fetch managers data
-  const [managers, setManagers] = useState([])
-  const fetchManagersData = async () => {
-    const query = qs.stringify(
-      {
-        fields: ['id', 'username'],
-        filters: {
-          role: {
-            name: 'Branch Manager',
-          },
-        },
-      },
-      { encodeValuesOnly: true },
-    )
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
-    const data = []
-    response.data.data.forEach((item) => {
-      data.push({ value: item.id, label: item.username })
-    })
-    setManagers(data)
-  }
-
   // For edit
   const fetchBranchData = async () => {
     if (id === null) return
@@ -121,7 +95,6 @@ const Add = () => {
 
   useEffect(() => {
     async function fetchData() {
-      fetchManagersData()
       fetchBranchData()
     }
     fetchData()
@@ -158,15 +131,12 @@ const Add = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Nhân viên quản lý</CFormLabel>
-                <CFormSelect name="manager" required value={manager} onChange={handleChangeManager}>
-                  <option disabled>Chọn nhân viên quản lý</option>
-                  {managers.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </CFormSelect>
-                <CFormFeedback invalid>Hãy chọn quản lý chi nhánh!</CFormFeedback>
+                <SelectFetchData
+                  name="manager"
+                  url={`${process.env.REACT_APP_STRAPI_URL}/api/user?filters[role][name]=Branch%20Manager`}
+                  value={manager}
+                  setValue={setManager}
+                ></SelectFetchData>
               </CCol>
             </CRow>
           </CCardBody>
