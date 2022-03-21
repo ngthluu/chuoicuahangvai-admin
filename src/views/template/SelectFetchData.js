@@ -27,6 +27,7 @@ const SelectFetchData = (props) => {
     <>
       <CFormSelect name={props.name} onChange={handleChange} required value={props.value}>
         <option disabled>Chọn giá trị</option>
+        <option value="">Không có</option>
         {data.map((item) => (
           <option key={item.id} value={item.id}>
             {item.attributes ? item.attributes.name : item.username}

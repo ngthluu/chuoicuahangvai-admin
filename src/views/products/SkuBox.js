@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import ImageUpload from 'src/views/template/ImageUpload'
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const SkuBox = () => {
   const [imagesList, setImagesList] = useState([])
@@ -50,46 +51,62 @@ const SkuBox = () => {
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>SKU</CFormLabel>
-              <CFormInput type="text" placeholder="SKU" />
+              <CFormInput type="text" placeholder="SKU" required />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>Đơn giá</CFormLabel>
-              <CFormInput type="number" placeholder="Đơn giá" />
+              <CFormInput type="number" placeholder="Đơn giá" required />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>Màu sắc (RGB)</CFormLabel>
-              <CFormInput type="text" placeholder="Màu sắc (RGB)" />
+              <CFormInput type="text" placeholder="Màu sắc (RGB)" required />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>
           <CRow>
             <CCol md={6} className="mb-3">
               <CFormLabel>Kiểu mẫu</CFormLabel>
-              <CFormSelect options={['Chọn kiểu mẫu']} required></CFormSelect>
-              <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              <SelectFetchData
+                name="pattern[]"
+                url={`${process.env.REACT_APP_STRAPI_URL}/api/product-patterns`}
+                value={null}
+                setValue={() => {}}
+              ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
               <CFormLabel>Chiều rộng</CFormLabel>
-              <CFormSelect options={['Chọn chiều rộng']} required></CFormSelect>
-              <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              <SelectFetchData
+                name="width[]"
+                url={`${process.env.REACT_APP_STRAPI_URL}/api/product-widths`}
+                value={null}
+                setValue={() => {}}
+              ></SelectFetchData>
             </CCol>
           </CRow>
           <CRow>
             <CCol md={6} className="mb-3">
               <CFormLabel>Co giãn</CFormLabel>
-              <CFormSelect options={['Chọn co giãn']} required></CFormSelect>
-              <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              <SelectFetchData
+                name="stretch[]"
+                url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
+                value={null}
+                setValue={() => {}}
+              ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
               <CFormLabel>Xuất xứ</CFormLabel>
-              <CFormSelect options={['Chọn xuất xứ']} required></CFormSelect>
-              <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              <SelectFetchData
+                name="origin[]"
+                url={`${process.env.REACT_APP_STRAPI_URL}/api/product-origins`}
+                value={null}
+                setValue={() => {}}
+              ></SelectFetchData>
             </CCol>
           </CRow>
         </CCardBody>

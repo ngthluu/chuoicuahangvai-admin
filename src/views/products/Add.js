@@ -26,12 +26,27 @@ const Add = () => {
   const addSKU = () => {
     setSkus([...skus, ''])
   }
-
   const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
 
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+  }
+
   return (
-    <CForm className="row g-3 needs-validation">
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
@@ -41,7 +56,7 @@ const Add = () => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Tên sản phẩm</CFormLabel>
-                <CFormInput type="text" placeholder="Tên sản phẩm" />
+                <CFormInput type="text" placeholder="Tên sản phẩm" required />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
@@ -63,6 +78,9 @@ const Add = () => {
               </CCol>
             </CRow>
             <CRow>
+              {skus.map((item, index) => (
+                <SkuBox key={index}></SkuBox>
+              ))}
               <CCol md={12} className="mb-3">
                 <CCard
                   className="p-2 mb-3 d-flex justify-content-center align-items-center"
@@ -76,9 +94,6 @@ const Add = () => {
                   </div>
                 </CCard>
               </CCol>
-              {skus.map((item, index) => (
-                <SkuBox key={index}></SkuBox>
-              ))}
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
