@@ -18,7 +18,7 @@ const ImageUpload = (props) => {
 
   return (
     <>
-      <CImage width="200" src={image} onClick={handleClickImage}></CImage>
+      <CImage width="180" src={image} onClick={handleClickImage}></CImage>
       <CFormInput
         name={props.name}
         type="file"

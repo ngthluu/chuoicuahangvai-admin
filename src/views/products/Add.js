@@ -16,16 +16,14 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
 import TextEditor from 'src/views/template/TextEditor'
+import SkuBox from './SkuBox'
 
 const Add = () => {
-  const [imagesList, setImagesList] = useState(['', ''])
-
-  const addProductImage = () => {
-    let newImagesList = [...imagesList]
-    newImagesList.push('')
-    setImagesList(newImagesList)
+  const [skus, setSkus] = useState([])
+  const addSKU = () => {
+    setSkus([...skus, ''])
   }
 
   const [description, setDescription] = useState('')
@@ -58,19 +56,23 @@ const Add = () => {
                 <TextEditor setValue={setDescription}></TextEditor>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Đơn giá</CFormLabel>
-                <CFormInput type="number" placeholder="Nhập đơn giá" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <CCard
+                  className="p-2 mb-3 d-flex justify-content-center align-items-center"
+                  onClick={addSKU}
+                  role="button"
+                  color="info"
+                  textColor="white"
+                >
+                  <div>
+                    <FontAwesomeIcon icon={faPlus} /> <strong>SKU</strong>
+                  </div>
+                </CCard>
               </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mô tả</CFormLabel>
-                <CFormTextarea placeholder="Nhập mô tả" rows="5"></CFormTextarea>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
+              {skus.map((item, index) => (
+                <SkuBox key={index}></SkuBox>
+              ))}
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
