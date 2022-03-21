@@ -19,15 +19,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSave } from '@fortawesome/free-solid-svg-icons'
 
-import sampleImage from 'src/assets/images/vue.jpg'
+import ImageUpload from 'src/views/template/ImageUpload'
 
 const Add = () => {
-  const [imagesList, setImagesList] = useState([sampleImage, sampleImage, sampleImage])
+  const [imagesList, setImagesList] = useState(['', ''])
 
   const addProductImage = () => {
-    console.log(sampleImage)
     let newImagesList = [...imagesList]
-    newImagesList.push(sampleImage)
+    newImagesList.push('')
     setImagesList(newImagesList)
   }
 
@@ -42,7 +41,7 @@ const Add = () => {
             <CRow>
               {imagesList.map((item, index) => (
                 <CCol key={index} md={2} className="mb-3">
-                  <CImage src={item} height="90px"></CImage>
+                  <ImageUpload name={index}></ImageUpload>
                 </CCol>
               ))}
               <CCol

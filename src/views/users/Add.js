@@ -12,30 +12,13 @@ import {
   CCardFooter,
   CButton,
   CFormFeedback,
-  CFormCheck,
-  CImage,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
-import PropTypes from 'prop-types'
-import sampleImage from 'src/assets/images/vue.jpg'
 
-const ShiftComponent = (props) => {
-  return (
-    <div className="mb-3">
-      <strong>{props.title}</strong>
-      <div>
-        <CFormCheck type="checkbox" inline label="Ca sáng" />
-        <CFormCheck type="checkbox" inline label="Ca chiều" />
-        <CFormCheck type="checkbox" inline label="Ca tối" />
-      </div>
-    </div>
-  )
-}
-ShiftComponent.propTypes = {
-  title: PropTypes.string,
-}
+import ShiftComponent from 'src/views/users/ShiftComponent'
+import ImageUpload from 'src/views/template/ImageUpload'
 
 const Add = () => {
   return (
@@ -48,14 +31,7 @@ const Add = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CImage width="200" src={sampleImage}></CImage>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mã số</CFormLabel>
-                <CFormInput type="text" readOnly />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+                <ImageUpload name="avatar1"></ImageUpload>
               </CCol>
             </CRow>
             <CRow className="mb-3">
@@ -73,12 +49,7 @@ const Add = () => {
               </CCol>
             </CRow>
             <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Cửa hàng</CFormLabel>
-                <CFormSelect options={['Chọn cửa hàng']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
+              <CCol md={12} className="mb-3">
                 <CFormLabel>Chức vụ</CFormLabel>
                 <CFormSelect options={['Chọn chức vụ']} required></CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>

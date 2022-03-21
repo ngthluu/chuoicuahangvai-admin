@@ -20,61 +20,61 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import sampleImage from 'src/assets/images/vue.jpg'
+import ImageUpload from 'src/views/template/ImageUpload'
 
 const importsList = [
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
   },
   {
     code: '#PRO001',
-    image: sampleImage,
+    image: '',
     name: 'Sản phẩm A',
     quantity: 200,
     latest_update_time: '25/09/2021',
@@ -132,7 +132,7 @@ const Inventory = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <CImage width="200" src={item.image}></CImage>
+                      <ImageUpload name="avatar"></ImageUpload>
                     </CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.code}</Link>

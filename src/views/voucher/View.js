@@ -17,7 +17,7 @@ import {
 } from '@coreui/react'
 
 import PropTypes from 'prop-types'
-import sampleImage from 'src/assets/images/vue.jpg'
+import ImageUpload from 'src/views/template/ImageUpload'
 
 const ShiftComponent = (props) => {
   return (
@@ -46,7 +46,7 @@ const View = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CImage width="200" src={sampleImage}></CImage>
+                <ImageUpload name="avatar"></ImageUpload>
               </CCol>
             </CRow>
             <CRow className="mb-3">
