@@ -66,15 +66,20 @@ const Add = () => {
     if (id === null) return
     const query = qs.stringify(
       {
-        populate: [
-          'category',
-          'product_skus',
-          'product_skus.images',
-          'product_skus.pattern',
-          'product_skus.stretch',
-          'product_skus.width',
-          'product_skus.origin',
-        ],
+        fields: ['id', 'name', 'description'],
+        populate: {
+          category: { fields: ['id'] },
+          product_skus: {
+            fields: ['sku', 'price', 'color'],
+            populate: {
+              pattern: { fields: ['id'] },
+              stretch: { fields: ['id'] },
+              width: { fields: ['id'] },
+              origin: { fields: ['id'] },
+              images: { fields: ['id', 'url'] },
+            },
+          },
+        },
       },
       { encodeValuesOnly: true },
     )
