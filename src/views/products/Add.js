@@ -43,7 +43,7 @@ const Add = () => {
           width: { data: null },
           stretch: { data: null },
           pattern: { data: null },
-          images: { data: [null] },
+          images: { data: null },
         },
       },
     ])
