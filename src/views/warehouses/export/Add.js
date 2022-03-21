@@ -83,7 +83,7 @@ const Add = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm phiếu xuất kho</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">

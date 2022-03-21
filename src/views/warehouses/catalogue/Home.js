@@ -1,4 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -34,96 +39,24 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
-
-const importsList = [
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 0,
-  },
-  {
-    code: '#EXP21091001',
-    warehouse: 'Cửa hàng A',
-    total_cost: '1.000.000đ',
-    import_date: '25/09/2021',
-    import_user: 'Nhân viên A',
-    status: 1,
-  },
-]
-
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Chưa xuất</CBadge>
-  }
-  return <CBadge color="success">Đã xuất</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
-
-const StatusAction = (props) => {
-  if (props.status === 0) {
-    return (
-      <CDropdownItem href="#">
-        <FontAwesomeIcon icon={faCheck} /> Xuất khỏi kho
-      </CDropdownItem>
-    )
-  }
-  return <></>
-}
-StatusAction.propTypes = { status: PropTypes.number }
-
 const Home = () => {
+  const [catalogueList, setCatalogueList] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await axios.get(
+        `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`,
+        {
+          params: {
+            populate: ['branch', 'submit_user'],
+          },
+        },
+      )
+      setCatalogueList(result.data.data)
+    }
+    fetchData()
+  }, [])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -131,7 +64,7 @@ const Home = () => {
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Quản lý phiếu xuất kho</h4>
+                <h4 className="mb-3">Quản lý phiếu kiểm kho</h4>
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
@@ -139,12 +72,12 @@ const Home = () => {
                       <CFormSelect options={['Chọn kho']}></CFormSelect>
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày xuất kho (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày xuất kho (từ)" />
+                      <CFormLabel>Ngày kiểm kho (từ)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày kiểm kho (từ)" />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày xuất kho (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày xuất kho (đến)" />
+                      <CFormLabel>Ngày kiểm kho (đến)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày kiểm kho (đến)" />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
@@ -158,9 +91,9 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/warehouses/export/add">
+              <Link to="/warehouses/catalogue/add">
                 <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu xuất kho</strong>
+                  <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu kiểm kho</strong>
                 </CButton>
               </Link>
             </div>
@@ -175,31 +108,33 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Kho hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tổng giá trị </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Ngày xuất </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Nhân viên xuất </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Ngày kiểm </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Nhân viên kiểm </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {importsList.map((item, index) => (
-                  <CTableRow key={index}>
+                {catalogueList.map((item, index) => (
+                  <CTableRow key={item.id}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/export/view?id=${index}`}>{item.code}</Link>
+                      <Link to={`/warehouses/export/view?id=${item.id}`}>
+                        {item.attributes.code}
+                      </Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.warehouse}</Link>
+                      <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.total_cost} </CTableDataCell>
-                    <CTableDataCell> {item.import_date} </CTableDataCell>
+                    <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.import_user}</Link>
+                      {item.attributes.submit_user.data
+                        ? item.attributes.submit_user.data.attributes.username
+                        : ''}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Status status={item.status} />
+                      <StatusLabel status={item.attributes.submit_status} />
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -207,13 +142,13 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/warehouses/export/view?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/export/edit?id=${index}`}>
+                          <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
+                          <StatusAction status={item.attributes.submit_status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
                           </CDropdownItem>

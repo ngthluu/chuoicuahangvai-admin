@@ -83,7 +83,7 @@ const Add = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thêm phiếu xuất kho</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
@@ -203,7 +203,7 @@ const Add = () => {
             </CButton>
             <div className="p-2"></div>
             <CButton
-              href="/warehouses/export"
+              href="/warehouses/catalogue"
               color="secondary"
               type="button"
               className="text-white ml-3"

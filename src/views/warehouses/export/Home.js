@@ -145,7 +145,7 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/export/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
+                          <StatusAction status={item.attributes.submit_status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
                           </CDropdownItem>
