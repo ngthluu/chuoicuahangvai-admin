@@ -24,6 +24,54 @@ const SkuBox = (props) => {
     setImagesList(newImagesList)
   }
 
+  const handleChangeSKU = (e) => {
+    let data = [...props.data]
+    data[props.index].attributes.sku = e.target.value
+    props.setData(data)
+  }
+  const handleChangePrice = (e) => {
+    let data = [...props.data]
+    data[props.index].attributes.price = e.target.value
+    props.setData(data)
+  }
+  const handleChangeColor = (e) => {
+    let data = [...props.data]
+    data[props.index].attributes.color = e.target.value
+    props.setData(data)
+  }
+  const handleChangePattern = (e) => {
+    let data = [...props.data]
+    if (data[props.index].attributes.pattern.data == null) {
+      data[props.index].attributes.pattern.data = { id: null }
+    }
+    data[props.index].attributes.pattern.data.id = e
+    props.setData(data)
+  }
+  const handleChangeWidth = (e) => {
+    let data = [...props.data]
+    if (data[props.index].attributes.width.data == null) {
+      data[props.index].attributes.width.data = { id: null }
+    }
+    data[props.index].attributes.width.data.id = e
+    props.setData(data)
+  }
+  const handleChangeStretch = (e) => {
+    let data = [...props.data]
+    if (data[props.index].attributes.stretch.data == null) {
+      data[props.index].attributes.stretch.data = { id: null }
+    }
+    data[props.index].attributes.stretch.data.id = e
+    props.setData(data)
+  }
+  const handleChangeOrigin = (e) => {
+    let data = [...props.data]
+    if (data[props.index].attributes.origin.data == null) {
+      data[props.index].attributes.origin.data = { id: null }
+    }
+    data[props.index].attributes.origin.data.id = e
+    props.setData(data)
+  }
+
   return (
     <CCol md={6} className="mb-3">
       <CCard className="border-info">
@@ -52,14 +100,26 @@ const SkuBox = (props) => {
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>SKU</CFormLabel>
-              <CFormInput defaultValue={props.sku} type="text" placeholder="SKU" required />
+              <CFormInput
+                defaultValue={props.sku}
+                onChange={handleChangeSKU}
+                type="text"
+                placeholder="SKU"
+                required
+              />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>Đơn giá</CFormLabel>
-              <CFormInput defaultValue={props.price} type="number" placeholder="Đơn giá" required />
+              <CFormInput
+                defaultValue={props.price}
+                onChange={handleChangePrice}
+                type="number"
+                placeholder="Đơn giá"
+                required
+              />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>
@@ -70,6 +130,7 @@ const SkuBox = (props) => {
                 defaultValue={props.color}
                 type="text"
                 placeholder="Màu sắc (RGB)"
+                onChange={handleChangeColor}
                 required
               />
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
@@ -79,19 +140,19 @@ const SkuBox = (props) => {
             <CCol md={6} className="mb-3">
               <CFormLabel>Kiểu mẫu</CFormLabel>
               <SelectFetchData
-                name="pattern[]"
+                name={`pattern[${props.index}]`}
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-patterns`}
                 value={props.pattern}
-                setValue={() => {}}
+                setValue={handleChangePattern}
               ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
               <CFormLabel>Chiều rộng</CFormLabel>
               <SelectFetchData
-                name="width[]"
+                name={`width[${props.index}]`}
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-widths`}
                 value={props.width}
-                setValue={() => {}}
+                setValue={handleChangeWidth}
               ></SelectFetchData>
             </CCol>
           </CRow>
@@ -99,19 +160,19 @@ const SkuBox = (props) => {
             <CCol md={6} className="mb-3">
               <CFormLabel>Co giãn</CFormLabel>
               <SelectFetchData
-                name="stretch[]"
+                name={`stretch[${props.index}]`}
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
                 value={props.stretch}
-                setValue={() => {}}
+                setValue={handleChangeStretch}
               ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
               <CFormLabel>Xuất xứ</CFormLabel>
               <SelectFetchData
-                name="origin[]"
+                name={`origin[${props.index}]`}
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-origins`}
                 value={props.origin}
-                setValue={() => {}}
+                setValue={handleChangeOrigin}
               ></SelectFetchData>
             </CCol>
           </CRow>
@@ -130,6 +191,9 @@ SkuBox.propTypes = {
   stretch: PropTypes.string,
   pattern: PropTypes.string,
   images: PropTypes.array,
+  index: PropTypes.number,
+  data: PropTypes.array,
+  setData: PropTypes.func,
 }
 
 export default SkuBox

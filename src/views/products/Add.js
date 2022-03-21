@@ -11,11 +11,9 @@ import {
   CCardHeader,
   CFormLabel,
   CFormInput,
-  CFormSelect,
   CCardFooter,
   CButton,
   CFormFeedback,
-  CFormTextarea,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -45,7 +43,7 @@ const Add = () => {
           width: { data: null },
           stretch: { data: null },
           pattern: { data: null },
-          images: { data: null },
+          images: { data: [null] },
         },
       },
     ])
@@ -135,7 +133,10 @@ const Add = () => {
             <CRow>
               {skus.map((item, index) => (
                 <SkuBox
-                  key={item.id}
+                  key={index}
+                  index={index}
+                  data={skus}
+                  setData={setSkus}
                   sku={item.attributes.sku}
                   price={item.attributes.price}
                   color={item.attributes.color}
@@ -162,7 +163,12 @@ const Add = () => {
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton color="info" type="submit" className="text-white">
+            <CButton
+              color="info"
+              type="button"
+              className="text-white"
+              onClick={() => console.log(skus)}
+            >
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
