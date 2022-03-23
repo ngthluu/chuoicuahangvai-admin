@@ -1,8 +1,18 @@
 import React, { useState } from 'react'
-import { CRow, CCol, CFormLabel, CFormInput, CFormFeedback, CCard, CCardBody } from '@coreui/react'
+import {
+  CRow,
+  CCol,
+  CFormLabel,
+  CFormInput,
+  CFormFeedback,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CButton,
+} from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import ImageUpload from 'src/views/template/ImageUpload'
 import SelectFetchData from 'src/views/template/SelectFetchData'
@@ -72,9 +82,18 @@ const SkuBox = (props) => {
     props.setData(data)
   }
 
+  const handleDeleteSKU = (e) => {
+    props.setData([...props.data.slice(0, props.index), ...props.data.slice(props.index + 1)])
+  }
+
   return (
     <CCol md={6} className="mb-3">
       <CCard className="border-info">
+        <CCardHeader>
+          <CButton type="button" className="float-end" color="danger" onClick={handleDeleteSKU}>
+            <FontAwesomeIcon icon={faTimes} color="white" />
+          </CButton>
+        </CCardHeader>
         <CCardBody>
           <CRow>
             <CCol md={12} className="mb-3">
@@ -102,6 +121,7 @@ const SkuBox = (props) => {
               <CFormLabel>SKU</CFormLabel>
               <CFormInput
                 defaultValue={props.sku}
+                value={props.sku}
                 onChange={handleChangeSKU}
                 type="text"
                 placeholder="SKU"
@@ -115,6 +135,7 @@ const SkuBox = (props) => {
               <CFormLabel>Đơn giá</CFormLabel>
               <CFormInput
                 defaultValue={props.price}
+                value={props.price}
                 onChange={handleChangePrice}
                 type="number"
                 placeholder="Đơn giá"
@@ -128,6 +149,7 @@ const SkuBox = (props) => {
               <CFormLabel>Màu sắc (RGB)</CFormLabel>
               <CFormInput
                 defaultValue={props.color}
+                value={props.color}
                 type="text"
                 placeholder="Màu sắc (RGB)"
                 onChange={handleChangeColor}
@@ -183,6 +205,7 @@ const SkuBox = (props) => {
 }
 
 SkuBox.propTypes = {
+  id: PropTypes.string,
   sku: PropTypes.string,
   price: PropTypes.string,
   color: PropTypes.string,

@@ -179,6 +179,7 @@ const Add = () => {
                   index={index}
                   data={skus}
                   setData={setSkus}
+                  id={item.id}
                   sku={item.attributes.sku}
                   price={item.attributes.price}
                   color={item.attributes.color}
