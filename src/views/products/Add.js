@@ -188,6 +188,8 @@ const Add = () => {
                   stretch={item.attributes.stretch.data ? item.attributes.stretch.data.id : ''}
                   pattern={item.attributes.pattern.data ? item.attributes.pattern.data.id : ''}
                   images={item.attributes.images.data ? item.attributes.images.data : []}
+                  triggerDeleteSuccess={() => toast.success('Xóa SKU thành công')}
+                  triggerDeleteError={() => toast.error(`Xóa thất bại.`)}
                 ></SkuBox>
               ))}
               <CCol md={12} className="mb-3">

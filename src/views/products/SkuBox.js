@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 import {
   CRow,
   CCol,
@@ -82,7 +83,13 @@ const SkuBox = (props) => {
     props.setData(data)
   }
 
-  const handleDeleteSKU = (e) => {
+  const handleDeleteSKU = async (e) => {
+    if (props.id !== null) {
+      await axios
+        .delete(`${process.env.REACT_APP_STRAPI_URL}/api/product-skus/${props.id}`)
+        .then((response) => props.triggerDeleteSuccess())
+        .catch((error) => props.triggerDeleteError())
+    }
     props.setData([...props.data.slice(0, props.index), ...props.data.slice(props.index + 1)])
   }
 
@@ -217,6 +224,8 @@ SkuBox.propTypes = {
   index: PropTypes.number,
   data: PropTypes.array,
   setData: PropTypes.func,
+  triggerDeleteSuccess: PropTypes.func,
+  triggerDeleteError: PropTypes.func,
 }
 
 export default SkuBox
