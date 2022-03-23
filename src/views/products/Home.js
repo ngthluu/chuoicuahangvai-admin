@@ -29,26 +29,61 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faTrash, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Home = () => {
   const [productsList, setProductsList] = useState([])
 
+  const fetchData = async () => {
+    const query = qs.stringify(
+      { populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'] },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/product-skus?${query}`,
+    )
+    console.log(response.data.data)
+    setProductsList(response.data.data)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const query = qs.stringify(
-        { populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'] },
-        { encodeValuesOnly: true },
-      )
-      const response = await axios.get(
-        `${process.env.REACT_APP_STRAPI_URL}/api/product-skus?${query}`,
-      )
-      console.log(response.data.data)
-      setProductsList(response.data.data)
-    }
     fetchData()
   }, [])
 
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa sản phẩm thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa sản phẩm"
+        content={`Bạn có muốn xóa sản phẩm ${deleteModalTargetName} và các SKU đi kèm không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/products`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -107,17 +142,27 @@ const Home = () => {
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
                       <CImage
-                        src={`${process.env.REACT_APP_STRAPI_URL}${item.attributes.images.data[0].attributes.url}`}
+                        src={`${process.env.REACT_APP_STRAPI_URL}${
+                          item.attributes.images.data
+                            ? item.attributes.images.data[0].attributes.url
+                            : ''
+                        }`}
                         width="200"
                       ></CImage>
                     </CTableDataCell>
-                    <CTableDataCell>{item.attributes.product.data.attributes.name}</CTableDataCell>
+                    <CTableDataCell>
+                      {item.attributes.product.data
+                        ? item.attributes.product.data.attributes.name
+                        : ''}
+                    </CTableDataCell>
                     <CTableDataCell> {item.attributes.sku} </CTableDataCell>
                     <CTableDataCell> {item.attributes.price} </CTableDataCell>
                     <CTableDataCell align="left">
-                      <div>
-                        <strong>Màu sắc: </strong> {}
-                      </div>
+                      {item.attributes.color != null && (
+                        <div>
+                          <strong>Màu sắc: </strong> {item.attributes.color}
+                        </div>
+                      )}
                       {item.attributes.pattern.data != null && (
                         <div>
                           <strong>Kiểu mẫu: </strong> {item.attributes.pattern.data.attributes.name}
@@ -155,7 +200,12 @@ const Home = () => {
                           >
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <CDropdownItem href="#">
+                          <CDropdownItem
+                            href="#"
+                            onClick={handleClickDelete}
+                            data-id={item.attributes.product.data.id}
+                            data-name={item.attributes.product.data.attributes.name}
+                          >
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
                         </CDropdownMenu>

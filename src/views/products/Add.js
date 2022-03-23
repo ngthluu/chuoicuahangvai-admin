@@ -85,7 +85,7 @@ const Add = () => {
       ${process.env.REACT_APP_STRAPI_URL}/api/products/${id}?${query}`)
     const data = response.data.data
     setName(data.attributes.name)
-    setCategory(`${data.attributes.category.data.id}`)
+    setCategory(`${data.attributes.category.data ? data.attributes.category.data.id : ''}`)
     setDescription(data.attributes.description)
     setSkus(data.attributes.product_skus.data)
   }
