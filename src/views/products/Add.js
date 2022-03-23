@@ -22,6 +22,9 @@ import TextEditor from 'src/views/template/TextEditor'
 import SkuBox from './SkuBox'
 import SelectFetchData from 'src/views/template/SelectFetchData'
 
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Add = () => {
   const query = useLocation().search
   const id = new URLSearchParams(query).get('id')
@@ -57,6 +60,36 @@ const Add = () => {
     if (form.checkValidity() === false) {
       e.stopPropagation()
       return
+    }
+
+    const data = {
+      name: name,
+      category: category,
+      description: description,
+      skus: skus,
+    }
+
+    if (id === null) {
+      // Add
+      axios
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/products`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    } else {
+      axios
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/products/${id}`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
     }
   }
 
@@ -100,6 +133,7 @@ const Add = () => {
       validated={validated}
       onSubmit={handleSubmit}
     >
+      <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
@@ -109,7 +143,15 @@ const Add = () => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Tên sản phẩm</CFormLabel>
-                <CFormInput defaultValue={name} type="text" placeholder="Tên sản phẩm" required />
+                <CFormInput
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value)
+                  }}
+                  type="text"
+                  placeholder="Tên sản phẩm"
+                  required
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
@@ -163,12 +205,7 @@ const Add = () => {
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton
-              color="info"
-              type="button"
-              className="text-white"
-              onClick={() => console.log(skus)}
-            >
+            <CButton color="info" type="submit" className="text-white">
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
