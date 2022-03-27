@@ -67,6 +67,7 @@ const Add = () => {
         id: productSkuId,
         sku: productSku,
         name: productName,
+        attributes: skuItem.sku.data.attributes,
         quantity: 1,
       })
     }
@@ -141,11 +142,7 @@ const Add = () => {
             populate: {
               sku: {
                 fields: ['sku'],
-                populate: {
-                  product: {
-                    fields: ['name'],
-                  },
-                },
+                populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
               },
             },
           },
@@ -161,11 +158,13 @@ const Add = () => {
     setBranchName(data.attributes.branch.data.attributes.name)
     setProducts(
       data.attributes.products.map((item) => {
+        console.log(item.sku.data.attributes)
         return {
           componentId: item.id,
           id: item.sku.data.id,
           sku: item.sku.data.attributes.sku,
           name: item.sku.data.attributes.product.data.attributes.name,
+          attributes: item.sku.data.attributes,
           quantity: item.quantity,
         }
       }),
@@ -239,6 +238,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
@@ -253,6 +253,37 @@ const Add = () => {
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
                         <CTableDataCell>{item.name} </CTableDataCell>
+                        <CTableDataCell align="left">
+                          {item.attributes.color != null && (
+                            <div>
+                              <strong>Màu sắc: </strong> {item.attributes.color}
+                            </div>
+                          )}
+                          {item.attributes.pattern.data != null && (
+                            <div>
+                              <strong>Kiểu mẫu: </strong>{' '}
+                              {item.attributes.pattern.data.attributes.name}
+                            </div>
+                          )}
+                          {item.attributes.width.data != null && (
+                            <div>
+                              <strong>Chiều rộng: </strong>{' '}
+                              {item.attributes.width.data.attributes.name}
+                            </div>
+                          )}
+                          {item.attributes.stretch.data != null && (
+                            <div>
+                              <strong>Co giãn: </strong>{' '}
+                              {item.attributes.stretch.data.attributes.name}
+                            </div>
+                          )}
+                          {item.attributes.origin.data != null && (
+                            <div>
+                              <strong>Xuất xứ: </strong>{' '}
+                              {item.attributes.origin.data.attributes.name}
+                            </div>
+                          )}
+                        </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="number"

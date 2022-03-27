@@ -47,8 +47,13 @@ const InputDropdownSearch = (props) => {
 
   const handleClickSearchButton = async () => {
     const searchData = await fetchData()
-    setSearchData(searchData)
-    setVisibleUl(true)
+    if (searchData.length === 0) {
+      props.handleNotFound()
+      setVisibleUl(false)
+    } else {
+      setSearchData(searchData)
+      setVisibleUl(true)
+    }
   }
 
   const handleClickLi = (item) => {
