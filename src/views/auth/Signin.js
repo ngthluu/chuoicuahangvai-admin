@@ -24,6 +24,7 @@ const Signin = () => {
   const [password, setPassword] = useState('')
   const [invalidLogin, setInvalidLogin] = useState(false)
   const [loginMessage, setLoginMessage] = useState('Đăng nhập thất bại')
+  const [isLoading, setIsLoading] = useState(false)
   const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
 
   const handleUsernameChange = (e) => {
@@ -37,12 +38,14 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setInvalidLogin(false)
+    setIsLoading(true)
     axios
       .post(`${process.env.REACT_APP_STRAPI_URL}/api/auth/local`, {
         identifier: username,
         password: password,
       })
       .then((response) => {
+        setIsLoading(false)
         setCookie(process.env.REACT_APP_COOKIE_NAME, response.data.jwt, {
           path: '/',
           expires: new Date(Date.now() + 16 * 60 * 60 * 1000),
@@ -57,6 +60,7 @@ const Signin = () => {
           setLoginMessage('Đăng nhập thất bại')
         } finally {
           setInvalidLogin(true)
+          setIsLoading(false)
         }
       })
   }
@@ -105,8 +109,13 @@ const Signin = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4" type="submit">
-                          Đăng nhập
+                        <CButton
+                          color="primary"
+                          className="px-4"
+                          type="submit"
+                          disabled={isLoading}
+                        >
+                          {!isLoading ? 'Đăng nhập' : 'Loading...'}
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">

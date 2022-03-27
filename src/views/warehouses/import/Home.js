@@ -113,9 +113,7 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/import/view?id=${item.id}`}>
-                        {item.attributes.code}
-                      </Link>
+                      <Link to={`/warehouses/import/view?id=${item.id}`}>WHIMP#{item.id}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
@@ -138,9 +136,13 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/import/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
+                          {item.attributes.submit_status ? (
+                            <></>
+                          ) : (
+                            <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                          )}
                           <StatusAction status={item.attributes.submit_status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
