@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -23,63 +27,164 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Add = () => {
-  const [productsList, setProductsList] = useState([])
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
 
-  const onChooseProduct = () => {
-    let productSelect = document.getElementById('product')
-    let index = productSelect.selectedIndex
-    let optionChoose = productSelect.options[index]
-    const remainLength = optionChoose.getAttribute('data-remain')
+  const [branch, setBranch] = useState('')
+  const [branchName, setBranchName] = useState('')
+  const [products, setProducts] = useState([])
+  const [note, setNote] = useState('')
 
-    document.getElementById('remain-length').value = remainLength
+  const handleDeleteSKU = (id) => {
+    setProducts(products.filter((value) => value.id !== id))
   }
 
-  const handleDeleteProduct = (event) => {
-    const productId = event.currentTarget.getAttribute('productid')
-    let newProductsList = [...productsList]
-    newProductsList = newProductsList.filter((value) => value.code !== productId)
-    setProductsList(newProductsList)
-  }
+  const handleAddSKU = (skuItem) => {
+    const productSkuId = skuItem.id
+    const productSku = skuItem.attributes.sku
+    const productName = skuItem.attributes.product.data.attributes.name
 
-  const handleAddProduct = () => {
-    let productSelect = document.getElementById('product')
-    const productId = productSelect.value
-    const productName = productSelect.options[productSelect.selectedIndex].innerHTML
-
-    const length = document.getElementById('length').value
-
-    let newProductsList = [...productsList]
+    let newProducts = [...products]
     let addFlag = true
-    newProductsList.forEach((value) => {
-      if (value.code === productId) {
-        value.length += parseInt(length)
+    newProducts.forEach((value) => {
+      if (value.id === productSkuId) {
+        value.quantity += 1
         addFlag = false
       }
     })
     if (addFlag) {
-      newProductsList.push({
-        code: productId,
+      newProducts.push({
+        componentId: null,
+        id: productSkuId,
+        sku: productSku,
         name: productName,
-        length: parseInt(length),
+        quantity: 1,
       })
     }
-    setProductsList(newProductsList)
+    setProducts(newProducts)
   }
 
-  const calculateTotalLength = () => {
-    let totalLength = 0
-    productsList.forEach((item) => {
-      totalLength += item.length
-    })
-    return totalLength
+  const handleChangeQuantity = (index, value) => {
+    let newProducts = [...products]
+    newProducts[index].quantity = parseInt(value)
+    setProducts(newProducts)
   }
+
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+
+    const data = {
+      branch: { id: branch },
+      note: note,
+      products: products.map((item) => {
+        let data = {
+          sku: { id: item.id },
+          new_quantity: 0,
+          quantity: item.quantity,
+        }
+        if (item.componentId != null) {
+          data.id = item.componentId
+        }
+        return data
+      }),
+    }
+
+    if (id === null) {
+      // Add
+      axios
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    } else {
+      axios
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    }
+  }
+
+  const fetchData = async () => {
+    if (id === null) return
+    const query = qs.stringify(
+      {
+        fields: ['id', 'note'],
+        populate: {
+          branch: { fields: ['id', 'name'] },
+          products: {
+            fields: ['quantity'],
+            populate: {
+              sku: {
+                fields: ['sku'],
+                populate: {
+                  product: {
+                    fields: ['name'],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`
+      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}?${query}`)
+    const data = response.data.data
+
+    setBranch(data.attributes.branch.data.id)
+    setBranchName(data.attributes.branch.data.attributes.name)
+    setProducts(
+      data.attributes.products.map((item) => {
+        return {
+          componentId: item.id,
+          id: item.sku.data.id,
+          sku: item.sku.data.attributes.sku,
+          name: item.sku.data.attributes.product.data.attributes.name,
+          quantity: item.quantity,
+        }
+      }),
+    )
+    setNote(data.attributes.note)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
-    <CForm className="row g-3 needs-validation">
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
@@ -88,60 +193,43 @@ const Add = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CFormLabel>Mã số</CFormLabel>
-                <CFormInput type="text" readOnly />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+                <CFormLabel>Kho</CFormLabel>
+                <InputDropdownSearch
+                  placeholder="Tìm kiếm kho"
+                  ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                  ajaxDataPopulate={[]}
+                  ajaxDataGetFilters={(value) => {
+                    return {
+                      $or: [{ name: { $containsi: value } }],
+                    }
+                  }}
+                  ajaxDataGetItemName={(item) => `${item.attributes.name}`}
+                  handleNotFound={() => toast.error('Không tìm thấy kho này !!!')}
+                  handleFound={(item) => setBranch(item.id)}
+                  setTextNameAfterFound={true}
+                  defaultName={branchName}
+                />
               </CCol>
             </CRow>
             <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Kho</CFormLabel>
-                <CFormSelect options={['Chọn kho']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3 m-1 p-2 border">
-              <CCol md={4}>
-                <CFormLabel>Sản phẩm</CFormLabel>
-                <CFormSelect id="product" required onChange={onChooseProduct}>
-                  <option value=""> Chọn sản phẩm </option>
-                  <option value="#PRO001" data-remain="123">
-                    Sản phẩm A
-                  </option>
-                  <option value="#PRO002" data-remain="12">
-                    Sản phẩm B
-                  </option>
-                  <option value="#PRO003" data-remain="1212">
-                    Sản phẩm C
-                  </option>
-                </CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3}>
-                <CFormLabel>Chiều dài tồn kho</CFormLabel>
-                <CFormInput
-                  readOnly
-                  id="remain-length"
-                  type="number"
-                  placeholder="Chiều dài tồn kho"
-                />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={3}>
-                <CFormLabel>Chiều dài</CFormLabel>
-                <CFormInput id="length" type="number" placeholder="Chiều dài" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={2} className="d-flex flex-column">
-                <CButton
-                  color="info"
-                  type="button"
-                  className="mt-auto text-white"
-                  onClick={handleAddProduct}
-                >
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Sản phẩm</strong>
-                </CButton>
-              </CCol>
+              <InputDropdownSearch
+                placeholder="Tìm kiếm sản phẩm"
+                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
+                ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
+                ajaxDataGetFilters={(value) => {
+                  return {
+                    $or: [
+                      { sku: { $containsi: value } },
+                      { product: { name: { $containsi: value } } },
+                    ],
+                  }
+                }}
+                ajaxDataGetItemName={(item) =>
+                  `${item.attributes.product.data.attributes.name} (${item.attributes.sku})`
+                }
+                handleNotFound={() => toast.error('Không tìm thấy sản phẩm này !!!')}
+                handleFound={(item) => handleAddSKU(item)}
+              />
             </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
@@ -151,27 +239,32 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
-                    {productsList.map((item, index) => (
+                    {products.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
                         <CTableDataCell>
-                          <Link to="#">{item.code}</Link>
+                          <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
                         <CTableDataCell>{item.name} </CTableDataCell>
-                        <CTableDataCell> {item.length} </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => handleChangeQuantity(index, e.target.value)}
+                          ></CFormInput>
+                        </CTableDataCell>
                         <CTableDataCell>
                           <CButton
                             color="danger"
                             className="text-white"
-                            onClick={handleDeleteProduct}
-                            productid={item.code}
+                            onClick={() => handleDeleteSKU(item.id)}
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </CButton>
@@ -181,8 +274,12 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="3"> Tổng chiều dài </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> {calculateTotalLength()} </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="3"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {(() => {
+                          return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
+                        })()}
+                      </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>
                     </CTableRow>
                   </CTableFoot>
@@ -192,7 +289,12 @@ const Add = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Ghi chú</CFormLabel>
-                <CFormTextarea placeholder="Nhập ghi chú" rows="5"></CFormTextarea>
+                <CFormTextarea
+                  placeholder="Nhập ghi chú"
+                  rows="5"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                ></CFormTextarea>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>

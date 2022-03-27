@@ -113,7 +113,7 @@ const Home = () => {
                   <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/import/view?id=${item.id}`}>WHIMP#{item.id}</Link>
+                      <Link to={`/warehouses/import/view?id=${item.id}`}>IMPORT#{item.id}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
