@@ -20,6 +20,7 @@ import {
   CFormLabel,
   CFormInput,
   CFormSelect,
+  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -30,10 +31,9 @@ import {
   faPlus,
   faFilePdf,
   faSearch,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import StatusLabel from 'src/views/warehouses/import/StatusLabel'
-import StatusAction from 'src/views/warehouses/import/StatusAction'
 
 import Modal from 'src/views/template/Modal'
 
@@ -56,6 +56,7 @@ const Home = () => {
     fetchData()
   }, [])
 
+  // Delete logic
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -74,6 +75,25 @@ const Home = () => {
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
+  // Submit logic
+  const [submitModalTargetId, setSubmitModalTargetId] = useState('')
+  const [submitModalTargetName, setSubmitModalTargetName] = useState('')
+  const [submitModalVisible, setSubmitModalVisible] = useState(false)
+  const handleClickSubmit = (e) => {
+    e.preventDefault()
+    setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setSubmitModalVisible(!deleteModalVisible)
+  }
+  const handleSubmitSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã nhập kho thành công')
+  }
+  const handleSubmitError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
       <ToastContainer />
@@ -87,6 +107,17 @@ const Home = () => {
         triggerSuccess={handleDeleteSuccess}
         triggerError={handleDeleteError}
         action="delete"
+      ></Modal>
+      <Modal
+        visible={submitModalVisible}
+        visibleAction={setSubmitModalVisible}
+        title="Nhập kho"
+        content={`Bạn có muốn nhập kho với phiếu ${submitModalTargetName} không ?`}
+        id={submitModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`}
+        triggerSuccess={handleSubmitSuccess}
+        triggerError={handleSubmitError}
+        action="post"
       ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
@@ -132,7 +163,7 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <CTable align="middle" responsive bordered>
+            <CTable align="middle" bordered>
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
@@ -161,7 +192,11 @@ const Home = () => {
                         : ''}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.attributes.submit_status} />
+                      {item.attributes.submit_status ? (
+                        <CBadge color="success">Đã nhập vào kho</CBadge>
+                      ) : (
+                        <CBadge color="danger">Chưa nhập vào kho</CBadge>
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -182,7 +217,14 @@ const Home = () => {
                               <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
                                 <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                               </CDropdownItem>
-                              <StatusAction status={item.attributes.submit_status} />
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickSubmit}
+                                data-id={item.id}
+                                data-name={`IMPORT#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faCheck} /> Nhập vào kho
+                              </CDropdownItem>
                               <CDropdownItem
                                 href="#"
                                 onClick={handleClickDelete}

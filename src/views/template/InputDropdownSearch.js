@@ -34,6 +34,7 @@ const InputDropdownSearch = (props) => {
     const searchData = await fetchData()
     if (searchData.length === 0) {
       props.handleNotFound()
+      return
     } else {
       props.handleFound(searchData[0])
     }
