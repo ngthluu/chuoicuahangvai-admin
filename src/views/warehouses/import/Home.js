@@ -32,26 +32,61 @@ import {
   faSearch,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import StatusLabel from 'src/views/template/StatusLabel'
-import StatusAction from 'src/views/template/StatusAction'
+import StatusLabel from 'src/views/warehouses/import/StatusLabel'
+import StatusAction from 'src/views/warehouses/import/StatusAction'
+
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Home = () => {
   const [importsList, setImportsList] = useState([])
 
+  const fetchData = async () => {
+    const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
+      params: {
+        populate: ['branch', 'submit_user'],
+      },
+    })
+    setImportsList(result.data.data)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
-        params: {
-          populate: ['branch', 'submit_user'],
-        },
-      })
-      setImportsList(result.data.data)
-    }
     fetchData()
   }, [])
 
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa phiếu nhập kho thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa phiếu nhập kho"
+        content={`Bạn có muốn xóa phiếu nhập kho ${deleteModalTargetName} không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -136,20 +171,27 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/import/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          {item.attributes.submit_status ? (
-                            <></>
-                          ) : (
-                            <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                            </CDropdownItem>
-                          )}
-                          <StatusAction status={item.attributes.submit_status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
                           </CDropdownItem>
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
+                          {item.attributes.submit_status ? (
+                            <></>
+                          ) : (
+                            <>
+                              <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
+                                <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                              </CDropdownItem>
+                              <StatusAction status={item.attributes.submit_status} />
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDelete}
+                                data-id={item.id}
+                                data-name={`IMPORT#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                              </CDropdownItem>
+                            </>
+                          )}
                         </CDropdownMenu>
                       </CDropdown>
                     </CTableDataCell>

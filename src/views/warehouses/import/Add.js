@@ -44,39 +44,40 @@ const Add = () => {
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
 
-  const handleDeleteSKU = (id) => {
-    setProducts(products.filter((value) => value.id !== id))
+  const handleDelete = (index) => {
+    let newProducts = [...products]
+    newProducts.splice(index, 1)
+    setProducts(newProducts)
   }
 
   const handleAddSKU = (skuItem) => {
     const productSkuId = skuItem.id
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
+    const productAttributes = skuItem.attributes
 
     let newProducts = [...products]
-    let addFlag = true
-    newProducts.forEach((value) => {
-      if (value.id === productSkuId) {
-        value.quantity += 1
-        addFlag = false
-      }
+    newProducts.push({
+      componentId: null,
+      id: productSkuId,
+      sku: productSku,
+      name: productName,
+      attributes: productAttributes,
+      quantity: 1,
+      length: 0,
     })
-    if (addFlag) {
-      newProducts.push({
-        componentId: null,
-        id: productSkuId,
-        sku: productSku,
-        name: productName,
-        attributes: skuItem.sku.data.attributes,
-        quantity: 1,
-      })
-    }
     setProducts(newProducts)
   }
 
   const handleChangeQuantity = (index, value) => {
     let newProducts = [...products]
     newProducts[index].quantity = parseInt(value)
+    setProducts(newProducts)
+  }
+
+  const handleChangeLength = (index, value) => {
+    let newProducts = [...products]
+    newProducts[index].length = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -96,8 +97,8 @@ const Add = () => {
       products: products.map((item) => {
         let data = {
           sku: { id: item.id },
-          new_quantity: 0,
           quantity: item.quantity,
+          length: item.length,
         }
         if (item.componentId != null) {
           data.id = item.componentId
@@ -138,7 +139,7 @@ const Add = () => {
         populate: {
           branch: { fields: ['id', 'name'] },
           products: {
-            fields: ['quantity'],
+            fields: ['quantity', 'length'],
             populate: {
               sku: {
                 fields: ['sku'],
@@ -158,7 +159,6 @@ const Add = () => {
     setBranchName(data.attributes.branch.data.attributes.name)
     setProducts(
       data.attributes.products.map((item) => {
-        console.log(item.sku.data.attributes)
         return {
           componentId: item.id,
           id: item.sku.data.id,
@@ -166,6 +166,7 @@ const Add = () => {
           name: item.sku.data.attributes.product.data.attributes.name,
           attributes: item.sku.data.attributes,
           quantity: item.quantity,
+          length: item.length,
         }
       }),
     )
@@ -239,6 +240,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài / SP (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
@@ -253,7 +255,7 @@ const Add = () => {
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
                         <CTableDataCell>{item.name} </CTableDataCell>
-                        <CTableDataCell align="left">
+                        <CTableDataCell>
                           {item.attributes.color != null && (
                             <div>
                               <strong>Màu sắc: </strong> {item.attributes.color}
@@ -287,6 +289,13 @@ const Add = () => {
                         <CTableDataCell>
                           <CFormInput
                             type="number"
+                            value={item.length}
+                            onChange={(e) => handleChangeLength(index, e.target.value)}
+                          ></CFormInput>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput
+                            type="number"
                             value={item.quantity}
                             onChange={(e) => handleChangeQuantity(index, e.target.value)}
                           ></CFormInput>
@@ -295,7 +304,7 @@ const Add = () => {
                           <CButton
                             color="danger"
                             className="text-white"
-                            onClick={() => handleDeleteSKU(item.id)}
+                            onClick={() => handleDelete(index)}
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </CButton>
@@ -305,7 +314,7 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="3"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
