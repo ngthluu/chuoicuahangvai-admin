@@ -24,9 +24,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import ImageUpload from 'src/views/template/ImageUpload'
 
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import ProductDescription from 'src/views/products/ProductDescription'
 
 const Inventory = () => {
   const query = useLocation().search
@@ -41,7 +41,15 @@ const Inventory = () => {
         filters: {
           branch: { id: { $eq: branch === '' ? -1 : branch } },
         },
-        populate: ['sku_quantity', 'sku_quantity.sku', 'sku_quantity.sku.product'],
+        populate: [
+          'sku_quantity',
+          'sku_quantity.sku',
+          'sku_quantity.sku.product',
+          'sku_quantity.sku.pattern',
+          'sku_quantity.sku.stretch',
+          'sku_quantity.sku.width',
+          'sku_quantity.sku.origin',
+        ],
       },
       { encodeValuesOnly: true },
     )
@@ -102,14 +110,14 @@ const Inventory = () => {
                   <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chiều dài còn lại </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Chiều dài còn lại (cm) </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian cập nhật gần nhất </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
                 {inventoryItems.map((item, index) => (
                   <CTableRow key={index}>
-                    <CTableDataCell>{item.id}</CTableDataCell>
+                    <CTableDataCell>#{item.id}</CTableDataCell>
                     <CTableDataCell>
                       <Link to="#">{item.attributes.sku_quantity.sku.data.attributes.sku}</Link>
                     </CTableDataCell>
@@ -119,8 +127,13 @@ const Inventory = () => {
                           .name
                       }
                     </CTableDataCell>
-                    <CTableDataCell> {item.quantity} </CTableDataCell>
-                    <CTableDataCell> {item.latest_update_time} </CTableDataCell>
+                    <CTableDataCell>
+                      <ProductDescription
+                        attributes={item.attributes.sku_quantity.sku.data.attributes}
+                      ></ProductDescription>
+                    </CTableDataCell>
+                    <CTableDataCell> {item.attributes.sku_quantity.length} </CTableDataCell>
+                    <CTableDataCell> {item.attributes.updatedAt} </CTableDataCell>
                   </CTableRow>
                 ))}
               </CTableBody>
