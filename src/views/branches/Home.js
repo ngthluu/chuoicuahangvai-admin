@@ -138,7 +138,7 @@ const Home = () => {
                           <CDropdownItem href={`/branches/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/inventory?warehouse=${item.id}`}>
+                          <CDropdownItem href={`/warehouses/inventory?branch=${item.id}`}>
                             <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                           </CDropdownItem>
                           <CDropdownItem

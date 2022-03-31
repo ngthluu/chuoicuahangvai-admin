@@ -1,4 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -22,66 +26,36 @@ import { faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import ImageUpload from 'src/views/template/ImageUpload'
 
-const importsList = [
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-  {
-    code: '#PRO001',
-    image: '',
-    name: 'Sản phẩm A',
-    quantity: 200,
-    latest_update_time: '25/09/2021',
-  },
-]
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Inventory = () => {
+  const query = useLocation().search
+  const branchId = new URLSearchParams(query).get('branch')
+
+  const [branch, setBranch] = useState(branchId ? branchId : '')
+  const [inventoryItems, setInventoryItems] = useState([])
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      {
+        filters: {
+          branch: { id: { $eq: branch === '' ? -1 : branch } },
+        },
+        populate: ['sku_quantity', 'sku_quantity.sku', 'sku_quantity.sku.product'],
+      },
+      { encodeValuesOnly: true },
+    )
+    const result = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories?${query}`,
+    )
+    console.log(result.data.data)
+    setInventoryItems(result.data.data)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [branch])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -93,8 +67,13 @@ const Inventory = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Kho</CFormLabel>
-                      <CFormSelect options={['Chọn kho']}></CFormSelect>
+                      <CFormLabel>Chi nhánh</CFormLabel>
+                      <SelectFetchData
+                        name="manager"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={branch}
+                        setValue={setBranch}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -119,25 +98,27 @@ const Inventory = () => {
             <CTable align="middle" bordered>
               <CTableHead align="middle">
                 <CTableRow>
-                  <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Hình ảnh </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Mã sản phẩm </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên sản phẩm </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Chiều dài còn lại </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian cập nhật gần nhất </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {importsList.map((item, index) => (
+                {inventoryItems.map((item, index) => (
                   <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
+                    <CTableDataCell>{item.id}</CTableDataCell>
                     <CTableDataCell>
-                      <ImageUpload name="avatar"></ImageUpload>
+                      <Link to="#">{item.attributes.sku_quantity.sku.data.attributes.sku}</Link>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <Link to="#">{item.code}</Link>
+                      {
+                        item.attributes.sku_quantity.sku.data.attributes.product.data.attributes
+                          .name
+                      }
                     </CTableDataCell>
-                    <CTableDataCell> {item.name} </CTableDataCell>
                     <CTableDataCell> {item.quantity} </CTableDataCell>
                     <CTableDataCell> {item.latest_update_time} </CTableDataCell>
                   </CTableRow>

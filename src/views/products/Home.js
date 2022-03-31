@@ -30,6 +30,7 @@ import { faEye, faEdit, faTrash, faPlus, faSearch } from '@fortawesome/free-soli
 import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
+import ProductDescription from 'src/views/products/ProductDescription'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -159,31 +160,7 @@ const Home = () => {
                     <CTableDataCell> {item.attributes.sku} </CTableDataCell>
                     <CTableDataCell> {item.attributes.price} </CTableDataCell>
                     <CTableDataCell align="left">
-                      {item.attributes.color != null && (
-                        <div>
-                          <strong>Màu sắc: </strong> {item.attributes.color}
-                        </div>
-                      )}
-                      {item.attributes.pattern.data != null && (
-                        <div>
-                          <strong>Kiểu mẫu: </strong> {item.attributes.pattern.data.attributes.name}
-                        </div>
-                      )}
-                      {item.attributes.width.data != null && (
-                        <div>
-                          <strong>Chiều rộng: </strong> {item.attributes.width.data.attributes.name}
-                        </div>
-                      )}
-                      {item.attributes.stretch.data != null && (
-                        <div>
-                          <strong>Co giãn: </strong> {item.attributes.stretch.data.attributes.name}
-                        </div>
-                      )}
-                      {item.attributes.origin.data != null && (
-                        <div>
-                          <strong>Xuất xứ: </strong> {item.attributes.origin.data.attributes.name}
-                        </div>
-                      )}
+                      <ProductDescription attributes={item.attributes}></ProductDescription>
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
