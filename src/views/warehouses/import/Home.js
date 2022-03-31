@@ -114,7 +114,7 @@ const Home = () => {
         title="Nhập kho"
         content={`Bạn có muốn nhập kho với phiếu ${submitModalTargetName} không ?`}
         id={submitModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports/submit`}
         triggerSuccess={handleSubmitSuccess}
         triggerError={handleSubmitError}
         action="post"

@@ -8,6 +8,7 @@ const BranchAdd = React.lazy(() => import('./views/branches/Add'))
 const WarehouseInventory = React.lazy(() => import('./views/warehouses/Inventory'))
 
 const WarehouseImport = React.lazy(() => import('./views/warehouses/import/Home'))
+const WarehouseImportView = React.lazy(() => import('./views/warehouses/import/View'))
 const WarehouseImportAdd = React.lazy(() => import('./views/warehouses/import/Add'))
 
 const WarehouseExport = React.lazy(() => import('./views/warehouses/export/Home'))
@@ -67,6 +68,12 @@ const routes = [
     exact: true,
     name: 'Thêm phiếu nhập kho',
     component: WarehouseImportAdd,
+  },
+  {
+    path: '/warehouses/import/view',
+    exact: true,
+    name: 'Xem phiếu nhập kho',
+    component: WarehouseImportView,
   },
   {
     path: '/warehouses/import/edit',
