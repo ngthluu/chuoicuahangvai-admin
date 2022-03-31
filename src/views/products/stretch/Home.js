@@ -78,6 +78,7 @@ const Home = () => {
         url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
         triggerSuccess={handleDeleteSuccess}
         triggerError={handleDeleteError}
+        action="delete"
       ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">

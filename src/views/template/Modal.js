@@ -9,10 +9,17 @@ const Modal = (props) => {
     e.preventDefault()
     props.visibleAction(false)
     const url = `${props.url}/${props.id}`
-    await axios
-      .delete(url)
-      .then((response) => props.triggerSuccess())
-      .catch((error) => props.triggerError())
+    if (props.action === 'delete') {
+      await axios
+        .delete(url)
+        .then((response) => props.triggerSuccess())
+        .catch((error) => props.triggerError())
+    } else if (props.action === 'post') {
+      await axios
+        .post(url)
+        .then((response) => props.triggerSuccess())
+        .catch((error) => props.triggerError())
+    }
   }
 
   return (
@@ -46,6 +53,7 @@ Modal.propTypes = {
   url: PropTypes.string,
   triggerSuccess: PropTypes.func,
   triggerError: PropTypes.func,
+  action: PropTypes.string,
 }
 
 export default Modal
