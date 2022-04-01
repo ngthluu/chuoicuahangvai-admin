@@ -12,7 +12,6 @@ import {
   CCardHeader,
   CFormLabel,
   CFormInput,
-  CFormSelect,
   CCardFooter,
   CButton,
   CFormFeedback,
@@ -26,8 +25,6 @@ import {
   CTableFoot,
 } from '@coreui/react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
@@ -44,12 +41,6 @@ const Add = () => {
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
-
-  const handleDelete = (index) => {
-    let newProducts = [...products]
-    newProducts.splice(index, 1)
-    setProducts(newProducts)
-  }
 
   const handleAddInventoryItem = (inventoryItem) => {
     const inventoryItemId = inventoryItem.id

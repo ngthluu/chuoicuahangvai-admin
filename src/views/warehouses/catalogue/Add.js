@@ -90,10 +90,6 @@ const Add = () => {
       e.stopPropagation()
       return
     }
-    if (products.filter((item) => item.length > item.current_length).length > 0) {
-      toast.error(`Thao tác thất bại. Không thể xuất quá SL tồn kho !!`)
-      return
-    }
 
     const data = {
       branch: { id: branch },
@@ -113,7 +109,7 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -123,7 +119,7 @@ const Add = () => {
         })
     } else {
       axios
-        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -155,7 +151,7 @@ const Add = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues/${id}?${query}`)
     const data = response.data.data
     setBranch(data.attributes.branch.data.id)
     setBranchName(data.attributes.branch.data.attributes.name)
@@ -268,7 +264,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài trong kho </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài mới </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
@@ -339,7 +335,7 @@ const Add = () => {
             </CButton>
             <div className="p-2"></div>
             <CButton
-              href="/warehouses/export"
+              href="/warehouses/catalogue"
               color="secondary"
               type="button"
               className="text-white ml-3"

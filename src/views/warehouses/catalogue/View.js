@@ -26,8 +26,6 @@ import {
   CTableFoot,
 } from '@coreui/react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
@@ -44,12 +42,6 @@ const Add = () => {
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
-
-  const handleDelete = (index) => {
-    let newProducts = [...products]
-    newProducts.splice(index, 1)
-    setProducts(newProducts)
-  }
 
   const handleAddInventoryItem = (inventoryItem) => {
     const inventoryItemId = inventoryItem.id
@@ -100,7 +92,7 @@ const Add = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues/${id}?${query}`)
     const data = response.data.data
     setBranch(data.attributes.branch.data.id)
     setBranchName(data.attributes.branch.data.attributes.name)
@@ -205,7 +197,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài mới </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
@@ -259,10 +251,10 @@ const Add = () => {
           <CCardFooter className="d-flex">
             <div className="p-2"></div>
             <CButton
-              href="/warehouses/export"
+              href="/warehouses/catalogue"
               color="secondary"
               type="button"
-              className="text-white"
+              className="text-white ml-3"
             >
               <strong>Hủy bỏ</strong>
             </CButton>
