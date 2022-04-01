@@ -60,6 +60,7 @@ const Add = () => {
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
     const productAttributes = skuItem.attributes
+    const currentInventoryLength = inventoryItem.attributes.sku_quantity.length
 
     let newProducts = [...products]
     newProducts.push({
@@ -69,6 +70,7 @@ const Add = () => {
       name: productName,
       attributes: productAttributes,
       length: 0,
+      current_length: currentInventoryLength,
     })
     setProducts(newProducts)
   }
@@ -86,6 +88,10 @@ const Add = () => {
     const form = e.currentTarget
     if (form.checkValidity() === false) {
       e.stopPropagation()
+      return
+    }
+    if (products.filter((item) => item.length > item.current_length).length > 0) {
+      toast.error(`Thao tác thất bại. Không thể xuất quá SL tồn kho !!`)
       return
     }
 
@@ -160,6 +166,7 @@ const Add = () => {
         const productSku = skuItem.attributes.sku
         const productName = skuItem.attributes.product.data.attributes.name
         const productAttributes = skuItem.attributes
+        const currentInventoryLength = inventoryItem.attributes.sku_quantity.length
         const productItem = {
           componentId: item.id,
           id: inventoryItem.id,
@@ -167,6 +174,7 @@ const Add = () => {
           name: productName,
           attributes: productAttributes,
           length: item.length,
+          current_length: currentInventoryLength,
         }
         return productItem
       }),
@@ -259,6 +267,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
@@ -277,6 +286,7 @@ const Add = () => {
                         <CTableDataCell>
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
+                        <CTableDataCell>{item.current_length}</CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="number"
