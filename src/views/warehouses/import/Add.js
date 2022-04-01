@@ -54,6 +54,7 @@ const Add = () => {
   const handleAddSKU = (skuItem) => {
     const productSkuId = skuItem.id
     if (productSkuId === '') return
+    if (products.filter((item) => item.id === productSkuId).length > 0) return
 
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
@@ -138,19 +139,17 @@ const Add = () => {
     if (id === null) return
     const query = qs.stringify(
       {
-        fields: ['id', 'note'],
-        populate: {
-          branch: { fields: ['id', 'name'] },
-          products: {
-            fields: ['quantity', 'length'],
-            populate: {
-              sku: {
-                fields: ['sku'],
-                populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
-              },
-            },
-          },
-        },
+        populate: [
+          'branch',
+          'products',
+          'products.sku',
+          'products.sku.product',
+          'products.sku.pattern',
+          'products.sku.stretch',
+          'products.sku.width',
+          'products.sku.origin',
+          'products.sku.images',
+        ],
       },
       { encodeValuesOnly: true },
     )
@@ -162,12 +161,16 @@ const Add = () => {
     setBranchName(data.attributes.branch.data.attributes.name)
     setProducts(
       data.attributes.products.map((item) => {
+        const skuItem = item.sku.data
+        const productSku = skuItem.attributes.sku
+        const productName = skuItem.attributes.product.data.attributes.name
+        const productAttributes = skuItem.attributes
         return {
           componentId: item.id,
-          id: item.sku.data.id,
-          sku: item.sku.data.attributes.sku,
-          name: item.sku.data.attributes.product.data.attributes.name,
-          attributes: item.sku.data.attributes,
+          id: skuItem.id,
+          sku: productSku,
+          name: productName,
+          attributes: productAttributes,
           quantity: item.quantity,
           length: item.length,
         }

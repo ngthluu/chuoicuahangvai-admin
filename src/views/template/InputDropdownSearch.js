@@ -59,6 +59,7 @@ const InputDropdownSearch = (props) => {
 
   const handleClickResetButton = async () => {
     setText('')
+    setVisibleUl(false)
     props.handleFound({ id: '' })
   }
 

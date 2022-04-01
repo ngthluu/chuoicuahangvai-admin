@@ -51,10 +51,12 @@ const Add = () => {
     setProducts(newProducts)
   }
 
-  const handleAddSKU = (skuItem) => {
-    const productSkuId = skuItem.id
-    if (productSkuId === '') return
+  const handleAddInventoryItem = (inventoryItem) => {
+    const inventoryItemId = inventoryItem.id
+    if (inventoryItemId === '') return
+    if (products.filter((item) => item.id === inventoryItemId).length > 0) return
 
+    const skuItem = inventoryItem.attributes.sku_quantity.sku.data
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
     const productAttributes = skuItem.attributes
@@ -62,19 +64,12 @@ const Add = () => {
     let newProducts = [...products]
     newProducts.push({
       componentId: null,
-      id: productSkuId,
+      id: inventoryItemId,
       sku: productSku,
       name: productName,
       attributes: productAttributes,
-      quantity: 1,
       length: 0,
     })
-    setProducts(newProducts)
-  }
-
-  const handleChangeQuantity = (index, value) => {
-    let newProducts = [...products]
-    newProducts[index].quantity = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -99,8 +94,7 @@ const Add = () => {
       note: note,
       products: products.map((item) => {
         let data = {
-          sku: { id: item.id },
-          quantity: item.quantity,
+          inventory_item: { id: item.id },
           length: item.length,
         }
         if (item.componentId != null) {
@@ -113,7 +107,7 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -123,7 +117,7 @@ const Add = () => {
         })
     } else {
       axios
-        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -138,39 +132,43 @@ const Add = () => {
     if (id === null) return
     const query = qs.stringify(
       {
-        fields: ['id', 'note'],
-        populate: {
-          branch: { fields: ['id', 'name'] },
-          products: {
-            fields: ['quantity', 'length'],
-            populate: {
-              sku: {
-                fields: ['sku'],
-                populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
-              },
-            },
-          },
-        },
+        populate: [
+          'branch',
+          'products',
+          'products.inventory_item',
+          'products.inventory_item.sku_quantity',
+          'products.inventory_item.sku_quantity.sku',
+          'products.inventory_item.sku_quantity.sku.product',
+          'products.inventory_item.sku_quantity.sku.pattern',
+          'products.inventory_item.sku_quantity.sku.stretch',
+          'products.inventory_item.sku_quantity.sku.width',
+          'products.inventory_item.sku_quantity.sku.origin',
+          'products.inventory_item.sku_quantity.sku.images',
+        ],
       },
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}?${query}`)
     const data = response.data.data
-
     setBranch(data.attributes.branch.data.id)
     setBranchName(data.attributes.branch.data.attributes.name)
     setProducts(
       data.attributes.products.map((item) => {
-        return {
+        const inventoryItem = item.inventory_item.data
+        const skuItem = inventoryItem.attributes.sku_quantity.sku.data
+        const productSku = skuItem.attributes.sku
+        const productName = skuItem.attributes.product.data.attributes.name
+        const productAttributes = skuItem.attributes
+        const productItem = {
           componentId: item.id,
-          id: item.sku.data.id,
-          sku: item.sku.data.attributes.sku,
-          name: item.sku.data.attributes.product.data.attributes.name,
-          attributes: item.sku.data.attributes,
-          quantity: item.quantity,
+          id: inventoryItem.id,
+          sku: productSku,
+          name: productName,
+          attributes: productAttributes,
           length: item.length,
         }
+        return productItem
       }),
     )
     setNote(data.attributes.note)
@@ -217,21 +215,38 @@ const Add = () => {
             <CRow className="mb-3">
               <InputDropdownSearch
                 placeholder="Tìm kiếm cây vải trong cửa hàng"
-                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
-                ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
+                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories`}
+                ajaxDataPopulate={[
+                  'sku_quantity',
+                  'sku_quantity.sku',
+                  'sku_quantity.sku.product',
+                  'sku_quantity.sku.pattern',
+                  'sku_quantity.sku.stretch',
+                  'sku_quantity.sku.width',
+                  'sku_quantity.sku.origin',
+                  'sku_quantity.sku.images',
+                ]}
                 ajaxDataGetFilters={(value) => {
                   return {
-                    $or: [
-                      { sku: { $containsi: value } },
-                      { product: { name: { $containsi: value } } },
+                    $and: [
+                      {
+                        $or: [
+                          { id: { $containsi: value } },
+                          { sku_quantity: { sku: { sku: { $containsi: value } } } },
+                          { sku_quantity: { sku: { product: { name: { $containsi: value } } } } },
+                        ],
+                      },
+                      {
+                        branch: { id: branch === '' ? -1 : branch },
+                      },
                     ],
                   }
                 }}
                 ajaxDataGetItemName={(item) =>
-                  `${item.attributes.product.data.attributes.name} (${item.attributes.sku})`
+                  `#${item.id} - (${item.attributes.sku_quantity.sku.data.attributes.sku} - ${item.attributes.sku_quantity.sku.data.attributes.product.data.attributes.name}) - Còn ${item.attributes.sku_quantity.length} cm`
                 }
-                handleNotFound={() => toast.error('Không tìm thấy sản phẩm này !!!')}
-                handleFound={(item) => handleAddSKU(item)}
+                handleNotFound={() => toast.error('Không tìm thấy cây vải này !!!')}
+                handleFound={(item) => handleAddInventoryItem(item)}
               />
             </CRow>
             <CRow className="mb-3">
@@ -240,11 +255,11 @@ const Add = () => {
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài / SP (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
@@ -254,6 +269,7 @@ const Add = () => {
                     {products.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
+                        <CTableDataCell> #{item.id} </CTableDataCell>
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
@@ -266,13 +282,6 @@ const Add = () => {
                             type="number"
                             value={item.length}
                             onChange={(e) => handleChangeLength(index, e.target.value)}
-                          ></CFormInput>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <CFormInput
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => handleChangeQuantity(index, e.target.value)}
                           ></CFormInput>
                         </CTableDataCell>
                         <CTableDataCell>
@@ -292,7 +301,7 @@ const Add = () => {
                       <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
+                          return products.reduce((sum, item) => sum + parseInt(item.length), 0)
                         })()}
                       </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>
@@ -320,7 +329,7 @@ const Add = () => {
             </CButton>
             <div className="p-2"></div>
             <CButton
-              href="/warehouses/import"
+              href="/warehouses/export"
               color="secondary"
               type="button"
               className="text-white ml-3"
