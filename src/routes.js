@@ -108,7 +108,7 @@ const routes = [
     component: WarehouseCatalogueAdd,
   },
 
-  { path: '/categories', exact: true, name: 'Danh mục sản phẩm', component: CategoryHome },
+  { path: '/categories', exact: true, name: 'Danh mục', component: CategoryHome },
   {
     path: '/categories/add',
     exact: true,

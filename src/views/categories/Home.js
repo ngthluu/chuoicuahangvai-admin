@@ -85,7 +85,7 @@ const Home = () => {
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Danh mục sản phẩm</h4>
+                <h4 className="mb-3">Danh mục</h4>
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">

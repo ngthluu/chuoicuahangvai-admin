@@ -64,7 +64,7 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Danh mục sản phẩm',
+        name: 'Danh mục',
         to: '/categories',
       },
       {

@@ -75,7 +75,7 @@ const Inventory = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Chi nhánh</CFormLabel>
+                      <CFormLabel>Cửa hàng</CFormLabel>
                       <SelectFetchData
                         name="manager"
                         url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}

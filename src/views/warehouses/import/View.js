@@ -130,9 +130,9 @@ const Add = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CFormLabel>Kho</CFormLabel>
+                <CFormLabel>Cửa hàng</CFormLabel>
                 <InputDropdownSearch
-                  placeholder="Tìm kiếm kho"
+                  placeholder="Tìm kiếm cửa hàng"
                   ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
                   ajaxDataPopulate={[]}
                   ajaxDataGetFilters={(value) => {
@@ -141,7 +141,7 @@ const Add = () => {
                     }
                   }}
                   ajaxDataGetItemName={(item) => `${item.attributes.name}`}
-                  handleNotFound={() => toast.error('Không tìm thấy kho này !!!')}
+                  handleNotFound={() => toast.error('Không tìm thấy cửa hàng này !!!')}
                   handleFound={(item) => setBranch(item.id)}
                   setTextNameAfterFound={true}
                   defaultName={branchName}

@@ -5,7 +5,7 @@ import qs from 'qs'
 import { CButton, CInputGroup, CFormInput } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import PropTypes from 'prop-types'
 
@@ -57,6 +57,11 @@ const InputDropdownSearch = (props) => {
     }
   }
 
+  const handleClickResetButton = async () => {
+    setText('')
+    props.handleFound({ id: '' })
+  }
+
   const handleClickLi = (item) => {
     setVisibleUl(false)
     props.handleFound(item)
@@ -104,6 +109,14 @@ const InputDropdownSearch = (props) => {
             setText(e.target.value)
           }}
         />
+        <CButton
+          type="button"
+          color="danger"
+          className="text-white border-right"
+          onClick={handleClickResetButton}
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </CButton>
         <CButton
           type="button"
           color="info"

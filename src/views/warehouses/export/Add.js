@@ -31,6 +31,7 @@ import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
+import ProductDescription from 'src/views/products/ProductDescription'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -44,38 +45,42 @@ const Add = () => {
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
 
-  const handleDeleteSKU = (id) => {
-    setProducts(products.filter((value) => value.id !== id))
+  const handleDelete = (index) => {
+    let newProducts = [...products]
+    newProducts.splice(index, 1)
+    setProducts(newProducts)
   }
 
   const handleAddSKU = (skuItem) => {
     const productSkuId = skuItem.id
+    if (productSkuId === '') return
+
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
+    const productAttributes = skuItem.attributes
 
     let newProducts = [...products]
-    let addFlag = true
-    newProducts.forEach((value) => {
-      if (value.id === productSkuId) {
-        value.quantity += 1
-        addFlag = false
-      }
+    newProducts.push({
+      componentId: null,
+      id: productSkuId,
+      sku: productSku,
+      name: productName,
+      attributes: productAttributes,
+      quantity: 1,
+      length: 0,
     })
-    if (addFlag) {
-      newProducts.push({
-        componentId: null,
-        id: productSkuId,
-        sku: productSku,
-        name: productName,
-        quantity: 1,
-      })
-    }
     setProducts(newProducts)
   }
 
   const handleChangeQuantity = (index, value) => {
     let newProducts = [...products]
     newProducts[index].quantity = parseInt(value)
+    setProducts(newProducts)
+  }
+
+  const handleChangeLength = (index, value) => {
+    let newProducts = [...products]
+    newProducts[index].length = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -95,8 +100,8 @@ const Add = () => {
       products: products.map((item) => {
         let data = {
           sku: { id: item.id },
-          new_quantity: 0,
           quantity: item.quantity,
+          length: item.length,
         }
         if (item.componentId != null) {
           data.id = item.componentId
@@ -108,7 +113,7 @@ const Add = () => {
     if (id === null) {
       // Add
       axios
-        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -118,7 +123,7 @@ const Add = () => {
         })
     } else {
       axios
-        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}`, {
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports/${id}`, {
           data: data,
         })
         .then((response) => toast.success('Thao tác thành công'))
@@ -137,15 +142,11 @@ const Add = () => {
         populate: {
           branch: { fields: ['id', 'name'] },
           products: {
-            fields: ['quantity'],
+            fields: ['quantity', 'length'],
             populate: {
               sku: {
                 fields: ['sku'],
-                populate: {
-                  product: {
-                    fields: ['name'],
-                  },
-                },
+                populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
               },
             },
           },
@@ -154,7 +155,7 @@ const Add = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports/${id}?${query}`)
     const data = response.data.data
 
     setBranch(data.attributes.branch.data.id)
@@ -166,7 +167,9 @@ const Add = () => {
           id: item.sku.data.id,
           sku: item.sku.data.attributes.sku,
           name: item.sku.data.attributes.product.data.attributes.name,
+          attributes: item.sku.data.attributes,
           quantity: item.quantity,
+          length: item.length,
         }
       }),
     )
@@ -193,9 +196,9 @@ const Add = () => {
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CFormLabel>Kho</CFormLabel>
+                <CFormLabel>Cửa hàng</CFormLabel>
                 <InputDropdownSearch
-                  placeholder="Tìm kiếm kho"
+                  placeholder="Tìm kiếm cửa hàng"
                   ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
                   ajaxDataPopulate={[]}
                   ajaxDataGetFilters={(value) => {
@@ -204,7 +207,7 @@ const Add = () => {
                     }
                   }}
                   ajaxDataGetItemName={(item) => `${item.attributes.name}`}
-                  handleNotFound={() => toast.error('Không tìm thấy kho này !!!')}
+                  handleNotFound={() => toast.error('Không tìm thấy cửa hàng này !!!')}
                   handleFound={(item) => setBranch(item.id)}
                   setTextNameAfterFound={true}
                   defaultName={branchName}
@@ -213,7 +216,7 @@ const Add = () => {
             </CRow>
             <CRow className="mb-3">
               <InputDropdownSearch
-                placeholder="Tìm kiếm sản phẩm"
+                placeholder="Tìm kiếm cây vải trong cửa hàng"
                 ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
                 ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
                 ajaxDataGetFilters={(value) => {
@@ -239,6 +242,8 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài / SP (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Số lượng </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
@@ -254,6 +259,16 @@ const Add = () => {
                         </CTableDataCell>
                         <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>
+                          <ProductDescription attributes={item.attributes}></ProductDescription>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput
+                            type="number"
+                            value={item.length}
+                            onChange={(e) => handleChangeLength(index, e.target.value)}
+                          ></CFormInput>
+                        </CTableDataCell>
+                        <CTableDataCell>
                           <CFormInput
                             type="number"
                             value={item.quantity}
@@ -264,7 +279,7 @@ const Add = () => {
                           <CButton
                             color="danger"
                             className="text-white"
-                            onClick={() => handleDeleteSKU(item.id)}
+                            onClick={() => handleDelete(index)}
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </CButton>
@@ -274,7 +289,7 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="3"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
@@ -305,7 +320,7 @@ const Add = () => {
             </CButton>
             <div className="p-2"></div>
             <CButton
-              href="/warehouses/export"
+              href="/warehouses/import"
               color="secondary"
               type="button"
               className="text-white ml-3"
