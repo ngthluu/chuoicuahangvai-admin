@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-import StatusLabel from 'src/views/template/StatusLabel'
-import StatusAction from 'src/views/template/StatusAction'
-
 import {
   CCard,
   CCardBody,
@@ -39,26 +36,90 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Home = () => {
   const [catalogueList, setCatalogueList] = useState([])
 
+  const fetchData = async () => {
+    const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`, {
+      params: {
+        populate: ['branch', 'submit_user'],
+      },
+    })
+    setCatalogueList(result.data.data)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const result = await axios.get(
-        `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`,
-        {
-          params: {
-            populate: ['branch', 'submit_user'],
-          },
-        },
-      )
-      setCatalogueList(result.data.data)
-    }
     fetchData()
   }, [])
 
+  // Delete logic
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa phiếu kiểm kho thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
+  // Submit logic
+  const [submitModalTargetId, setSubmitModalTargetId] = useState('')
+  const [submitModalTargetName, setSubmitModalTargetName] = useState('')
+  const [submitModalVisible, setSubmitModalVisible] = useState(false)
+  const handleClickSubmit = (e) => {
+    e.preventDefault()
+    setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setSubmitModalVisible(!deleteModalVisible)
+  }
+  const handleSubmitSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã kiểm kho thành công')
+  }
+  const handleSubmitError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa phiếu kiểm kho"
+        content={`Bạn có muốn xóa phiếu kiểm kho ${deleteModalTargetName} không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+        action="delete"
+      ></Modal>
+      <Modal
+        visible={submitModalVisible}
+        visibleAction={setSubmitModalVisible}
+        title="Kiểm kho"
+        content={`Bạn có muốn kiểm kho với phiếu ${submitModalTargetName} không ?`}
+        id={submitModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues/submit`}
+        triggerSuccess={handleSubmitSuccess}
+        triggerError={handleSubmitError}
+        action="post"
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -117,11 +178,11 @@ const Home = () => {
               </CTableHead>
               <CTableBody align="middle">
                 {catalogueList.map((item, index) => (
-                  <CTableRow key={item.id}>
+                  <CTableRow key={index}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/warehouses/export/view?id=${item.id}`}>
-                        {item.attributes.code}
+                      <Link to={`/warehouses/catalogue/view?id=${item.id}`}>
+                        CATALOGUE#{item.id}
                       </Link>
                     </CTableDataCell>
                     <CTableDataCell>
@@ -134,7 +195,11 @@ const Home = () => {
                         : ''}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.attributes.submit_status} />
+                      {item.attributes.submit_status ? (
+                        <CBadge color="success">Đã kiểm kho</CBadge>
+                      ) : (
+                        <CBadge color="danger">Chưa kiểm kho</CBadge>
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -145,16 +210,34 @@ const Home = () => {
                           <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <StatusAction status={item.attributes.submit_status} />
                           <CDropdownItem href="#">
                             <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
                           </CDropdownItem>
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
+                          {item.attributes.submit_status ? (
+                            <></>
+                          ) : (
+                            <>
+                              <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
+                                <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                              </CDropdownItem>
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickSubmit}
+                                data-id={item.id}
+                                data-name={`CATALOGUE#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faCheck} /> Kiểm kho
+                              </CDropdownItem>
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDelete}
+                                data-id={item.id}
+                                data-name={`CATALOGUE#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                              </CDropdownItem>
+                            </>
+                          )}
                         </CDropdownMenu>
                       </CDropdown>
                     </CTableDataCell>

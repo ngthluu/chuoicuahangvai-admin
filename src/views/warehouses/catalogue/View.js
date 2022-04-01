@@ -79,55 +79,6 @@ const Add = () => {
     setProducts(newProducts)
   }
 
-  const [validated, setValidated] = useState(false)
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setValidated(true)
-    const form = e.currentTarget
-    if (form.checkValidity() === false) {
-      e.stopPropagation()
-      return
-    }
-
-    const data = {
-      branch: { id: branch },
-      note: note,
-      products: products.map((item) => {
-        let data = {
-          inventory_item: { id: item.id },
-          length: item.length,
-        }
-        if (item.componentId != null) {
-          data.id = item.componentId
-        }
-        return data
-      }),
-    }
-
-    if (id === null) {
-      // Add
-      axios
-        .post(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports`, {
-          data: data,
-        })
-        .then((response) => toast.success('Thao tác thành công'))
-        .catch((error) => {
-          const errorMesaage = error.response.data.error.message
-          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
-        })
-    } else {
-      axios
-        .put(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/${id}`, {
-          data: data,
-        })
-        .then((response) => toast.success('Thao tác thành công'))
-        .catch((error) => {
-          const errorMesaage = error.response.data.error.message
-          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
-        })
-    }
-  }
-
   const fetchData = async () => {
     if (id === null) return
     const query = qs.stringify(
@@ -179,12 +130,7 @@ const Add = () => {
   }, [])
 
   return (
-    <CForm
-      className="row g-3 needs-validation"
-      noValidate
-      validated={validated}
-      onSubmit={handleSubmit}
-    >
+    <CForm className="row g-3 needs-validation">
       <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
@@ -260,9 +206,6 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
-                      <CTableHeaderCell scope="col">
-                        <FontAwesomeIcon icon={faTrash} />
-                      </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
@@ -284,15 +227,6 @@ const Add = () => {
                             onChange={(e) => handleChangeLength(index, e.target.value)}
                           ></CFormInput>
                         </CTableDataCell>
-                        <CTableDataCell>
-                          <CButton
-                            color="danger"
-                            className="text-white"
-                            onClick={() => handleDelete(index)}
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </CButton>
-                        </CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
@@ -304,7 +238,6 @@ const Add = () => {
                           return products.reduce((sum, item) => sum + parseInt(item.length), 0)
                         })()}
                       </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
                     </CTableRow>
                   </CTableFoot>
                 </CTable>
@@ -324,15 +257,12 @@ const Add = () => {
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton color="info" type="submit" className="text-white">
-              <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
-            </CButton>
             <div className="p-2"></div>
             <CButton
               href="/warehouses/export"
               color="secondary"
               type="button"
-              className="text-white ml-3"
+              className="text-white"
             >
               <strong>Hủy bỏ</strong>
             </CButton>

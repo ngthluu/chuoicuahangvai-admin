@@ -16,6 +16,7 @@ const WarehouseExportView = React.lazy(() => import('./views/warehouses/export/V
 const WarehouseExportAdd = React.lazy(() => import('./views/warehouses/export/Add'))
 
 const WarehouseCatalogue = React.lazy(() => import('./views/warehouses/catalogue/Home'))
+const WarehouseCatalogueView = React.lazy(() => import('./views/warehouses/catalogue/View'))
 const WarehouseCatalogueAdd = React.lazy(() => import('./views/warehouses/catalogue/Add'))
 
 const CategoryHome = React.lazy(() => import('./views/categories/Home'))
@@ -107,6 +108,12 @@ const routes = [
     exact: true,
     name: 'Thêm phiếu kiểm kho',
     component: WarehouseCatalogueAdd,
+  },
+  {
+    path: '/warehouses/catalogue/view',
+    exact: true,
+    name: 'Xem phiếu kiểm kho',
+    component: WarehouseCatalogueView,
   },
   {
     path: '/warehouses/catalogue/edit',

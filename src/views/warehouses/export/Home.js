@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-import StatusLabel from 'src/views/template/StatusLabel'
-import StatusAction from 'src/views/template/StatusAction'
-
 import {
   CCard,
   CCardBody,
@@ -115,7 +112,7 @@ const Home = () => {
       <Modal
         visible={submitModalVisible}
         visibleAction={setSubmitModalVisible}
-        title="Xuất kho kho"
+        title="Xuất kho"
         content={`Bạn có muốn xuất kho với phiếu ${submitModalTargetName} không ?`}
         id={submitModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/submit`}
