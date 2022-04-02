@@ -19,6 +19,7 @@ import {
   CFormLabel,
   CImage,
   CFormSelect,
+  CTableFoot,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,6 +28,7 @@ import { Link } from 'react-router-dom'
 
 import SelectFetchData from 'src/views/template/SelectFetchData'
 import ProductDescription from 'src/views/products/ProductDescription'
+import SmartPagination from 'src/views/template/SmartPagination'
 
 const Inventory = () => {
   const query = useLocation().search
@@ -35,9 +37,15 @@ const Inventory = () => {
   const [branch, setBranch] = useState(branchId ? branchId : '')
   const [inventoryItems, setInventoryItems] = useState([])
 
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        pagination: {
+          page: page,
+        },
         filters: {
           branch: { id: { $eq: branch === '' ? -1 : branch } },
         },
@@ -57,11 +65,12 @@ const Inventory = () => {
       `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories?${query}`,
     )
     setInventoryItems(result.data.data)
+    setTotalItems(result.data.meta.pagination.total)
   }
 
   useEffect(() => {
     fetchData()
-  }, [branch])
+  }, [branch, page])
 
   return (
     <CRow>
@@ -137,6 +146,14 @@ const Inventory = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>
