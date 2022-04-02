@@ -304,7 +304,7 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce((sum, item) => sum + parseInt(item.length), 0)

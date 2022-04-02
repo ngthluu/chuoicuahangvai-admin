@@ -85,7 +85,7 @@ const Inventory = () => {
                     <div className="p-1">
                       <CFormLabel>Cửa hàng</CFormLabel>
                       <SelectFetchData
-                        name="manager"
+                        name="branch"
                         url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
                         value={branch}
                         setValue={setBranch}

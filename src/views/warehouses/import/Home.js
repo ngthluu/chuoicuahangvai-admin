@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import qs from 'qs'
 import {
   CCard,
   CCardBody,
@@ -40,30 +41,39 @@ import Modal from 'src/views/template/Modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
   const [importsList, setImportsList] = useState([])
 
+  const [branch, setBranch] = useState('')
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
   const fetchData = async () => {
-    const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports`, {
-      params: {
+    const query = qs.stringify(
+      {
+        filters: {
+          branch: { id: { $eq: branch === '' ? -1 : branch } },
+        },
         populate: ['branch', 'submit_user'],
         pagination: {
           page: page,
         },
       },
-    })
+      { encodeValuesOnly: true },
+    )
+    const result = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-imports?${query}`,
+    )
     setImportsList(result.data.data)
     setTotalItems(result.data.meta.pagination.total)
   }
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [branch, page])
 
   // Delete logic
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
@@ -137,8 +147,13 @@ const Home = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Kho</CFormLabel>
-                      <CFormSelect options={['Chọn kho']}></CFormSelect>
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={branch}
+                        setValue={setBranch}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CFormLabel>Ngày nhập kho (từ)</CFormLabel>
