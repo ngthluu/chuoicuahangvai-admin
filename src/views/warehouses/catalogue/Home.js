@@ -41,16 +41,25 @@ import Modal from 'src/views/template/Modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SmartPagination from 'src/views/template/SmartPagination'
+
 const Home = () => {
   const [catalogueList, setCatalogueList] = useState([])
+
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
 
   const fetchData = async () => {
     const result = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues`, {
       params: {
         populate: ['branch', 'submit_user'],
+        pagination: {
+          page: page,
+        },
       },
     })
     setCatalogueList(result.data.data)
+    setTotalItems(result.data.meta.pagination.total)
   }
 
   useEffect(() => {
@@ -245,6 +254,14 @@ const Home = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>
