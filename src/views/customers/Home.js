@@ -25,10 +25,18 @@ import {
   CFormLabel,
   CFormInput,
   CFormSelect,
+  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faSearch, faTrash, faFilePdf } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEye,
+  faSearch,
+  faTrash,
+  faFilePdf,
+  faLock,
+  faUnlock,
+} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
@@ -70,6 +78,25 @@ const Home = () => {
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
+  // Submit logic
+  const [submitModalTargetId, setSubmitModalTargetId] = useState('')
+  const [submitModalTargetName, setSubmitModalTargetName] = useState('')
+  const [submitModalVisible, setSubmitModalVisible] = useState(false)
+  const handleClickSubmit = (e) => {
+    e.preventDefault()
+    setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setSubmitModalVisible(!deleteModalVisible)
+  }
+  const handleSubmitSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã cập nhật thành công')
+  }
+  const handleSubmitError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
       <ToastContainer />
@@ -83,6 +110,17 @@ const Home = () => {
         triggerSuccess={handleDeleteSuccess}
         triggerError={handleDeleteError}
         action="delete"
+      ></Modal>
+      <Modal
+        visible={submitModalVisible}
+        visibleAction={setSubmitModalVisible}
+        title="Cập nhật trạng thái khách hàng"
+        content={`Bạn có muốn cập nhật trạng thái khách hàng ${submitModalTargetName} không ?`}
+        id={submitModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/customer/submit`}
+        triggerSuccess={handleSubmitSuccess}
+        triggerError={handleSubmitError}
+        action="post"
       ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
@@ -153,7 +191,11 @@ const Home = () => {
                       {item.address.address_three_levels.city}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.status} />
+                      {!item.blocked ? (
+                        <CBadge color="success">Đang hoạt động</CBadge>
+                      ) : (
+                        <CBadge color="danger">Đã bị khóa</CBadge>
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
@@ -164,7 +206,22 @@ const Home = () => {
                           <CDropdownItem href={`/customers/view?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
-                          <StatusAction status={item.status} />
+                          <CDropdownItem
+                            href="#"
+                            onClick={handleClickSubmit}
+                            data-id={item.id}
+                            data-name={`${item.name.firstname} ${item.name.lastname}`}
+                          >
+                            {!item.blocked ? (
+                              <>
+                                <FontAwesomeIcon icon={faLock} /> Khóa
+                              </>
+                            ) : (
+                              <>
+                                <FontAwesomeIcon icon={faUnlock} /> Mở khóa
+                              </>
+                            )}
+                          </CDropdownItem>
                           <CDropdownItem
                             href="#"
                             onClick={handleClickDelete}
