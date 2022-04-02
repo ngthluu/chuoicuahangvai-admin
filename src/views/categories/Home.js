@@ -33,20 +33,34 @@ import Modal from 'src/views/template/Modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SmartPagination from 'src/views/template/SmartPagination'
+
 const Home = () => {
   const [categoriesList, setCategoriesList] = useState([])
 
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
   const fetchData = async () => {
-    const query = qs.stringify({ populate: ['parent'] }, { encodeValuesOnly: true })
+    const query = qs.stringify(
+      {
+        populate: ['parent'],
+        pagination: {
+          page: page,
+        },
+      },
+      { encodeValuesOnly: true },
+    )
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/product-categories?${query}`,
     )
     setCategoriesList(response.data.data)
+    setTotalItems(response.data.meta.pagination.total)
   }
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [page])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -155,6 +169,14 @@ const Home = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>

@@ -35,23 +35,34 @@ import ProductDescription from 'src/views/products/ProductDescription'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SmartPagination from 'src/views/template/SmartPagination'
+
 const Home = () => {
   const [productsList, setProductsList] = useState([])
 
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
   const fetchData = async () => {
     const query = qs.stringify(
-      { populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'] },
+      {
+        populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
+        pagination: {
+          page: page,
+        },
+      },
       { encodeValuesOnly: true },
     )
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/product-skus?${query}`,
     )
     setProductsList(response.data.data)
+    setTotalItems(response.data.meta.pagination.total)
   }
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [page])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -192,6 +203,14 @@ const Home = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>
