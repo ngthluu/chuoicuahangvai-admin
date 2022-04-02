@@ -31,24 +31,59 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faSearch, faTrash, faFilePdf } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Home = () => {
   const [customersList, setCustomersList] = useState([])
 
+  const fetchData = async () => {
+    const query = qs.stringify(
+      { populate: ['name', 'address', 'address.address_three_levels'] },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/customer?${query}`)
+    setCustomersList(response.data.data)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const query = qs.stringify(
-        { populate: ['name', 'address', 'address.address_three_levels'] },
-        { encodeValuesOnly: true },
-      )
-      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/customer?${query}`)
-      console.log(response.data.data)
-      setCustomersList(response.data.data)
-    }
     fetchData()
   }, [])
 
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa khách hàng thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa khách hàng"
+        content={`Bạn có muốn xóa khách hàng ${deleteModalTargetName} không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+        action="delete"
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -130,7 +165,12 @@ const Home = () => {
                             <FontAwesomeIcon icon={faEye} /> Xem
                           </CDropdownItem>
                           <StatusAction status={item.status} />
-                          <CDropdownItem href="#">
+                          <CDropdownItem
+                            href="#"
+                            onClick={handleClickDelete}
+                            data-id={item.id}
+                            data-name={`${item.name.firstname} ${item.name.lastname}`}
+                          >
                             <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
                         </CDropdownMenu>
