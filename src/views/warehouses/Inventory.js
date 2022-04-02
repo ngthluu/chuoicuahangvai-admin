@@ -56,7 +56,6 @@ const Inventory = () => {
     const result = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories?${query}`,
     )
-    console.log(result.data.data)
     setInventoryItems(result.data.data)
   }
 

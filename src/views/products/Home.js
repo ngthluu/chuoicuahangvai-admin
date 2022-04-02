@@ -46,7 +46,6 @@ const Home = () => {
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/product-skus?${query}`,
     )
-    console.log(response.data.data)
     setProductsList(response.data.data)
   }
 
