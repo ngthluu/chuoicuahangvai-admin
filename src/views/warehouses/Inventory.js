@@ -123,27 +123,33 @@ const Inventory = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {inventoryItems.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>#{item.id}</CTableDataCell>
-                    <CTableDataCell>
-                      <Link to="#">{item.attributes.sku_quantity.sku.data.attributes.sku}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {
-                        item.attributes.sku_quantity.sku.data.attributes.product.data.attributes
-                          .name
-                      }
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <ProductDescription
-                        attributes={item.attributes.sku_quantity.sku.data.attributes}
-                      ></ProductDescription>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.attributes.sku_quantity.length} </CTableDataCell>
-                    <CTableDataCell> {item.attributes.updatedAt} </CTableDataCell>
+                {inventoryItems.length > 0 ? (
+                  inventoryItems.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell>#{item.id}</CTableDataCell>
+                      <CTableDataCell>
+                        <Link to="#">{item.attributes.sku_quantity.sku.data.attributes.sku}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {
+                          item.attributes.sku_quantity.sku.data.attributes.product.data.attributes
+                            .name
+                        }
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <ProductDescription
+                          attributes={item.attributes.sku_quantity.sku.data.attributes}
+                        ></ProductDescription>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.attributes.sku_quantity.length} </CTableDataCell>
+                      <CTableDataCell> {item.attributes.updatedAt} </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">

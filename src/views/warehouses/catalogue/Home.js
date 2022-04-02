@@ -64,7 +64,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [page])
 
   // Delete logic
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
@@ -186,72 +186,78 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {catalogueList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/warehouses/catalogue/view?id=${item.id}`}>
-                        CATALOGUE#{item.id}
-                      </Link>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
-                    <CTableDataCell>
-                      {item.attributes.submit_user.data
-                        ? item.attributes.submit_user.data.attributes.username
-                        : ''}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {item.attributes.submit_status ? (
-                        <CBadge color="success">Đã kiểm kho</CBadge>
-                      ) : (
-                        <CBadge color="danger">Chưa kiểm kho</CBadge>
-                      )}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
-                          </CDropdownItem>
-                          {item.attributes.submit_status ? (
-                            <></>
-                          ) : (
-                            <>
-                              <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
-                                <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                              </CDropdownItem>
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickSubmit}
-                                data-id={item.id}
-                                data-name={`CATALOGUE#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faCheck} /> Kiểm kho
-                              </CDropdownItem>
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickDelete}
-                                data-id={item.id}
-                                data-name={`CATALOGUE#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faTrash} /> Xóa
-                              </CDropdownItem>
-                            </>
-                          )}
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {catalogueList.length > 0 ? (
+                  catalogueList.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/warehouses/catalogue/view?id=${item.id}`}>
+                          CATALOGUE#{item.id}
+                        </Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.submit_user.data
+                          ? item.attributes.submit_user.data.attributes.username
+                          : ''}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.submit_status ? (
+                          <CBadge color="success">Đã kiểm kho</CBadge>
+                        ) : (
+                          <CBadge color="danger">Chưa kiểm kho</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                            <CDropdownItem href="#">
+                              <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
+                            </CDropdownItem>
+                            {item.attributes.submit_status ? (
+                              <></>
+                            ) : (
+                              <>
+                                <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
+                                  <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                                </CDropdownItem>
+                                <CDropdownItem
+                                  href="#"
+                                  onClick={handleClickSubmit}
+                                  data-id={item.id}
+                                  data-name={`CATALOGUE#${item.id}`}
+                                >
+                                  <FontAwesomeIcon icon={faCheck} /> Kiểm kho
+                                </CDropdownItem>
+                                <CDropdownItem
+                                  href="#"
+                                  onClick={handleClickDelete}
+                                  data-id={item.id}
+                                  data-name={`CATALOGUE#${item.id}`}
+                                >
+                                  <FontAwesomeIcon icon={faTrash} /> Xóa
+                                </CDropdownItem>
+                              </>
+                            )}
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">
