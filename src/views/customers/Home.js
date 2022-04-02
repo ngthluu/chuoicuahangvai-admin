@@ -182,70 +182,76 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {customersList.map((item, index) => (
-                  <CTableRow key={item.id}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/customers/view?id=${item.id}`}>
-                        {item.name.firstname} {item.name.lastname}
-                      </Link>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.email} </CTableDataCell>
-                    <CTableDataCell> {item.phone} </CTableDataCell>
-                    <CTableDataCell>
-                      {item.address.address}
-                      <span>, </span>
-                      {item.address.address_three_levels.ward}
-                      <span>, </span>
-                      {item.address.address_three_levels.district}
-                      <span>, </span>
-                      {item.address.address_three_levels.city}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {!item.blocked ? (
-                        <CBadge color="success">Đang hoạt động</CBadge>
-                      ) : (
-                        <CBadge color="danger">Đã bị khóa</CBadge>
-                      )}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/customers/view?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={handleClickSubmit}
-                            data-id={item.id}
-                            data-name={`${item.name.firstname} ${item.name.lastname}`}
-                          >
-                            {!item.blocked ? (
-                              <>
-                                <FontAwesomeIcon icon={faLock} /> Khóa
-                              </>
-                            ) : (
-                              <>
-                                <FontAwesomeIcon icon={faUnlock} /> Mở khóa
-                              </>
-                            )}
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={handleClickDelete}
-                            data-id={item.id}
-                            data-name={`${item.name.firstname} ${item.name.lastname}`}
-                          >
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {customersList.length > 0 ? (
+                  customersList.map((item, index) => (
+                    <CTableRow key={item.id}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/customers/view?id=${item.id}`}>
+                          {item.name.firstname} {item.name.lastname}
+                        </Link>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.email} </CTableDataCell>
+                      <CTableDataCell> {item.phone} </CTableDataCell>
+                      <CTableDataCell>
+                        {item.address.address}
+                        <span>, </span>
+                        {item.address.address_three_levels.ward}
+                        <span>, </span>
+                        {item.address.address_three_levels.district}
+                        <span>, </span>
+                        {item.address.address_three_levels.city}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {!item.blocked ? (
+                          <CBadge color="success">Đang hoạt động</CBadge>
+                        ) : (
+                          <CBadge color="danger">Đã bị khóa</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/customers/view?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickSubmit}
+                              data-id={item.id}
+                              data-name={`${item.name.firstname} ${item.name.lastname}`}
+                            >
+                              {!item.blocked ? (
+                                <>
+                                  <FontAwesomeIcon icon={faLock} /> Khóa
+                                </>
+                              ) : (
+                                <>
+                                  <FontAwesomeIcon icon={faUnlock} /> Mở khóa
+                                </>
+                              )}
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickDelete}
+                              data-id={item.id}
+                              data-name={`${item.name.firstname} ${item.name.lastname}`}
+                            >
+                              <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">

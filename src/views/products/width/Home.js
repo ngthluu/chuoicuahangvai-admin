@@ -134,32 +134,38 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {widthList.map((item, index) => (
-                  <CTableRow key={item.id}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell> {item.attributes.name} </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/product-width/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={handleClickDelete}
-                            data-id={item.id}
-                            data-name={item.attributes.name}
-                          >
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {widthList.length > 0 ? (
+                  widthList.map((item, index) => (
+                    <CTableRow key={item.id}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell> {item.attributes.name} </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/product-width/edit?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickDelete}
+                              data-id={item.id}
+                              data-name={item.attributes.name}
+                            >
+                              <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">

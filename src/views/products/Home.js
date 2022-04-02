@@ -149,58 +149,64 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {productsList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <CImage
-                        src={`${process.env.REACT_APP_STRAPI_URL}${
-                          item.attributes.images.data
-                            ? item.attributes.images.data[0].attributes.url
-                            : ''
-                        }`}
-                        width="200"
-                      ></CImage>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {item.attributes.product.data
-                        ? item.attributes.product.data.attributes.name
-                        : ''}
-                    </CTableDataCell>
-                    <CTableDataCell> {item.attributes.sku} </CTableDataCell>
-                    <CTableDataCell> {item.attributes.price} </CTableDataCell>
-                    <CTableDataCell align="left">
-                      <ProductDescription attributes={item.attributes}></ProductDescription>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem
-                            href={`/products/view?id=${item.attributes.product.data.id}`}
-                          >
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href={`/products/edit?id=${item.attributes.product.data.id}`}
-                          >
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={handleClickDelete}
-                            data-id={item.attributes.product.data.id}
-                            data-name={item.attributes.product.data.attributes.name}
-                          >
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {productsList.length > 0 ? (
+                  productsList.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <CImage
+                          src={`${process.env.REACT_APP_STRAPI_URL}${
+                            item.attributes.images.data
+                              ? item.attributes.images.data[0].attributes.url
+                              : ''
+                          }`}
+                          width="200"
+                        ></CImage>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.product.data
+                          ? item.attributes.product.data.attributes.name
+                          : ''}
+                      </CTableDataCell>
+                      <CTableDataCell> {item.attributes.sku} </CTableDataCell>
+                      <CTableDataCell> {item.attributes.price} </CTableDataCell>
+                      <CTableDataCell align="left">
+                        <ProductDescription attributes={item.attributes}></ProductDescription>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem
+                              href={`/products/view?id=${item.attributes.product.data.id}`}
+                            >
+                              <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href={`/products/edit?id=${item.attributes.product.data.id}`}
+                            >
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickDelete}
+                              data-id={item.attributes.product.data.id}
+                              data-name={item.attributes.product.data.attributes.name}
+                            >
+                              <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">

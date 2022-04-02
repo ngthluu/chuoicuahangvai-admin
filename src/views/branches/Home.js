@@ -118,53 +118,59 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {branchesList.map((item, index) => (
-                  <CTableRow key={item.id}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {item.attributes.manager.data != null && (
-                        <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>
-                          {item.attributes.manager.data.attributes.email}
-                        </Link>
-                      )}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {item.attributes.address.address}
-                      <span>, </span>
-                      {item.attributes.address.address_three_levels.data.attributes.ward}
-                      <span>, </span>
-                      {item.attributes.address.address_three_levels.data.attributes.district}
-                      <span>, </span>
-                      {item.attributes.address.address_three_levels.data.attributes.city}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/branches/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <CDropdownItem href={`/warehouses/inventory?branch=${item.id}`}>
-                            <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={handleClickDelete}
-                            data-id={item.id}
-                            data-name={item.attributes.name}
-                          >
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {branchesList.length > 0 ? (
+                  branchesList.map((item, index) => (
+                    <CTableRow key={item.id}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.manager.data != null && (
+                          <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>
+                            {item.attributes.manager.data.attributes.email}
+                          </Link>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.address.address}
+                        <span>, </span>
+                        {item.attributes.address.address_three_levels.data.attributes.ward}
+                        <span>, </span>
+                        {item.attributes.address.address_three_levels.data.attributes.district}
+                        <span>, </span>
+                        {item.attributes.address.address_three_levels.data.attributes.city}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/branches/edit?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                            <CDropdownItem href={`/warehouses/inventory?branch=${item.id}`}>
+                              <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickDelete}
+                              data-id={item.id}
+                              data-name={item.attributes.name}
+                            >
+                              <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">

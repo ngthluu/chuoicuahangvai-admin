@@ -109,35 +109,43 @@ const Home = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {usersList.map((item, index) => (
-                  <CTableRow key={item.id}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.username} </CTableDataCell>
-                    <CTableDataCell> {item.role.name} </CTableDataCell>
-                    <CTableDataCell>{item.branches.map((el) => el.name).join(', ')}</CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/users/view?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem href={`/users/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {usersList.length > 0 ? (
+                  usersList.map((item, index) => (
+                    <CTableRow key={item.id}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.username} </CTableDataCell>
+                      <CTableDataCell> {item.role.name} </CTableDataCell>
+                      <CTableDataCell>
+                        {item.branches.map((el) => el.name).join(', ')}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/users/view?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                            <CDropdownItem href={`/users/edit?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                            <CDropdownItem href="#">
+                              <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
             <nav className="float-end">
