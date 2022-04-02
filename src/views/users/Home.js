@@ -28,17 +28,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import SmartPagination from 'src/views/template/SmartPagination'
+
 const Home = () => {
   const [usersList, setUsersList] = useState([])
 
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      {
+        populate: ['role', 'branches'],
+        pagination: {
+          page: page,
+        },
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
+    setUsersList(response.data.data)
+    setTotalItems(0)
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const query = qs.stringify({ populate: ['role', 'branches'] }, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
-      setUsersList(response.data.data)
-    }
     fetchData()
-  }, [])
+  }, [page])
 
   return (
     <CRow>
@@ -125,6 +140,14 @@ const Home = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>
