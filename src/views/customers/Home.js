@@ -90,8 +90,9 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Họ và tên </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Email </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Số điện thoại </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
@@ -105,6 +106,8 @@ const Home = () => {
                         {item.name.firstname} {item.name.lastname}
                       </Link>
                     </CTableDataCell>
+                    <CTableDataCell> {item.email} </CTableDataCell>
+                    <CTableDataCell> {item.phone} </CTableDataCell>
                     <CTableDataCell>
                       {item.address.address}
                       <span>, </span>
@@ -114,7 +117,6 @@ const Home = () => {
                       <span>, </span>
                       {item.address.address_three_levels.city}
                     </CTableDataCell>
-                    <CTableDataCell> {item.phone} </CTableDataCell>
                     <CTableDataCell>
                       <StatusLabel status={item.status} />
                     </CTableDataCell>

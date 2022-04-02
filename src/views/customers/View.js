@@ -1,4 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -8,34 +12,50 @@ import {
   CCardHeader,
   CFormLabel,
   CFormInput,
-  CFormSelect,
   CCardFooter,
   CButton,
   CFormFeedback,
-  CFormCheck,
-  CImage,
 } from '@coreui/react'
 
-import PropTypes from 'prop-types'
-import ImageUpload from 'src/views/template/ImageUpload'
-
-const ShiftComponent = (props) => {
-  return (
-    <div className="mb-3">
-      <strong>{props.title}</strong>
-      <div>
-        <CFormCheck type="checkbox" inline label="Ca sáng" />
-        <CFormCheck type="checkbox" inline label="Ca chiều" />
-        <CFormCheck type="checkbox" inline label="Ca tối" />
-      </div>
-    </div>
-  )
-}
-ShiftComponent.propTypes = {
-  title: PropTypes.string,
-}
+import Address from '../template/Address'
 
 const View = () => {
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [city, setCity] = useState('')
+  const [district, setDistrict] = useState('')
+  const [ward, setWard] = useState('')
+  const [address, setAddress] = useState('')
+
+  const fetchData = async () => {
+    if (id === null) return
+    const query = qs.stringify(
+      { populate: ['name', 'address', 'address.address_three_levels'] },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/customer/${id}?${query}`,
+    )
+    const data = response.data.data
+    setFirstName(data.name.firstname)
+    setLastName(data.name.lastname)
+    setEmail(data.email)
+    setPhone(data.phone)
+    setCity(data.address.address_three_levels.city)
+    setDistrict(data.address.address_three_levels.district)
+    setWard(data.address.address_three_levels.id)
+    setAddress(data.address.address)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
     <CForm className="row g-3 needs-validation">
       <CCol md={7}>
@@ -44,61 +64,51 @@ const View = () => {
             <h5>Thông tin khách hàng</h5>
           </CCardHeader>
           <CCardBody>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <ImageUpload name="avatar"></ImageUpload>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mã số</CFormLabel>
-                <CFormInput type="text" readOnly />
+            <CRow>
+              <CCol md={6} className="mb-3">
+                <CFormLabel>Họ</CFormLabel>
+                <CFormInput
+                  type="text"
+                  placeholder="Họ"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Họ và tên</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tên khách hàng" />
+              <CCol md={6} className="mb-3">
+                <CFormLabel>Tên</CFormLabel>
+                <CFormInput
+                  type="text"
+                  placeholder="Tên"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
             <CRow>
               <CCol md={6} className="mb-3">
                 <CFormLabel>Email</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập email" />
+                <CFormInput
+                  type="text"
+                  placeholder="Nhập email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={6} className="mb-3">
                 <CFormLabel>Số điện thoại</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập số điện thoại" />
+                <CFormInput
+                  type="text"
+                  placeholder="Nhập số điện thoại"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Tỉnh / thành phố</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tỉnh / thành phố" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Quận / huyện</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập quận / huyện" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Phường / xã</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập phường / xã" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-              <CCol md={6} className="mb-3">
-                <CFormLabel>Địa chỉ</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập địa chỉ" />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
+            <Address city={city} district={district} ward={ward} address={address}></Address>
           </CCardBody>
           <CCardFooter className="d-flex">
             <CButton href="/customers" color="secondary" type="button" className="text-white ml-3">
