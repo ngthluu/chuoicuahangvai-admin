@@ -29,6 +29,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import Modal from 'src/views/template/Modal'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
@@ -56,8 +61,38 @@ const Home = () => {
     fetchData()
   }, [page])
 
+  const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
+  const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const handleClickDelete = (e) => {
+    e.preventDefault()
+    setDeleteModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeleteModalVisible(!deleteModalVisible)
+  }
+  const handleDeleteSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã xóa nhân viên thành công')
+  }
+  const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={deleteModalVisible}
+        visibleAction={setDeleteModalVisible}
+        title="Xóa nhân viên"
+        content={`Bạn có muốn xóa nhân viên ${deleteModalTargetName} không ?`}
+        id={deleteModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/users`}
+        triggerSuccess={handleDeleteSuccess}
+        triggerError={handleDeleteError}
+        action="delete"
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -134,7 +169,12 @@ const Home = () => {
                             <CDropdownItem href={`/users/edit?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
                             </CDropdownItem>
-                            <CDropdownItem href="#">
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickDelete}
+                              data-id={item.id}
+                              data-name={item.username}
+                            >
                               <FontAwesomeIcon icon={faTrash} /> Xóa
                             </CDropdownItem>
                           </CDropdownMenu>

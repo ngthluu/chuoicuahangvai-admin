@@ -115,14 +115,18 @@ const Add = () => {
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user/${id}?${query}`)
     const data = response.data.data
-    setName(data.name.id)
-    setFirstName(data.name.firstname)
-    setLastName(data.name.lastname)
+    if (data.name) {
+      setName(data.name.id)
+      setFirstName(data.name.firstname)
+      setLastName(data.name.lastname)
+    }
     setEmail(data.email)
     setPhone(data.phone)
     setRole(data.role.id)
     setSalary(data.salary_per_shift)
-    setShift(data.shift)
+    if (data.shift) {
+      setShift(data.shift)
+    }
   }
 
   useEffect(() => {
