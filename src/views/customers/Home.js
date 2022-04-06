@@ -97,7 +97,7 @@ const Home = () => {
     e.preventDefault()
     setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
     setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setSubmitModalVisible(!deleteModalVisible)
+    setSubmitModalVisible(!submitModalVisible)
   }
   const handleSubmitSuccess = () => {
     fetchData()

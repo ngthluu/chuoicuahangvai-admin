@@ -25,27 +25,104 @@ import ShiftComponent from 'src/views/users/ShiftComponent'
 import ImageUpload from 'src/views/template/ImageUpload'
 import SelectFetchData from 'src/views/template/SelectFetchData'
 
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const Add = () => {
   const query = useLocation().search
   const id = new URLSearchParams(query).get('id')
 
+  const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [role, setRole] = useState('')
   const [salary, setSalary] = useState('')
+  const [shift, setShift] = useState({
+    monday: { morning: false, afternoon: false, night: false },
+    tuesday: { morning: false, afternoon: false, night: false },
+    wednesday: { morning: false, afternoon: false, night: false },
+    thursday: { morning: false, afternoon: false, night: false },
+    friday: { morning: false, afternoon: false, night: false },
+    saturday: { morning: false, afternoon: false, night: false },
+    sunday: { morning: false, afternoon: false, night: false },
+  })
+
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+
+    const data = {
+      name: { firstname: firstName, lastname: lastName },
+      username: email,
+      email: email,
+      phone: phone,
+      role: { id: role },
+      shift: shift,
+      salary_per_shift: salary,
+    }
+    if (name !== '') data.name.id = name
+
+    if (id === null) {
+      // Add
+      axios
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/user`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    } else {
+      axios
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/user/${id}`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMesaage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+        })
+    }
+  }
 
   const fetchData = async () => {
     if (id === null) return
-    const query = qs.stringify({ populate: ['name', 'shift'] }, { encodeValuesOnly: true })
+    const query = qs.stringify(
+      {
+        populate: [
+          'name',
+          'role',
+          'shift',
+          'shift.monday',
+          'shift.tuesday',
+          'shift.wednesday',
+          'shift.thursday',
+          'shift.friday',
+          'shift.saturday',
+          'shift.sunday',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user/${id}?${query}`)
     const data = response.data.data
+    setName(data.name.id)
     setFirstName(data.name.firstname)
     setLastName(data.name.lastname)
     setEmail(data.email)
     setPhone(data.phone)
+    setRole(data.role.id)
     setSalary(data.salary_per_shift)
+    setShift(data.shift)
   }
 
   useEffect(() => {
@@ -53,18 +130,19 @@ const Add = () => {
   }, [])
 
   return (
-    <CForm className="row g-3 needs-validation">
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
       <CCol md={7}>
         <CCard className="mb-4">
           <CCardHeader>
             <h5>Thông tin nhân viên</h5>
           </CCardHeader>
           <CCardBody>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <ImageUpload name="avatar1"></ImageUpload>
-              </CCol>
-            </CRow>
             <CRow>
               <CCol md={6} className="mb-3">
                 <CFormLabel>Họ</CFormLabel>
@@ -73,6 +151,7 @@ const Add = () => {
                   placeholder="Họ"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
+                  required
                 />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
@@ -83,6 +162,7 @@ const Add = () => {
                   placeholder="Tên"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
+                  required
                 />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
@@ -95,6 +175,7 @@ const Add = () => {
                   placeholder="Nhập email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
@@ -105,6 +186,7 @@ const Add = () => {
                   placeholder="Nhập số điện thoại"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  required
                 />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
@@ -133,6 +215,7 @@ const Add = () => {
                   placeholder="Nhập mức lương"
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
+                  required
                 />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
@@ -155,13 +238,7 @@ const Add = () => {
             <h5>Ca trực</h5>
           </CCardHeader>
           <CCardBody>
-            <ShiftComponent title="Thứ hai" />
-            <ShiftComponent title="Thứ ba" />
-            <ShiftComponent title="Thứ tư" />
-            <ShiftComponent title="Thứ năm" />
-            <ShiftComponent title="Thứ sáu" />
-            <ShiftComponent title="Thứ bảy" />
-            <ShiftComponent title="Chủ nhật" />
+            <ShiftComponent data={shift} setData={setShift} />
           </CCardBody>
         </CCard>
       </CCol>

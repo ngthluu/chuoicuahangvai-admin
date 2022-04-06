@@ -22,6 +22,7 @@ import {
   CFormLabel,
   CFormInput,
   CFormSelect,
+  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
