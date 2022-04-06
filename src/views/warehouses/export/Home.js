@@ -153,6 +153,11 @@ const Home = () => {
                         url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
                         value={branch}
                         setValue={setBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
                       ></SelectFetchData>
                     </div>
                     <div className="p-1">

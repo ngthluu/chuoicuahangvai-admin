@@ -136,6 +136,11 @@ const Add = () => {
                   url={`${process.env.REACT_APP_STRAPI_URL}/api/user?filters[role][name]=Branch%20Manager`}
                   value={manager}
                   setValue={setManager}
+                  processFetchDataResponse={(response) => {
+                    return response.data.data.map((item) => {
+                      return { id: item.id, name: item.email }
+                    })
+                  }}
                 ></SelectFetchData>
               </CCol>
             </CRow>

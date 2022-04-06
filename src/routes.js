@@ -210,6 +210,12 @@ const routes = [
   { path: '/orders', exact: true, name: 'Đơn hàng' },
   { path: '/orders/sell', exact: true, name: 'Đơn hàng bán', component: OrderSell },
   {
+    path: '/orders/sell/add',
+    exact: true,
+    name: 'Thêm đơn hàng (bán)',
+    component: OrderSellAdd,
+  },
+  {
     path: '/orders/sell/edit',
     exact: true,
     name: 'Chỉnh sửa đơn hàng (bán)',

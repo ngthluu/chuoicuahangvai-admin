@@ -163,6 +163,11 @@ const Add = () => {
                   url={`${process.env.REACT_APP_STRAPI_URL}/api/product-categories`}
                   value={category}
                   setValue={setCategory}
+                  processFetchDataResponse={(response) => {
+                    return response.data.data.map((item) => {
+                      return { id: item.id, name: item.attributes.name }
+                    })
+                  }}
                 ></SelectFetchData>
               </CCol>
             </CRow>

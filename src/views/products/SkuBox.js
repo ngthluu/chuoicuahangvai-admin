@@ -173,6 +173,11 @@ const SkuBox = (props) => {
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-patterns`}
                 value={props.pattern}
                 setValue={handleChangePattern}
+                processFetchDataResponse={(response) => {
+                  return response.data.data.map((item) => {
+                    return { id: item.id, name: item.attributes.name }
+                  })
+                }}
               ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
@@ -182,6 +187,11 @@ const SkuBox = (props) => {
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-widths`}
                 value={props.width}
                 setValue={handleChangeWidth}
+                processFetchDataResponse={(response) => {
+                  return response.data.data.map((item) => {
+                    return { id: item.id, name: item.attributes.name }
+                  })
+                }}
               ></SelectFetchData>
             </CCol>
           </CRow>
@@ -193,6 +203,11 @@ const SkuBox = (props) => {
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
                 value={props.stretch}
                 setValue={handleChangeStretch}
+                processFetchDataResponse={(response) => {
+                  return response.data.data.map((item) => {
+                    return { id: item.id, name: item.attributes.name }
+                  })
+                }}
               ></SelectFetchData>
             </CCol>
             <CCol md={6} className="mb-3">
@@ -202,6 +217,11 @@ const SkuBox = (props) => {
                 url={`${process.env.REACT_APP_STRAPI_URL}/api/product-origins`}
                 value={props.origin}
                 setValue={handleChangeOrigin}
+                processFetchDataResponse={(response) => {
+                  return response.data.data.map((item) => {
+                    return { id: item.id, name: item.attributes.name }
+                  })
+                }}
               ></SelectFetchData>
             </CCol>
           </CRow>

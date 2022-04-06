@@ -9,7 +9,8 @@ const SelectFetchData = (props) => {
 
   const fetchData = async () => {
     const response = await axios.get(props.url)
-    setData(response.data.data ? response.data.data : response.data)
+    const data = props.processFetchDataResponse(response)
+    setData(data)
   }
 
   const handleChange = (e) => {
@@ -30,7 +31,7 @@ const SelectFetchData = (props) => {
         <option value="">Không có</option>
         {data.map((item) => (
           <option key={item.id} value={item.id}>
-            {item.attributes ? item.attributes.name : item.username}
+            {item.name}
           </option>
         ))}
       </CFormSelect>
@@ -44,6 +45,7 @@ SelectFetchData.propTypes = {
   value: PropTypes.string,
   url: PropTypes.string,
   setValue: PropTypes.func,
+  processFetchDataResponse: PropTypes.func,
 }
 
 export default SelectFetchData
