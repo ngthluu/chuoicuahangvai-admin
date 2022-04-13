@@ -194,19 +194,25 @@ const Home = () => {
                       <CTableDataCell> {item.email} </CTableDataCell>
                       <CTableDataCell> {item.phone} </CTableDataCell>
                       <CTableDataCell>
-                        {item.address.address}
-                        <span>, </span>
-                        {item.address.address_three_levels.ward}
-                        <span>, </span>
-                        {item.address.address_three_levels.district}
-                        <span>, </span>
-                        {item.address.address_three_levels.city}
+                        {!item.address ? (
+                          ''
+                        ) : (
+                          <>
+                            {item.address.address}
+                            <span>, </span>
+                            {item.address.address_three_levels.ward}
+                            <span>, </span>
+                            {item.address.address_three_levels.district}
+                            <span>, </span>
+                            {item.address.address_three_levels.city}
+                          </>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         {!item.blocked ? (
-                          <CBadge color="success">Đang hoạt động</CBadge>
+                          <CBadge color="success">Đã đăng ký</CBadge>
                         ) : (
-                          <CBadge color="danger">Đã bị khóa</CBadge>
+                          <CBadge color="warning">Vãng lai</CBadge>
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
@@ -226,11 +232,11 @@ const Home = () => {
                             >
                               {!item.blocked ? (
                                 <>
-                                  <FontAwesomeIcon icon={faLock} /> Khóa
+                                  <FontAwesomeIcon icon={faLock} /> Chuyển sang khách vãng lai
                                 </>
                               ) : (
                                 <>
-                                  <FontAwesomeIcon icon={faUnlock} /> Mở khóa
+                                  <FontAwesomeIcon icon={faUnlock} /> Chuyển sang khách đăng ký
                                 </>
                               )}
                             </CDropdownItem>
