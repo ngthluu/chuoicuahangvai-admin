@@ -263,8 +263,8 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài trong kho </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài mới </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài trong kho (cm) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài mới (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>

@@ -31,6 +31,7 @@ import {
   faPhone,
   faAddressBook,
   faSearch,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -154,11 +155,19 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
-                </CButton>
-              </Link>
+              <div className="d-block d-md-flex justify-content-between">
+                <Link to="#">
+                  <CButton color="info" className="text-white w-100 mb-2">
+                    <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                  </CButton>
+                </Link>
+                <div className="p-1"></div>
+                <Link to="/orders/sell/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
+                  </CButton>
+                </Link>
+              </div>
             </div>
           </CCardBody>
         </CCard>

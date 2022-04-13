@@ -267,8 +267,8 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài trong kho </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài xuất </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài trong kho (cm) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài xuất (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
@@ -308,7 +308,7 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce((sum, item) => sum + parseInt(item.length), 0)
