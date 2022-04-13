@@ -46,10 +46,10 @@ const View = () => {
     setLastName(data.name.lastname)
     setEmail(data.email)
     setPhone(data.phone)
-    setCity(data.address.address_three_levels.city)
-    setDistrict(data.address.address_three_levels.district)
-    setWard(data.address.address_three_levels.id)
-    setAddress(data.address.address)
+    setCity(data.address ? data.address.address_three_levels.city : '')
+    setDistrict(data.address ? data.address.address_three_levels.district : '')
+    setWard(data.address ? data.address.address_three_levels.id : '')
+    setAddress(data.address ? data.address.address : '')
   }
 
   useEffect(() => {
