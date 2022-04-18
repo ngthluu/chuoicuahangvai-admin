@@ -158,7 +158,7 @@ const Home = () => {
                         </Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice ? (
+                        {item.attributes.order_invoice.data ? (
                           <Link
                             to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
                           >

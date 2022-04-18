@@ -158,7 +158,7 @@ const Home = () => {
                         <Link to={`/orders/refund/view?id=${item.id}`}>{`REFUND#${item.id}`}</Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.refund_invoice ? (
+                        {item.attributes.refund_invoice.data ? (
                           <Link
                             to={`/orders/refund/view_invoice?id=${item.attributes.refund_invoice.data.id}`}
                           >
