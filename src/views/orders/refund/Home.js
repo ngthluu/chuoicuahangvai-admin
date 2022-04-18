@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -35,92 +38,38 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
+import Modal from 'src/views/template/Modal'
 
-const ordersList = [
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 1,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 1,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 1,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 1,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#ORDER2901001',
-    customer_name: 'Nguyễn Văn A',
-    customer_phone: '01234567890',
-    customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TPHCM',
-    order_date: '25/09/2021',
-    total_cost: '1.000.000đ',
-    status: 0,
-  },
-]
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Đã hủy</CBadge>
-  }
-  return <CBadge color="success">Hoàn tất</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
+import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
+  const [ordersList, setOrdersList] = useState([])
+
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      {
+        populate: ['customer', 'branch', 'refund_statuses', 'refund_invoice'],
+        pagination: {
+          page: page,
+        },
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/refunds?${query}`)
+    setOrdersList(response.data.data)
+    setTotalItems(response.data.meta.pagination.total)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [page])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -136,12 +85,12 @@ const Home = () => {
                       <CFormInput type="text" placeholder="Mã đơn hàng..." />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày trả (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày trả (từ)" />
+                      <CFormLabel>Ngày tạo (từ)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày tạo (từ)" />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày trả (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày trả (đến)" />
+                      <CFormLabel>Ngày tạo (đến)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày tạo (đến)" />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
@@ -180,55 +129,79 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Hóa đơn </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Chi nhánh </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Khách hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Ngày trả </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tổng giá trị </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Ngày tạo </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cập nhật cuối </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {ordersList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/orders/refund/view?id=${index}`}>{item.code}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>
-                        <FontAwesomeIcon icon={faUser} /> <Link to="#">{item.customer_name}</Link>
-                      </div>
-                      <div>
-                        <FontAwesomeIcon icon={faPhone} /> {item.customer_phone}
-                      </div>
-                      <div>
-                        <FontAwesomeIcon icon={faAddressBook} /> {item.customer_address}
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.order_date} </CTableDataCell>
-                    <CTableDataCell> {item.total_cost} </CTableDataCell>
-                    <CTableDataCell>
-                      <Status status={item.status} />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href={`/orders/refund/view?id=${index}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem href={`/orders/refund/edit?id=${index}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {ordersList.length > 0 ? (
+                  ordersList.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/orders/refund/view?id=${item.id}`}>{`REFUND#${item.id}`}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.order_invoice ? (
+                          <Link
+                            to={`/orders/refund/view_invoice?id=${item.attributes.order_invoice.data.id}`}
+                          >
+                            {`INVOICE#${item.attributes.order_invoice.data.id}`}
+                          </Link>
+                        ) : (
+                          <></>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>{item.attributes.branch.data.attributes.name}</CTableDataCell>
+                      <CTableDataCell>
+                        <div>
+                          <FontAwesomeIcon icon={faUser} />{' '}
+                          <Link to={`/customers/view?id=${item.attributes.customer.data.id}`}>
+                            {item.attributes.customer.data.attributes.username}
+                          </Link>
+                        </div>
+                        <div>
+                          <FontAwesomeIcon icon={faPhone} />{' '}
+                          {item.attributes.customer.data.attributes.phone}
+                        </div>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.attributes.createdAt} </CTableDataCell>
+                      <CTableDataCell> </CTableDataCell>
+                      <CTableDataCell> </CTableDataCell>
+                      <CTableDataCell>
+                        <CDropdown>
+                          <CDropdownToggle color="info" variant="outline">
+                            Hành động
+                          </CDropdownToggle>
+                          <CDropdownMenu>
+                            <CDropdownItem href={`/orders/refund/view?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>

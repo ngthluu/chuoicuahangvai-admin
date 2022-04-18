@@ -28,31 +28,36 @@ import {
 import { Link } from 'react-router-dom'
 import ProductDescription from 'src/views/products/ProductDescription'
 
-const View = () => {
+const ViewInvoice = () => {
   const query = useLocation().search
   const id = new URLSearchParams(query).get('id')
 
+  const [invoiceCode, setInvoiceCode] = useState('')
+  const [orderId, setOrderId] = useState('')
   const [orderCode, setOrderCode] = useState('')
   const [createdTime, setCreatedTime] = useState('')
-  const [branchName, setBranchName] = useState('')
 
-  const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [ward, setWard] = useState('')
+  const [district, setDistrict] = useState('')
+  const [city, setCity] = useState('')
 
   const [products, setProducts] = useState([])
-  const [note, setNote] = useState('')
-  const [statuses, setStatuses] = useState([])
+
+  const [invoiceTotal, setInvoiceTotal] = useState('')
 
   const fetchData = async () => {
     if (id === null) return
     const query = qs.stringify(
       {
         populate: [
-          'customer',
-          'customer.name',
-          'branch',
+          'order',
+          'customer_name',
+          'receive_address',
+          'receive_address.address_three_levels',
           'products',
           'products.inventory_item',
           'products.inventory_item.sku_quantity',
@@ -63,23 +68,33 @@ const View = () => {
           'products.inventory_item.sku_quantity.sku.width',
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
-          'order_statuses',
         ],
       },
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/orders/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/order-invoices/${id}?${query}`)
     const data = response.data.data
 
-    setOrderCode(`${data.attributes.type.toUpperCase()}#${data.id}`)
+    setInvoiceCode(`INVOICE#${data.id}`)
+    setInvoiceTotal(data.attributes.price)
+    setOrderId(data.attributes.order.data.id)
+    setOrderCode(
+      `${data.attributes.order.data.attributes.type.toUpperCase()}#${
+        data.attributes.order.data.id
+      }`,
+    )
     setCreatedTime(data.attributes.createdAt)
-    setBranchName(data.attributes.branch.data.attributes.name)
 
-    setEmail(data.attributes.customer.data.attributes.email)
-    setPhone(data.attributes.customer.data.attributes.phone)
-    setFirstName(data.attributes.customer.data.attributes.name.firstname)
-    setLastName(data.attributes.customer.data.attributes.name.lastname)
+    setFirstName(data.attributes.customer_name.firstname)
+    setLastName(data.attributes.customer_name.lastname)
+    setPhone(data.attributes.customer_phone)
+    if (data.attributes.receive_address) {
+      setAddress(data.attributes.receive_address.address)
+      setWard(data.attributes.receive_address.address_three_levels.data.attributes.ward)
+      setDistrict(data.attributes.receive_address.address_three_levels.data.attributes.district)
+      setCity(data.attributes.receive_address.address_three_levels.data.attributes.city)
+    }
 
     setProducts(
       data.attributes.products.map((item) => {
@@ -100,8 +115,6 @@ const View = () => {
         return productItem
       }),
     )
-    setNote(data.attributes.note)
-    setStatuses(data.attributes.order_statuses.data)
   }
 
   useEffect(() => {
@@ -118,14 +131,14 @@ const View = () => {
           <CCardBody>
             <CRow>
               <CCol md={5} className="mb-3">
-                <h6 className="mb-3">Thông tin đơn hàng</h6>
+                <h6 className="mb-3">Thông tin hóa đơn</h6>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Mã đơn hàng: </div>
-                  <div>{orderCode}</div>
+                  <div>Mã hóa đơn: </div>
+                  <div>{invoiceCode}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Mua tại chi nhánh: </div>
-                  <div>{branchName}</div>
+                  <div>Mã đơn hàng: </div>
+                  <Link to={`/orders/refund/view?id=${orderId}`}>{orderCode}</Link>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <div>Thời gian khởi tạo: </div>
@@ -136,10 +149,6 @@ const View = () => {
               <CCol md={5} className="mb-3">
                 <h6 className="mb-3">Thông tin người mua</h6>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Email người mua: </div>
-                  <div>{email}</div>
-                </div>
-                <div className="d-flex justify-content-between mb-3">
                   <div>Họ và tên: </div>
                   <div>{`${firstName} ${lastName}`}</div>
                 </div>
@@ -147,10 +156,14 @@ const View = () => {
                   <div>Số điện thoại: </div>
                   <div>{phone}</div>
                 </div>
-                <div className="d-flex justify-content-between mb-3">
-                  <div>Địa chỉ nhận hàng: </div>
-                  <div>ABC</div>
-                </div>
+                {ward !== '' ? (
+                  <div className="d-flex justify-content-between mb-3">
+                    <div>Địa chỉ nhận hàng: </div>
+                    <div>{`${address}, ${ward}, ${district}, ${city}`}</div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </CCol>
             </CRow>
             <CRow className="mb-3">
@@ -199,55 +212,12 @@ const View = () => {
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
-                  </CTableFoot>
-                </CTable>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Ghi chú</CFormLabel>
-                <CFormTextarea
-                  placeholder="Nhập ghi chú"
-                  rows="5"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                ></CFormTextarea>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Lịch sử cập nhật</CFormLabel>
-                <CTable align="middle" bordered>
-                  <CTableHead align="middle" color="info">
                     <CTableRow>
-                      <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="6"> Tổng giá trị hóa đơn</CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">{invoiceTotal}</CTableHeaderCell>
                     </CTableRow>
-                  </CTableHead>
-                  <CTableBody align="middle">
-                    {statuses.map((item, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell> {index + 1} </CTableDataCell>
-                        <CTableDataCell>
-                          {item.attributes.status === 'initialize' ? (
-                            <CBadge color="warning">{item.attributes.status.toUpperCase()}</CBadge>
-                          ) : item.attributes.status === 'confirmed' ||
-                            item.attributes.status === 'packaged' ||
-                            item.attributes.status === 'delivery' ? (
-                            <CBadge color="primary">{item.attributes.status.toUpperCase()}</CBadge>
-                          ) : item.attributes.status === 'return' ||
-                            item.attributes.status === 'canceled' ? (
-                            <CBadge color="danger">{item.attributes.status.toUpperCase()}</CBadge>
-                          ) : (
-                            <CBadge color="success">{item.attributes.status.toUpperCase()}</CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
-                      </CTableRow>
-                    ))}
-                  </CTableBody>
+                  </CTableFoot>
                 </CTable>
               </CCol>
             </CRow>
@@ -268,4 +238,4 @@ const View = () => {
   )
 }
 
-export default View
+export default ViewInvoice
