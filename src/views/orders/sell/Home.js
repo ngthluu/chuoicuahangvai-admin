@@ -158,11 +158,15 @@ const Home = () => {
                         </Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        <Link
-                          to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
-                        >
-                          {`INVOICE#${item.attributes.order_invoice.data.id}`}
-                        </Link>
+                        {item.attributes.order_invoice ? (
+                          <Link
+                            to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
+                          >
+                            {`INVOICE#${item.attributes.order_invoice.data.id}`}
+                          </Link>
+                        ) : (
+                          <></>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>{item.attributes.branch.data.attributes.name}</CTableDataCell>
                       <CTableDataCell>
@@ -209,7 +213,7 @@ const Home = () => {
                             Hành động
                           </CDropdownToggle>
                           <CDropdownMenu>
-                            <CDropdownItem href={`/orders/sell/view?id=${index}`}>
+                            <CDropdownItem href={`/orders/sell/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
                           </CDropdownMenu>
