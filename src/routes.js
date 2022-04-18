@@ -37,6 +37,8 @@ const ProductView = React.lazy(() => import('./views/products/View'))
 const OrderSell = React.lazy(() => import('./views/orders/sell/Home'))
 const OrderSellAdd = React.lazy(() => import('./views/orders/sell/Add'))
 const OrderSellView = React.lazy(() => import('./views/orders/sell/View'))
+const OrderSellViewInvoice = React.lazy(() => import('./views/orders/sell/ViewInvoice'))
+
 const OrderRefund = React.lazy(() => import('./views/orders/refund/Home'))
 const OrderRefundAdd = React.lazy(() => import('./views/orders/refund/Add'))
 const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
@@ -226,6 +228,12 @@ const routes = [
     exact: true,
     name: 'Xem đơn hàng (bán)',
     component: OrderSellView,
+  },
+  {
+    path: '/orders/sell/view_invoice',
+    exact: true,
+    name: 'Xem hóa đơn (bán)',
+    component: OrderSellViewInvoice,
   },
   { path: '/orders/refund', exact: true, name: 'Đơn hàng trả', component: OrderRefund },
   {
