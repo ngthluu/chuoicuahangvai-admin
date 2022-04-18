@@ -62,7 +62,18 @@ const Home = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/refunds?${query}`)
-    setOrdersList(response.data.data)
+    setOrdersList(
+      response.data.data.map((item) => {
+        item.attributes.status = {
+          data: item.attributes.refund_statuses.data.sort((a, b) => {
+            return Date.parse(a.attributes.update_time) < Date.parse(b.attributes.update_time)
+              ? 1
+              : -1
+          })[0],
+        }
+        return item
+      }),
+    )
     setTotalItems(response.data.meta.pagination.total)
   }
 
@@ -147,11 +158,11 @@ const Home = () => {
                         <Link to={`/orders/refund/view?id=${item.id}`}>{`REFUND#${item.id}`}</Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice ? (
+                        {item.attributes.refund_invoice ? (
                           <Link
-                            to={`/orders/refund/view_invoice?id=${item.attributes.order_invoice.data.id}`}
+                            to={`/orders/refund/view_invoice?id=${item.attributes.refund_invoice.data.id}`}
                           >
-                            {`R-INVOICE#${item.attributes.order_invoice.data.id}`}
+                            {`R-INVOICE#${item.attributes.refund_invoice.data.id}`}
                           </Link>
                         ) : (
                           <></>
@@ -171,8 +182,16 @@ const Home = () => {
                         </div>
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.createdAt} </CTableDataCell>
-                      <CTableDataCell> </CTableDataCell>
-                      <CTableDataCell> </CTableDataCell>
+                      <CTableDataCell>
+                        {!item.attributes.status.data.attributes.update_status ? (
+                          <CBadge color="warning">Chưa xác nhận</CBadge>
+                        ) : (
+                          <CBadge color="success">Đã xác nhận và nhập kho</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.status.data.attributes.update_time}
+                      </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>
                           <CDropdownToggle color="info" variant="outline">

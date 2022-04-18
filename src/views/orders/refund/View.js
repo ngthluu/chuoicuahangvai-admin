@@ -54,25 +54,24 @@ const View = () => {
           'customer.name',
           'branch',
           'products',
-          'products.inventory_item',
-          'products.inventory_item.sku_quantity',
-          'products.inventory_item.sku_quantity.sku',
-          'products.inventory_item.sku_quantity.sku.product',
-          'products.inventory_item.sku_quantity.sku.pattern',
-          'products.inventory_item.sku_quantity.sku.stretch',
-          'products.inventory_item.sku_quantity.sku.width',
-          'products.inventory_item.sku_quantity.sku.origin',
-          'products.inventory_item.sku_quantity.sku.images',
-          'order_statuses',
+          'products.sku',
+          'products.sku.product',
+          'products.sku.pattern',
+          'products.sku.stretch',
+          'products.sku.width',
+          'products.sku.origin',
+          'products.sku.images',
+          'refund_statuses',
+          'refund_statuses.update_user',
         ],
       },
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`
-      ${process.env.REACT_APP_STRAPI_URL}/api/orders/${id}?${query}`)
+      ${process.env.REACT_APP_STRAPI_URL}/api/refunds/${id}?${query}`)
     const data = response.data.data
 
-    setOrderCode(`${data.attributes.type.toUpperCase()}#${data.id}`)
+    setOrderCode(`REFUND#${data.id}`)
     setCreatedTime(data.attributes.createdAt)
     setBranchName(data.attributes.branch.data.attributes.name)
 
@@ -83,25 +82,24 @@ const View = () => {
 
     setProducts(
       data.attributes.products.map((item) => {
-        const inventoryItem = item.inventory_item.data
-        const skuItem = inventoryItem.attributes.sku_quantity.sku.data
+        const skuItem = item.sku.data
         const productSku = skuItem.attributes.sku
         const productName = skuItem.attributes.product.data.attributes.name
         const productAttributes = skuItem.attributes
-        const productItem = {
+        return {
           componentId: item.id,
-          id: inventoryItem.id,
+          id: skuItem.id,
           sku: productSku,
           name: productName,
           attributes: productAttributes,
-          length: item.length,
+          quantity: item.quantity,
           price: skuItem.attributes.price,
+          length: item.length,
         }
-        return productItem
       }),
     )
     setNote(data.attributes.note)
-    setStatuses(data.attributes.order_statuses.data)
+    setStatuses(data.attributes.refund_statuses.data)
   }
 
   useEffect(() => {
@@ -120,11 +118,11 @@ const View = () => {
               <CCol md={5} className="mb-3">
                 <h6 className="mb-3">Thông tin đơn hàng</h6>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Mã đơn hàng: </div>
+                  <div>Mã đơn trả: </div>
                   <div>{orderCode}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Mua tại chi nhánh: </div>
+                  <div>Trả tại chi nhánh: </div>
                   <div>{branchName}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
@@ -134,9 +132,9 @@ const View = () => {
               </CCol>
               <CCol md={2}></CCol>
               <CCol md={5} className="mb-3">
-                <h6 className="mb-3">Thông tin người mua</h6>
+                <h6 className="mb-3">Thông tin người trả</h6>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Email người mua: </div>
+                  <div>Email người trả: </div>
                   <div>{email}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
@@ -147,10 +145,6 @@ const View = () => {
                   <div>Số điện thoại: </div>
                   <div>{phone}</div>
                 </div>
-                <div className="d-flex justify-content-between mb-3">
-                  <div>Địa chỉ nhận hàng: </div>
-                  <div>ABC</div>
-                </div>
               </CCol>
             </CRow>
             <CRow className="mb-3">
@@ -159,7 +153,6 @@ const View = () => {
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
@@ -172,7 +165,6 @@ const View = () => {
                     {products.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
-                        <CTableDataCell> #{item.id} </CTableDataCell>
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
@@ -189,7 +181,6 @@ const View = () => {
                   <CTableFoot align="middle">
                     <CTableRow>
                       <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce(
@@ -223,6 +214,7 @@ const View = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Người cập nhật </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -231,20 +223,16 @@ const View = () => {
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
                         <CTableDataCell>
-                          {item.attributes.status === 'initialize' ? (
-                            <CBadge color="warning">{item.attributes.status.toUpperCase()}</CBadge>
-                          ) : item.attributes.status === 'confirmed' ||
-                            item.attributes.status === 'packaged' ||
-                            item.attributes.status === 'delivery' ? (
-                            <CBadge color="primary">{item.attributes.status.toUpperCase()}</CBadge>
-                          ) : item.attributes.status === 'return' ||
-                            item.attributes.status === 'canceled' ? (
-                            <CBadge color="danger">{item.attributes.status.toUpperCase()}</CBadge>
+                          {!item.attributes.update_status ? (
+                            <CBadge color="warning">Chưa xác nhận</CBadge>
                           ) : (
-                            <CBadge color="success">{item.attributes.status.toUpperCase()}</CBadge>
+                            <CBadge color="success">Đã xác nhận và nhập kho</CBadge>
                           )}
                         </CTableDataCell>
-                        <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
+                        <CTableDataCell>
+                          {item.attributes.update_user.data.attributes.email}
+                        </CTableDataCell>
+                        <CTableDataCell>{item.attributes.update_time}</CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
