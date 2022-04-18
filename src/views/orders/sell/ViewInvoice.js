@@ -76,7 +76,7 @@ const ViewInvoice = () => {
       ${process.env.REACT_APP_STRAPI_URL}/api/order-invoices/${id}?${query}`)
     const data = response.data.data
 
-    setInvoiceCode(`INVOICE#${data.id}`)
+    setInvoiceCode(`S-INVOICE#${data.id}`)
     setInvoiceTotal(data.attributes.price)
     setOrderId(data.attributes.order.data.id)
     setOrderCode(

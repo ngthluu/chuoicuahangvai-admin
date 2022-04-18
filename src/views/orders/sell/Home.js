@@ -162,7 +162,7 @@ const Home = () => {
                           <Link
                             to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
                           >
-                            {`INVOICE#${item.attributes.order_invoice.data.id}`}
+                            {`S-INVOICE#${item.attributes.order_invoice.data.id}`}
                           </Link>
                         ) : (
                           <></>
