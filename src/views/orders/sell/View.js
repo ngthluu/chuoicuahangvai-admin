@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -7,8 +11,7 @@ import {
   CForm,
   CCardHeader,
   CFormLabel,
-  CFormInput,
-  CFormSelect,
+  CBadge,
   CCardFooter,
   CButton,
   CFormFeedback,
@@ -22,75 +25,88 @@ import {
   CTableFoot,
 } from '@coreui/react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import ProductDescription from 'src/views/products/ProductDescription'
 
-const OrderDetailsItem = (props) => {
-  return (
-    <div className="d-flex justify-content-between mb-3">
-      <div>{props.title}</div>
-      <div>{props.value}</div>
-    </div>
-  )
-}
-OrderDetailsItem.propTypes = {
-  title: PropTypes.string,
-  value: PropTypes.node,
-}
+const View = () => {
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
 
-const ordersDetails = {
-  order_code: '#ORDER210921001',
-  order_status: 'Thành công',
-  init_time: '22:08:15 21/09/2021',
-  customer_code: '#KH001',
-  customer_name: 'Nguyễn Văn A',
-  customer_phone: '0383477379',
-  customer_address: '268 Lý Thường Kiệt, P.14, Q.10, TP.HCM',
-}
+  const [orderCode, setOrderCode] = useState('')
+  const [createdTime, setCreatedTime] = useState('')
+  const [branchName, setBranchName] = useState('')
 
-const Add = () => {
-  const [productsList, setProductsList] = useState([
-    {
-      name: 'Vải lanh',
-      color: 'Xanh',
-      material: 'Cotton',
-      origin: 'Trung Quốc',
-      width: '2m',
-      price: 12000,
-      length: 12,
-      total_price: 12000 * 12,
-    },
-    {
-      name: 'Vải lanh',
-      color: 'Xanh',
-      material: 'Cotton',
-      origin: 'Trung Quốc',
-      width: '2m',
-      price: 12000,
-      length: 12,
-      total_price: 12000 * 12,
-    },
-    {
-      name: 'Vải lanh',
-      color: 'Xanh',
-      material: 'Cotton',
-      origin: 'Trung Quốc',
-      width: '2m',
-      price: 12000,
-      length: 12,
-      total_price: 12000 * 12,
-    },
-  ])
+  const [email, setEmail] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
 
-  const calculateTotalPrice = () => {
-    let totalPrice = 0
-    productsList.forEach((item) => {
-      totalPrice += item.total_price
-    })
-    return totalPrice
+  const [products, setProducts] = useState([])
+  const [note, setNote] = useState('')
+  const [statuses, setStatuses] = useState([])
+
+  const fetchData = async () => {
+    if (id === null) return
+    const query = qs.stringify(
+      {
+        populate: [
+          'customer',
+          'customer.name',
+          'branch',
+          'products',
+          'products.inventory_item',
+          'products.inventory_item.sku_quantity',
+          'products.inventory_item.sku_quantity.sku',
+          'products.inventory_item.sku_quantity.sku.product',
+          'products.inventory_item.sku_quantity.sku.pattern',
+          'products.inventory_item.sku_quantity.sku.stretch',
+          'products.inventory_item.sku_quantity.sku.width',
+          'products.inventory_item.sku_quantity.sku.origin',
+          'products.inventory_item.sku_quantity.sku.images',
+          'order_statuses',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`
+      ${process.env.REACT_APP_STRAPI_URL}/api/orders/${id}?${query}`)
+    const data = response.data.data
+
+    setOrderCode(`${data.attributes.type.toUpperCase()}#${data.id}`)
+    setCreatedTime(data.attributes.createdAt)
+    setBranchName(data.attributes.branch.data.attributes.name)
+
+    setEmail(data.attributes.customer.data.attributes.email)
+    setPhone(data.attributes.customer.data.attributes.phone)
+    setFirstName(data.attributes.customer.data.attributes.name.firstname)
+    setLastName(data.attributes.customer.data.attributes.name.lastname)
+
+    setProducts(
+      data.attributes.products.map((item) => {
+        const inventoryItem = item.inventory_item.data
+        const skuItem = inventoryItem.attributes.sku_quantity.sku.data
+        const productSku = skuItem.attributes.sku
+        const productName = skuItem.attributes.product.data.attributes.name
+        const productAttributes = skuItem.attributes
+        const productItem = {
+          componentId: item.id,
+          id: inventoryItem.id,
+          sku: productSku,
+          name: productName,
+          attributes: productAttributes,
+          length: item.length,
+          price: skuItem.attributes.price,
+        }
+        return productItem
+      }),
+    )
+    setNote(data.attributes.note)
+    setStatuses(data.attributes.order_statuses.data)
   }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <CForm className="row g-3 needs-validation">
@@ -103,38 +119,38 @@ const Add = () => {
             <CRow>
               <CCol md={5} className="mb-3">
                 <h6 className="mb-3">Thông tin đơn hàng</h6>
-                <OrderDetailsItem
-                  title="Mã đơn hàng: "
-                  value={<strong>{ordersDetails.order_code}</strong>}
-                />
-                <OrderDetailsItem
-                  title="Thời gian khởi tạo: "
-                  value={<strong>{ordersDetails.init_time}</strong>}
-                />
-                <OrderDetailsItem
-                  title="Trạng thái đơn hàng: "
-                  value={<strong>{ordersDetails.order_status}</strong>}
-                />
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Mã đơn hàng: </div>
+                  <div>{orderCode}</div>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Mua tại chi nhánh: </div>
+                  <div>{branchName}</div>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Thời gian khởi tạo: </div>
+                  <div>{createdTime}</div>
+                </div>
               </CCol>
               <CCol md={2}></CCol>
               <CCol md={5} className="mb-3">
                 <h6 className="mb-3">Thông tin người mua</h6>
-                <OrderDetailsItem
-                  title="Mã người mua: "
-                  value={<Link to="#">{ordersDetails.customer_code}</Link>}
-                />
-                <OrderDetailsItem
-                  title="Tên người mua: "
-                  value={<strong>{ordersDetails.customer_name}</strong>}
-                />
-                <OrderDetailsItem
-                  title="Số điện thoại: "
-                  value={<strong>{ordersDetails.customer_phone}</strong>}
-                />
-                <OrderDetailsItem
-                  title="Địa chỉ: "
-                  value={<strong>{ordersDetails.customer_address}</strong>}
-                />
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Email người mua: </div>
+                  <div>{email}</div>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Họ và tên: </div>
+                  <div>{`${firstName} ${lastName}`}</div>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Số điện thoại: </div>
+                  <div>{phone}</div>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <div>Địa chỉ nhận hàng: </div>
+                  <div>ABC</div>
+                </div>
               </CCol>
             </CRow>
             <CRow className="mb-3">
@@ -143,46 +159,95 @@ const Add = () => {
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Sản phẩm </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Đơn giá </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Số mét </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tổng cộng </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
-                    {productsList.map((item, index) => (
+                    {products.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
+                        <CTableDataCell> #{item.id} </CTableDataCell>
                         <CTableDataCell>
-                          <Link to="#">{item.name}</Link>
+                          <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
+                        <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>
-                          <div className="mb-2">
-                            <strong>Màu sắc: </strong> {item.color}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Chất liệu: </strong> {item.material}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Xuất xứ: </strong> {item.origin}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Chiều rộng: </strong> {item.width}
-                          </div>
+                          <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.price} / mét vuông </CTableDataCell>
-                        <CTableDataCell>{item.length} </CTableDataCell>
-                        <CTableDataCell>{item.total_price} </CTableDataCell>
+                        <CTableDataCell> {item.price} </CTableDataCell>
+                        <CTableDataCell> {item.length} </CTableDataCell>
+                        <CTableDataCell> {item.price * item.length * 0.01} </CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> {calculateTotalPrice()} </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {(() => {
+                          return products.reduce(
+                            (sum, item) => sum + item.price * item.length * 0.01,
+                            0,
+                          )
+                        })()}
+                      </CTableHeaderCell>
                     </CTableRow>
                   </CTableFoot>
+                </CTable>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Ghi chú</CFormLabel>
+                <CFormTextarea
+                  placeholder="Nhập ghi chú"
+                  rows="5"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                ></CFormTextarea>
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Lịch sử cập nhật</CFormLabel>
+                <CTable align="middle" bordered>
+                  <CTableHead align="middle" color="info">
+                    <CTableRow>
+                      <CTableHeaderCell scope="col"> # </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody align="middle">
+                    {statuses.map((item, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell> {index + 1} </CTableDataCell>
+                        <CTableDataCell>
+                          {item.attributes.status === 'initialize' ? (
+                            <CBadge color="warning">{item.attributes.status.toUpperCase()}</CBadge>
+                          ) : item.attributes.status === 'confirmed' ||
+                            item.attributes.status === 'packaged' ||
+                            item.attributes.status === 'delivery' ? (
+                            <CBadge color="primary">{item.attributes.status.toUpperCase()}</CBadge>
+                          ) : item.attributes.status === 'return' ||
+                            item.attributes.status === 'canceled' ? (
+                            <CBadge color="danger">{item.attributes.status.toUpperCase()}</CBadge>
+                          ) : (
+                            <CBadge color="success">{item.attributes.status.toUpperCase()}</CBadge>
+                          )}
+                        </CTableDataCell>
+                        <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
+                      </CTableRow>
+                    ))}
+                  </CTableBody>
                 </CTable>
               </CCol>
             </CRow>
@@ -203,4 +268,4 @@ const Add = () => {
   )
 }
 
-export default Add
+export default View
