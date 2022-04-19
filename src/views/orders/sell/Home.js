@@ -54,7 +54,13 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        populate: ['customer', 'branch', 'order_statuses', 'order_invoice'],
+        populate: [
+          'customer',
+          'branch',
+          'order_statuses',
+          'order_invoice',
+          'order_invoice.order_payment_invoices',
+        ],
         pagination: {
           page: page,
         },
@@ -143,7 +149,9 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Khách hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày đặt </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Cập nhật cuối </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Giá trị </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Đã thanh toán </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Nợ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -205,7 +213,21 @@ const Home = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.status.data.attributes.createdAt}
+                        {item.attributes.order_invoice.data.attributes.price}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+                          (prev, cur) => prev + parseFloat(cur.attributes.amount),
+                          0,
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {
+                          -item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+                            (prev, cur) => prev + parseFloat(cur.attributes.amount),
+                            -item.attributes.order_invoice.data.attributes.price,
+                          )
+                        }
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>

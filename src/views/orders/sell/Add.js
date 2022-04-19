@@ -21,6 +21,7 @@ import {
   CTableBody,
   CTableDataCell,
   CTableFoot,
+  CFormFeedback,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -45,6 +46,7 @@ const Add = () => {
   const [branch, setBranch] = useState('')
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
+  const [paymentCost, setPaymentCost] = useState(0)
 
   const handleDelete = (index) => {
     let newProducts = [...products]
@@ -119,6 +121,7 @@ const Add = () => {
       firstName: firstName,
       lastName: lastName,
       phone: phone,
+      paymentCost: paymentCost,
     }
 
     axios
@@ -140,82 +143,12 @@ const Add = () => {
       onSubmit={handleSubmit}
     >
       <ToastContainer />
-      <CCol md={12}>
+      <CCol md={8}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thông tin đơn hàng</h5>
+            <h5>Đơn hàng</h5>
           </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol md={12} className="mb-3">
-                <h6 className="mb-3">Thông tin người mua</h6>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div className="align-self-center">Mã người mua: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <InputDropdownSearch
-                      placeholder="Tìm kiếm khách hàng"
-                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
-                      ajaxDataPopulate={['name']}
-                      ajaxDataGetFilters={(value) => {
-                        return {
-                          $or: [
-                            {
-                              name: {
-                                firstname: { $containsi: value },
-                                lastname: { $containsi: value },
-                              },
-                            },
-                            { phone: { $containsi: value } },
-                          ],
-                        }
-                      }}
-                      ajaxDataGetItemName={(item) =>
-                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
-                      }
-                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
-                      handleFound={(item) => handleLoadCustomerData(item)}
-                    />
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>Tên người mua: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập họ"
-                      required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập tên"
-                      required
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>Số điện thoại: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập số điện thoại"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </CCol>
-            </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Cửa hàng</CFormLabel>
@@ -282,7 +215,6 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Giá (đ - theo mét) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài trong kho (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài xuất (cm) </CTableHeaderCell>
@@ -300,8 +232,8 @@ const Add = () => {
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
-                        <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>
+                          {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
                         <CTableDataCell> {item.attributes.price.toLocaleString()} </CTableDataCell>
@@ -330,7 +262,7 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="8"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products.reduce(
@@ -344,6 +276,126 @@ const Add = () => {
                     </CTableRow>
                   </CTableFoot>
                 </CTable>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol md={4}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <h5>Thanh toán</h5>
+          </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <h6 className="mb-3">Thông tin người mua</h6>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="flex-fill">
+                    <InputDropdownSearch
+                      placeholder="Tìm kiếm khách hàng"
+                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                      ajaxDataPopulate={['name']}
+                      ajaxDataGetFilters={(value) => {
+                        return {
+                          $or: [
+                            {
+                              name: {
+                                firstname: { $containsi: value },
+                                lastname: { $containsi: value },
+                              },
+                            },
+                            { phone: { $containsi: value } },
+                          ],
+                        }
+                      }}
+                      ajaxDataGetItemName={(item) =>
+                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                      }
+                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                      handleFound={(item) => handleLoadCustomerData(item)}
+                    />
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập họ"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                  <div className="p-2"></div>
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập tên"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập số điện thoại"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                </div>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <h6>Tổng</h6>
+                <CFormInput
+                  type="number"
+                  placeholder="Tổng"
+                  value={(() => {
+                    return products.reduce(
+                      (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
+                      0,
+                    )
+                  })()}
+                  required
+                  readOnly
+                />
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              </CCol>
+              <CCol md={12} className="mb-3">
+                <h6>Khách hàng trả</h6>
+                <CFormInput
+                  type="number"
+                  placeholder="Khách hàng trả"
+                  value={paymentCost}
+                  onChange={(e) => setPaymentCost(e.target.value)}
+                  required
+                />
+                <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+              </CCol>
+              <CCol md={12} className="mb-3">
+                <h6>Tiền dư / nợ</h6>
+                <CFormInput
+                  type="number"
+                  placeholder="Tiền dư / nợ"
+                  required
+                  value={(() => {
+                    return -products.reduce(
+                      (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
+                      -paymentCost,
+                    )
+                  })()}
+                  readOnly
+                />
               </CCol>
             </CRow>
           </CCardBody>
