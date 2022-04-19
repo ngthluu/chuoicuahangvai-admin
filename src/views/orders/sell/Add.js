@@ -215,7 +215,7 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Giá (đ - theo mét) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Giá (đ/m) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài trong kho (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài xuất (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tổng (đ) </CTableHeaderCell>
@@ -356,15 +356,16 @@ const Add = () => {
             </CRow>
             <CRow>
               <CCol md={12} className="mb-3">
-                <h6>Tổng</h6>
+                <h6>Tổng (đ)</h6>
                 <CFormInput
-                  type="number"
                   placeholder="Tổng"
                   value={(() => {
-                    return products.reduce(
-                      (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
-                      0,
-                    )
+                    return products
+                      .reduce(
+                        (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
+                        0,
+                      )
+                      .toLocaleString()
                   })()}
                   required
                   readOnly
@@ -372,7 +373,7 @@ const Add = () => {
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={12} className="mb-3">
-                <h6>Khách hàng trả</h6>
+                <h6>Khách hàng trả (đ)</h6>
                 <CFormInput
                   type="number"
                   placeholder="Khách hàng trả"
@@ -383,16 +384,15 @@ const Add = () => {
                 <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
               </CCol>
               <CCol md={12} className="mb-3">
-                <h6>Tiền dư / nợ</h6>
+                <h6>Tiền dư / nợ (đ)</h6>
                 <CFormInput
-                  type="number"
                   placeholder="Tiền dư / nợ"
                   required
                   value={(() => {
-                    return -products.reduce(
+                    return (-products.reduce(
                       (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
                       -paymentCost,
-                    )
+                    )).toLocaleString()
                   })()}
                   readOnly
                 />

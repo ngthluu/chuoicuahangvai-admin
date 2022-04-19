@@ -21,6 +21,7 @@ import {
   CTableBody,
   CTableDataCell,
   CTableFoot,
+  CFormFeedback,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -46,17 +47,17 @@ const Add = () => {
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
 
+  const handleDelete = (index) => {
+    let newProducts = [...products]
+    newProducts.splice(index, 1)
+    setProducts(newProducts)
+  }
+
   const handleLoadCustomerData = (customer) => {
     setCustomerId(customer.id)
     setFirstName(customer.id !== '' ? customer.name.firstname : '')
     setLastName(customer.id !== '' ? customer.name.lastname : '')
     setPhone(customer.id !== '' ? customer.phone : '')
-  }
-
-  const handleDelete = (index) => {
-    let newProducts = [...products]
-    newProducts.splice(index, 1)
-    setProducts(newProducts)
   }
 
   const handleAddSKU = (skuItem) => {
@@ -78,12 +79,6 @@ const Add = () => {
       quantity: 1,
       length: 0,
     })
-    setProducts(newProducts)
-  }
-
-  const handleChangeQuantity = (index, value) => {
-    let newProducts = [...products]
-    newProducts[index].quantity = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -144,82 +139,12 @@ const Add = () => {
       onSubmit={handleSubmit}
     >
       <ToastContainer />
-      <CCol md={12}>
+      <CCol md={8}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thông tin đơn hàng</h5>
+            <h5>Đơn trả hàng</h5>
           </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol md={12} className="mb-3">
-                <h6 className="mb-3">Thông tin người mua</h6>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div className="align-self-center">Mã người mua: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <InputDropdownSearch
-                      placeholder="Tìm kiếm khách hàng"
-                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
-                      ajaxDataPopulate={['name']}
-                      ajaxDataGetFilters={(value) => {
-                        return {
-                          $or: [
-                            {
-                              name: {
-                                firstname: { $containsi: value },
-                                lastname: { $containsi: value },
-                              },
-                            },
-                            { phone: { $containsi: value } },
-                          ],
-                        }
-                      }}
-                      ajaxDataGetItemName={(item) =>
-                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
-                      }
-                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
-                      handleFound={(item) => handleLoadCustomerData(item)}
-                    />
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>Tên người mua: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập họ"
-                      required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập tên"
-                      required
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>Số điện thoại: </div>
-                  <div className="p-2"></div>
-                  <div className="flex-fill">
-                    <CFormInput
-                      type="text"
-                      placeholder="Nhập số điện thoại"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </CCol>
-            </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Cửa hàng</CFormLabel>
@@ -268,8 +193,9 @@ const Add = () => {
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Giá (đ/m) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tổng (đ) </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
@@ -282,16 +208,20 @@ const Add = () => {
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
-                        <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>
+                          {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
+                        <CTableDataCell>{item.attributes.price}</CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="number"
                             value={item.length}
                             onChange={(e) => handleChangeLength(index, e.target.value)}
                           ></CFormInput>
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {(item.attributes.price * item.length * 0.01).toLocaleString()}
                         </CTableDataCell>
                         <CTableDataCell>
                           <CButton
@@ -305,24 +235,108 @@ const Add = () => {
                       </CTableRow>
                     ))}
                   </CTableBody>
-                  <CTableFoot align="middle">
-                    <CTableRow>
-                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
-                      <CTableHeaderCell scope="col">
-                        {(() => {
-                          return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
-                        })()}
-                      </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
-                    </CTableRow>
-                  </CTableFoot>
                 </CTable>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol md={4}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <h5>Thanh toán</h5>
+          </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <h6 className="mb-3">Thông tin người trả</h6>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="flex-fill">
+                    <InputDropdownSearch
+                      placeholder="Tìm kiếm khách hàng"
+                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                      ajaxDataPopulate={['name']}
+                      ajaxDataGetFilters={(value) => {
+                        return {
+                          $or: [
+                            {
+                              name: {
+                                firstname: { $containsi: value },
+                                lastname: { $containsi: value },
+                              },
+                            },
+                            { phone: { $containsi: value } },
+                          ],
+                        }
+                      }}
+                      ajaxDataGetItemName={(item) =>
+                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                      }
+                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                      handleFound={(item) => handleLoadCustomerData(item)}
+                    />
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập họ"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                  <div className="p-2"></div>
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập tên"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="flex-fill">
+                    <CFormInput
+                      type="text"
+                      placeholder="Nhập số điện thoại"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <CFormFeedback invalid>Đây là trường bắt buộc</CFormFeedback>
+                  </div>
+                </div>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <h6>Tổng (đ)</h6>
+                <CFormInput
+                  placeholder="Tổng"
+                  value={(() => {
+                    return products
+                      .reduce(
+                        (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
+                        0,
+                      )
+                      .toLocaleString()
+                  })()}
+                  required
+                  readOnly
+                />
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
             <CButton color="info" type="submit" className="text-white">
-              <FontAwesomeIcon icon={faSave} /> <strong>Lưu và xuất kho</strong>
+              <FontAwesomeIcon icon={faSave} /> <strong>Lưu lại</strong>
             </CButton>
             <div className="p-2"></div>
             <CButton
