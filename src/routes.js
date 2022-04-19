@@ -42,6 +42,7 @@ const OrderSellViewInvoice = React.lazy(() => import('./views/orders/sell/ViewIn
 const OrderRefund = React.lazy(() => import('./views/orders/refund/Home'))
 const OrderRefundAdd = React.lazy(() => import('./views/orders/refund/Add'))
 const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
+const OrderRefundViewInvoice = React.lazy(() => import('./views/orders/refund/ViewInvoice'))
 
 const UserHome = React.lazy(() => import('./views/users/Home'))
 const UserSalary = React.lazy(() => import('./views/users/Salary'))
@@ -253,6 +254,12 @@ const routes = [
     exact: true,
     name: 'Xem đơn hàng (trả)',
     component: OrderRefundView,
+  },
+  {
+    path: '/orders/refund/view_invoice',
+    exact: true,
+    name: 'Xem hóa đơn (trả)',
+    component: OrderRefundViewInvoice,
   },
 
   { path: '/users', exact: true, name: 'Nhân viên', component: UserHome },

@@ -110,7 +110,7 @@ const Home = () => {
         title="Duyệt đơn trả hàng"
         content={`Bạn có muốn duyệt đơn trả hàng và nhập kho với phiếu ${submitModalTargetName} không ?`}
         id={submitModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/refunds/create`}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/refunds/submit`}
         triggerSuccess={handleSubmitSuccess}
         triggerError={handleSubmitError}
         action="post"
@@ -233,14 +233,18 @@ const Home = () => {
                             <CDropdownItem href={`/orders/refund/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickSubmit}
-                              data-id={item.id}
-                              data-name={`REFUND#${item.id}`}
-                            >
-                              <FontAwesomeIcon icon={faCheck} /> Duyệt và nhập kho
-                            </CDropdownItem>
+                            {!item.attributes.status.data.attributes.update_status ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickSubmit}
+                                data-id={item.id}
+                                data-name={`REFUND#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faCheck} /> Duyệt và nhập kho
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
                           </CDropdownMenu>
                         </CDropdown>
                       </CTableDataCell>
