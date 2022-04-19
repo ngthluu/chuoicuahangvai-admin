@@ -26,6 +26,11 @@ import {
   CFormInput,
   CFormSelect,
   CBadge,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -39,6 +44,32 @@ import SmartPagination from 'src/views/template/SmartPagination'
 
 const Debt = () => {
   const [customersList, setCustomersList] = useState([])
+
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalCustomerId, setModalCustomerId] = useState('')
+  const [modalCustomerName, setModalCustomerName] = useState('')
+  const [modalAmount, setModalAmount] = useState(0)
+  const handleOpenModal = (item) => {
+    setModalCustomerId(item.id)
+    setModalCustomerName(`${item.name.firstname} ${item.name.lastname}`)
+    setModalVisible(true)
+    setModalAmount(0)
+  }
+  const handleModalSubmit = () => {
+    if (modalCustomerId === '' || modalAmount <= 0) return
+    setModalVisible(false)
+    axios
+      .post(`${process.env.REACT_APP_STRAPI_URL}/api/customer/debt/${modalCustomerId}`, {
+        data: {
+          amount: modalAmount,
+        },
+      })
+      .then((response) => {
+        fetchData()
+        toast.success('Bạn đã cập nhật thành công')
+      })
+      .catch((error) => toast.error('Thao tác thất bại. Có lỗi xảy ra !!'))
+  }
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
@@ -85,6 +116,34 @@ const Debt = () => {
   return (
     <CRow>
       <ToastContainer />
+      <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+        <CModalHeader onClose={() => setModalVisible(false)}>
+          <CModalTitle>Cập nhật số tiền nợ</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CRow>
+            <CCol md={12}>
+              <CFormLabel>
+                Vui lòng nhập số tiền mà khách hàng <strong>{modalCustomerName}</strong> trả
+              </CFormLabel>
+              <CFormInput
+                placeholder="Nhập số tiền"
+                type="number"
+                value={modalAmount}
+                onChange={(e) => setModalAmount(e.target.value)}
+              />
+            </CCol>
+          </CRow>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" className="text-white" onClick={() => setModalVisible(false)}>
+            Đóng
+          </CButton>
+          <CButton color="info" className="text-white" onClick={handleModalSubmit}>
+            OK
+          </CButton>
+        </CModalFooter>
+      </CModal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -158,7 +217,7 @@ const Debt = () => {
                               Hành động
                             </CDropdownToggle>
                             <CDropdownMenu>
-                              <CDropdownItem href={`/customers/view?id=${item.id}`}>
+                              <CDropdownItem href="#" onClick={() => handleOpenModal(item)}>
                                 <FontAwesomeIcon icon={faEdit} /> Cập nhật số tiền nợ
                               </CDropdownItem>
                             </CDropdownMenu>
