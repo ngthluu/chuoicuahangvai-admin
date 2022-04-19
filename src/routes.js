@@ -282,7 +282,7 @@ const routes = [
 
   { path: '/customers', exact: true, name: 'Khách hàng', component: CustomerHome },
   { path: '/customers/view', exact: true, name: 'Xem khách hàng', component: CustomerView },
-  { path: '/customers/debt', exact: true, name: 'Công nợ', component: CustomerDebt },
+  { path: '/customers/debt', exact: true, name: 'Nợ', component: CustomerDebt },
 ]
 
 export default routes

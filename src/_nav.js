@@ -152,7 +152,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Công nợ',
+        name: 'Nợ',
         to: '/customers/debt',
       },
     ],

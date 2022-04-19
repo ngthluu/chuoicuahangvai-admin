@@ -1,4 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
+import StatusLabel from 'src/views/template/StatusLabel'
+import StatusAction from 'src/views/template/StatusAction'
+
 import {
   CCard,
   CCardBody,
@@ -15,87 +21,76 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CButton,
-  CBadge,
   CForm,
   CFormLabel,
   CFormInput,
   CFormSelect,
+  CBadge,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faTrash, faFilePdf, faUndo, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faSearch, faFilePdf } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-const ordersList = [
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '0đ',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '0đ',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '0đ',
-    status: 1,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '1.000.000đ',
-    status: 0,
-  },
-  {
-    code: '#KH21091001',
-    name: 'Nguyễn Văn A',
-    debt: '1.000.000đ',
-    status: 0,
-  },
-]
+import SmartPagination from 'src/views/template/SmartPagination'
 
-const Status = (props) => {
-  if (props.status === 0) {
-    return <CBadge color="danger">Đang nợ</CBadge>
+const Debt = () => {
+  const [customersList, setCustomersList] = useState([])
+
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      {
+        populate: [
+          'name',
+          'orders',
+          'orders.order_invoice',
+          'orders.order_invoice.order_payment_invoices',
+        ],
+        pagination: {
+          page: page,
+        },
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/customer?${query}`)
+    setCustomersList(
+      response.data.data.map((item) => {
+        return {
+          ...item,
+          debt_amount: item.orders.reduce((prev, cur) => {
+            return (
+              prev +
+              cur.order_invoice.price -
+              cur.order_invoice.order_payment_invoices.reduce((prev1, cur1) => {
+                return prev1 + parseInt(cur1.amount)
+              }, 0)
+            )
+          }, 0),
+        }
+      }),
+    )
+    setTotalItems(0)
   }
-  return <CBadge color="success">Thanh toán đủ</CBadge>
-}
-Status.propTypes = { status: PropTypes.number }
 
-const Home = () => {
+  useEffect(() => {
+    fetchData()
+  }, [page])
+
   return (
     <CRow>
+      <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Quản lý khách hàng (công nợ)</h4>
+                <h4 className="mb-3">Quản lý khách hàng (nợ)</h4>
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
@@ -130,41 +125,65 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Họ và tên </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Số tiền nợ </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Số điện thoại </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Số tiền nợ (đ)</CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {ordersList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell> {index + 1} </CTableDataCell>
-                    <CTableDataCell>
-                      <Link to={`/customers/view?id=${index}`}>{item.code}</Link>
-                    </CTableDataCell>
-                    <CTableDataCell> {item.name} </CTableDataCell>
-                    <CTableDataCell> {item.debt} </CTableDataCell>
-                    <CTableDataCell>
-                      <Status status={item.status} />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CDropdown>
-                        <CDropdownToggle color="info" variant="outline">
-                          Hành động
-                        </CDropdownToggle>
-                        <CDropdownMenu>
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faEdit} /> Cập nhật số tiền nợ
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </CTableDataCell>
+                {customersList.length > 0 ? (
+                  customersList.map((item, index) => (
+                    <CTableRow key={item.id}>
+                      <CTableDataCell> {index + 1} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/customers/view?id=${item.id}`}>
+                          {item.name.firstname} {item.name.lastname}
+                        </Link>
+                      </CTableDataCell>
+                      <CTableDataCell> {item.phone} </CTableDataCell>
+                      <CTableDataCell> {item.debt_amount.toLocaleString()} </CTableDataCell>
+                      <CTableDataCell>
+                        {item.debt_amount > 0 ? (
+                          <CBadge color="danger">Đang nợ</CBadge>
+                        ) : (
+                          <CBadge color="success">Thanh toán đủ</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.debt_amount > 0 ? (
+                          <CDropdown>
+                            <CDropdownToggle color="info" variant="outline">
+                              Hành động
+                            </CDropdownToggle>
+                            <CDropdownMenu>
+                              <CDropdownItem href={`/customers/view?id=${item.id}`}>
+                                <FontAwesomeIcon icon={faEdit} /> Cập nhật số tiền nợ
+                              </CDropdownItem>
+                            </CDropdownMenu>
+                          </CDropdown>
+                        ) : (
+                          <></>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={'100%'}>Chưa có dữ liệu</CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>
@@ -172,4 +191,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Debt
