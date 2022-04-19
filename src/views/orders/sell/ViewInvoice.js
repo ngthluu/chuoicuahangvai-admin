@@ -48,6 +48,7 @@ const ViewInvoice = () => {
   const [products, setProducts] = useState([])
 
   const [invoiceTotal, setInvoiceTotal] = useState('')
+  const [paymentHistory, setPaymentHistory] = useState([])
 
   const fetchData = async () => {
     if (id === null) return
@@ -68,6 +69,7 @@ const ViewInvoice = () => {
           'products.inventory_item.sku_quantity.sku.width',
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
+          'order_payment_invoices',
         ],
       },
       { encodeValuesOnly: true },
@@ -85,6 +87,7 @@ const ViewInvoice = () => {
       }`,
     )
     setCreatedTime(data.attributes.createdAt)
+    setPaymentHistory(data.attributes.order_payment_invoices.data)
 
     setFirstName(data.attributes.customer_name.firstname)
     setLastName(data.attributes.customer_name.lastname)
@@ -176,9 +179,9 @@ const ViewInvoice = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Đơn giá </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Đơn giá (đ/m)</CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Tổng cộng </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tổng cộng (đ) </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
@@ -193,9 +196,11 @@ const ViewInvoice = () => {
                         <CTableDataCell>
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.price} </CTableDataCell>
+                        <CTableDataCell> {parseInt(item.price).toLocaleString()} </CTableDataCell>
                         <CTableDataCell> {item.length} </CTableDataCell>
-                        <CTableDataCell> {item.price * item.length * 0.01} </CTableDataCell>
+                        <CTableDataCell>
+                          {parseInt(item.price * item.length * 0.01).toLocaleString()}
+                        </CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
@@ -205,17 +210,65 @@ const ViewInvoice = () => {
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce(
-                            (sum, item) => sum + item.price * item.length * 0.01,
-                            0,
-                          )
+                          return products
+                            .reduce((sum, item) => sum + item.price * item.length * 0.01, 0)
+                            .toLocaleString()
+                        })()}
+                      </CTableHeaderCell>
+                    </CTableRow>
+                  </CTableFoot>
+                </CTable>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Lịch sử thanh toán</CFormLabel>
+                <CTable align="middle" bordered>
+                  <CTableHead align="middle" color="info">
+                    <CTableRow>
+                      <CTableHeaderCell scope="col"> # </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Số tiền (đ)</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody align="middle">
+                    {paymentHistory.map((item, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell> {index + 1} </CTableDataCell>
+                        <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
+                        <CTableDataCell>
+                          {parseInt(item.attributes.amount).toLocaleString()}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
+                  </CTableBody>
+                  <CTableFoot align="middle">
+                    <CTableRow>
+                      <CTableHeaderCell colSpan={2}> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {(() => {
+                          return paymentHistory
+                            .reduce((sum, item) => sum + parseInt(item.attributes.amount), 0)
+                            .toLocaleString()
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
                     <CTableRow>
-                      <CTableHeaderCell colSpan="6"> Tổng giá trị hóa đơn</CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
-                      <CTableHeaderCell scope="col">{invoiceTotal}</CTableHeaderCell>
+                      <CTableHeaderCell colSpan={2}> Tổng giá trị hóa đơn</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {invoiceTotal.toLocaleString()}
+                      </CTableHeaderCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell colSpan={2}> Còn nợ</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {(() => {
+                          return (-paymentHistory.reduce(
+                            (sum, item) => sum + parseInt(item.attributes.amount),
+                            -invoiceTotal,
+                          )).toLocaleString()
+                        })()}
+                      </CTableHeaderCell>
                     </CTableRow>
                   </CTableFoot>
                 </CTable>

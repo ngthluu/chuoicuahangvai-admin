@@ -143,7 +143,7 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Hình ảnh </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Tên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> SKU </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Giá </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Giá (đ) </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thông tin </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
@@ -169,7 +169,9 @@ const Home = () => {
                           : ''}
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.sku} </CTableDataCell>
-                      <CTableDataCell> {item.attributes.price} </CTableDataCell>
+                      <CTableDataCell>
+                        {parseInt(item.attributes.price).toLocaleString()}
+                      </CTableDataCell>
                       <CTableDataCell align="left">
                         <ProductDescription attributes={item.attributes}></ProductDescription>
                       </CTableDataCell>

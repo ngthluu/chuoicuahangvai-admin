@@ -163,9 +163,9 @@ const View = () => {
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Đơn giá </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Đơn giá (đ/m) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Tổng cộng </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tổng cộng (đ) </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
@@ -180,9 +180,11 @@ const View = () => {
                         <CTableDataCell>
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.price} </CTableDataCell>
+                        <CTableDataCell> {parseInt(item.price).toLocaleString()} </CTableDataCell>
                         <CTableDataCell> {item.length} </CTableDataCell>
-                        <CTableDataCell> {item.price * item.length * 0.01} </CTableDataCell>
+                        <CTableDataCell>
+                          {parseInt(item.price * item.length * 0.01).toLocaleString()}
+                        </CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
@@ -192,10 +194,9 @@ const View = () => {
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce(
-                            (sum, item) => sum + item.price * item.length * 0.01,
-                            0,
-                          )
+                          return products
+                            .reduce((sum, item) => sum + item.price * item.length * 0.01, 0)
+                            .toLocaleString()
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
@@ -222,8 +223,8 @@ const View = () => {
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">

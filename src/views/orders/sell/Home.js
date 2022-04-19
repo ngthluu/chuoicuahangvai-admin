@@ -145,13 +145,12 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hóa đơn </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chi nhánh </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Khách hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày đặt </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Giá trị </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Đã thanh toán </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Nợ </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Giá trị (đ) </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Đã thanh toán (đ) </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Nợ (đ) </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -176,7 +175,6 @@ const Home = () => {
                           <></>
                         )}
                       </CTableDataCell>
-                      <CTableDataCell>{item.attributes.branch.data.attributes.name}</CTableDataCell>
                       <CTableDataCell>
                         <div>
                           <FontAwesomeIcon icon={faUser} />{' '}
@@ -213,21 +211,18 @@ const Home = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice.data.attributes.price}
+                        {item.attributes.order_invoice.data.attributes.price.toLocaleString()}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+                        {item.attributes.order_invoice.data.attributes.order_payment_invoices.data
+                          .reduce((prev, cur) => prev + parseFloat(cur.attributes.amount), 0)
+                          .toLocaleString()}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {(-item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
                           (prev, cur) => prev + parseFloat(cur.attributes.amount),
-                          0,
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {
-                          -item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
-                            (prev, cur) => prev + parseFloat(cur.attributes.amount),
-                            -item.attributes.order_invoice.data.attributes.price,
-                          )
-                        }
+                          -item.attributes.order_invoice.data.attributes.price,
+                        )).toLocaleString()}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>
