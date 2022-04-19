@@ -111,12 +111,12 @@ const View = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thông tin đơn hàng</h5>
+            <h5>Thông tin đơn trả hàng</h5>
           </CCardHeader>
           <CCardBody>
             <CRow>
               <CCol md={5} className="mb-3">
-                <h6 className="mb-3">Thông tin đơn hàng</h6>
+                <h6 className="mb-3">Thông tin đơn trả hàng</h6>
                 <div className="d-flex justify-content-between mb-3">
                   <div>Mã đơn trả: </div>
                   <div>{orderCode}</div>

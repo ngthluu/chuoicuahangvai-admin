@@ -46,12 +46,6 @@ const Add = () => {
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
 
-  const handleDelete = (index) => {
-    let newProducts = [...products]
-    newProducts.splice(index, 1)
-    setProducts(newProducts)
-  }
-
   const handleLoadCustomerData = (customer) => {
     setCustomerId(customer.id)
     setFirstName(customer.id !== '' ? customer.name.firstname : '')
@@ -59,27 +53,37 @@ const Add = () => {
     setPhone(customer.id !== '' ? customer.phone : '')
   }
 
-  const handleAddInventoryItem = (inventoryItem) => {
-    const inventoryItemId = inventoryItem.id
-    if (inventoryItemId === '') return
-    if (products.filter((item) => item.id === inventoryItemId).length > 0) return
+  const handleDelete = (index) => {
+    let newProducts = [...products]
+    newProducts.splice(index, 1)
+    setProducts(newProducts)
+  }
 
-    const skuItem = inventoryItem.attributes.sku_quantity.sku.data
+  const handleAddSKU = (skuItem) => {
+    const productSkuId = skuItem.id
+    if (productSkuId === '') return
+    if (products.filter((item) => item.id === productSkuId).length > 0) return
+
     const productSku = skuItem.attributes.sku
     const productName = skuItem.attributes.product.data.attributes.name
     const productAttributes = skuItem.attributes
-    const currentInventoryLength = inventoryItem.attributes.sku_quantity.length
 
     let newProducts = [...products]
     newProducts.push({
       componentId: null,
-      id: inventoryItemId,
+      id: productSkuId,
       sku: productSku,
       name: productName,
       attributes: productAttributes,
+      quantity: 1,
       length: 0,
-      current_length: currentInventoryLength,
     })
+    setProducts(newProducts)
+  }
+
+  const handleChangeQuantity = (index, value) => {
+    let newProducts = [...products]
+    newProducts[index].quantity = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -238,39 +242,22 @@ const Add = () => {
             </CRow>
             <CRow className="mb-3">
               <InputDropdownSearch
-                placeholder="Tìm kiếm cây vải trong cửa hàng"
-                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories`}
-                ajaxDataPopulate={[
-                  'sku_quantity',
-                  'sku_quantity.sku',
-                  'sku_quantity.sku.product',
-                  'sku_quantity.sku.pattern',
-                  'sku_quantity.sku.stretch',
-                  'sku_quantity.sku.width',
-                  'sku_quantity.sku.origin',
-                  'sku_quantity.sku.images',
-                ]}
+                placeholder="Tìm kiếm sản phẩm"
+                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
+                ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
                 ajaxDataGetFilters={(value) => {
                   return {
-                    $and: [
-                      {
-                        $or: [
-                          { id: { $containsi: value } },
-                          { sku_quantity: { sku: { sku: { $containsi: value } } } },
-                          { sku_quantity: { sku: { product: { name: { $containsi: value } } } } },
-                        ],
-                      },
-                      {
-                        branch: { id: branch === '' ? -1 : branch },
-                      },
+                    $or: [
+                      { sku: { $containsi: value } },
+                      { product: { name: { $containsi: value } } },
                     ],
                   }
                 }}
                 ajaxDataGetItemName={(item) =>
-                  `#${item.id} - (${item.attributes.sku_quantity.sku.data.attributes.sku} - ${item.attributes.sku_quantity.sku.data.attributes.product.data.attributes.name}) - Còn ${item.attributes.sku_quantity.length} cm`
+                  `${item.attributes.product.data.attributes.name} (${item.attributes.sku})`
                 }
-                handleNotFound={() => toast.error('Không tìm thấy cây vải này !!!')}
-                handleFound={(item) => handleAddInventoryItem(item)}
+                handleNotFound={() => toast.error('Không tìm thấy sản phẩm này !!!')}
+                handleFound={(item) => handleAddSKU(item)}
               />
             </CRow>
             <CRow className="mb-3">
@@ -279,14 +266,10 @@ const Add = () => {
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> ID trong kho </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Giá (đ - theo mét) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài trong kho (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Chiều dài xuất (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Tổng (đ) </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         <FontAwesomeIcon icon={faTrash} />
                       </CTableHeaderCell>
@@ -296,7 +279,6 @@ const Add = () => {
                     {products.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
-                        <CTableDataCell> #{item.id} </CTableDataCell>
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
@@ -304,17 +286,12 @@ const Add = () => {
                         <CTableDataCell>
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.attributes.price.toLocaleString()} </CTableDataCell>
-                        <CTableDataCell>{item.current_length}</CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="number"
                             value={item.length}
                             onChange={(e) => handleChangeLength(index, e.target.value)}
                           ></CFormInput>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {(item.attributes.price * item.length * 0.01).toLocaleString()}
                         </CTableDataCell>
                         <CTableDataCell>
                           <CButton
@@ -330,14 +307,10 @@ const Add = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="8"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce(
-                            (sum, item) =>
-                              sum + parseInt(item.length) * item.attributes.price * 0.01,
-                            0,
-                          )
+                          return products.reduce((sum, item) => sum + parseInt(item.quantity), 0)
                         })()}
                       </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>

@@ -124,7 +124,7 @@ const Home = () => {
                 <div className="p-1"></div>
                 <Link to="/orders/refund/add">
                   <CButton color="info" className="text-white w-100">
-                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn trả hàng</strong>
                   </CButton>
                 </Link>
               </div>
