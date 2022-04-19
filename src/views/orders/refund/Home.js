@@ -35,6 +35,7 @@ import {
   faAddressBook,
   faSearch,
   faPlus,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -81,8 +82,39 @@ const Home = () => {
     fetchData()
   }, [page])
 
+  // Submit logic
+  const [submitModalTargetId, setSubmitModalTargetId] = useState('')
+  const [submitModalTargetName, setSubmitModalTargetName] = useState('')
+  const [submitModalVisible, setSubmitModalVisible] = useState(false)
+  const handleClickSubmit = (e) => {
+    e.preventDefault()
+    setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setSubmitModalVisible(!submitModalVisible)
+  }
+  const handleSubmitSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã duyệt thành công')
+  }
+  const handleSubmitError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
+      <ToastContainer />
+      <Modal
+        visible={submitModalVisible}
+        visibleAction={setSubmitModalVisible}
+        title="Duyệt đơn trả hàng"
+        content={`Bạn có muốn duyệt đơn trả hàng và nhập kho với phiếu ${submitModalTargetName} không ?`}
+        id={submitModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/refunds/create`}
+        triggerSuccess={handleSubmitSuccess}
+        triggerError={handleSubmitError}
+        action="post"
+      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -200,6 +232,14 @@ const Home = () => {
                           <CDropdownMenu>
                             <CDropdownItem href={`/orders/refund/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickSubmit}
+                              data-id={item.id}
+                              data-name={`REFUND#${item.id}`}
+                            >
+                              <FontAwesomeIcon icon={faCheck} /> Duyệt và nhập kho
                             </CDropdownItem>
                           </CDropdownMenu>
                         </CDropdown>

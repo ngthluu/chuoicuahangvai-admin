@@ -166,7 +166,9 @@ const View = () => {
                           {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell>{item.attributes.price.toLocaleString()}</CTableDataCell>
+                        <CTableDataCell>
+                          {parseInt(item.attributes.price).toLocaleString()}
+                        </CTableDataCell>
                         <CTableDataCell>{item.length}</CTableDataCell>
                         <CTableDataCell>
                           {(item.attributes.price * item.length * 0.01).toLocaleString()}

@@ -209,7 +209,9 @@ const Add = () => {
                           {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell>{item.attributes.price}</CTableDataCell>
+                        <CTableDataCell>
+                          {parseInt(item.attributes.price).toLocaleString()}
+                        </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="number"
