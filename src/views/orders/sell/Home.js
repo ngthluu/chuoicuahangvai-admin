@@ -219,10 +219,13 @@ const Home = () => {
                           .toLocaleString()}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {(-item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
-                          (prev, cur) => prev + parseFloat(cur.attributes.amount),
-                          -item.attributes.order_invoice.data.attributes.price,
-                        )).toLocaleString()}
+                        {(
+                          item.attributes.order_invoice.data.attributes.price -
+                          item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+                            (prev, cur) => prev + parseFloat(cur.attributes.amount),
+                            0,
+                          )
+                        ).toLocaleString()}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>

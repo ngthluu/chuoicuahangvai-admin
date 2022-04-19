@@ -263,10 +263,13 @@ const ViewInvoice = () => {
                       <CTableHeaderCell colSpan={2}> Còn nợ</CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return (-paymentHistory.reduce(
-                            (sum, item) => sum + parseInt(item.attributes.amount),
-                            -invoiceTotal,
-                          )).toLocaleString()
+                          return (
+                            invoiceTotal -
+                            paymentHistory.reduce(
+                              (sum, item) => sum + parseInt(item.attributes.amount),
+                              0,
+                            )
+                          ).toLocaleString()
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
