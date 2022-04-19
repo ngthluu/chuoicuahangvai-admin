@@ -82,18 +82,13 @@ const View = () => {
 
     setProducts(
       data.attributes.products.map((item) => {
-        const skuItem = item.sku.data
-        const productSku = skuItem.attributes.sku
-        const productName = skuItem.attributes.product.data.attributes.name
-        const productAttributes = skuItem.attributes
         return {
           componentId: item.id,
-          id: skuItem.id,
-          sku: productSku,
-          name: productName,
-          attributes: productAttributes,
+          id: item.sku.data.id,
+          sku: item.sku.data.attributes.sku,
+          name: item.sku.data.attributes.product.data.attributes.name,
+          attributes: item.sku.data.attributes,
           quantity: item.quantity,
-          price: skuItem.attributes.price,
           length: item.length,
         }
       }),
@@ -155,10 +150,9 @@ const View = () => {
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Đơn giá </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Giá (đ/m) </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Chiều dài (cm) </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> Tổng cộng </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Tổng (đ) </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody align="middle">
@@ -168,25 +162,30 @@ const View = () => {
                         <CTableDataCell>
                           <Link to="#">{item.sku}</Link>
                         </CTableDataCell>
-                        <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>
+                          {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.price} </CTableDataCell>
-                        <CTableDataCell> {item.length} </CTableDataCell>
-                        <CTableDataCell> {item.price * item.length * 0.01} </CTableDataCell>
+                        <CTableDataCell>{item.attributes.price.toLocaleString()}</CTableDataCell>
+                        <CTableDataCell>{item.length}</CTableDataCell>
+                        <CTableDataCell>
+                          {(item.attributes.price * item.length * 0.01).toLocaleString()}
+                        </CTableDataCell>
                       </CTableRow>
                     ))}
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="5"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce(
-                            (sum, item) => sum + item.price * item.length * 0.01,
-                            0,
-                          )
+                          return products
+                            .reduce(
+                              (sum, item) =>
+                                sum + parseInt(item.length) * item.attributes.price * 0.01,
+                              0,
+                            )
+                            .toLocaleString()
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>

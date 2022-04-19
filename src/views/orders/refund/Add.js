@@ -71,7 +71,6 @@ const Add = () => {
 
     let newProducts = [...products]
     newProducts.push({
-      componentId: null,
       id: productSkuId,
       sku: productSku,
       name: productName,
@@ -106,11 +105,9 @@ const Add = () => {
       branch: { id: branch },
       products: products.map((item) => {
         let data = {
-          inventory_item: { id: item.id },
+          sku: { id: item.id },
+          quantity: item.quantity,
           length: item.length,
-        }
-        if (item.componentId != null) {
-          data.id = item.componentId
         }
         return data
       }),
@@ -121,7 +118,7 @@ const Add = () => {
     }
 
     axios
-      .post(`${process.env.REACT_APP_STRAPI_URL}/api/orders/create-pos`, {
+      .post(`${process.env.REACT_APP_STRAPI_URL}/api/refunds/create`, {
         data: data,
       })
       .then((response) => toast.success('Thao tác thành công'))
