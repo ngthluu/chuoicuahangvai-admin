@@ -35,6 +35,35 @@ const SkuBox = (props) => {
     setImagesList(newImagesList)
   }
 
+  const handleChangeImage = (index, resImageData) => {
+    let data = [...props.data]
+    const newImageData = {
+      id: resImageData.id,
+      attributes: { url: resImageData.url },
+    }
+    // If existed, upload id and url
+    if (imagesList[index].id !== null) {
+      imagesList[index] = newImageData
+      return
+    }
+    if (data[props.index].attributes.images.data == null) {
+      data[props.index].attributes.images.data = [newImageData]
+      props.setData(data)
+      return
+    }
+    data[props.index].attributes.images.data.push(newImageData)
+    props.setData(data)
+  }
+  const handleRemoveImage = (index) => {
+    let data = [...props.data]
+    data[props.index].attributes.images.data = [
+      ...data[props.index].attributes.images.data.slice(0, index),
+      ...data[props.index].attributes.images.data.slice(index + 1),
+    ]
+    props.setData(data)
+
+    setImagesList([...imagesList.slice(0, index), ...imagesList.slice(index + 1)])
+  }
   const handleChangeSKU = (e) => {
     let data = [...props.data]
     data[props.index].attributes.sku = e.target.value
@@ -110,7 +139,12 @@ const SkuBox = (props) => {
               <CFormLabel>Hình ảnh</CFormLabel>
               <div>
                 {imagesList.map((item, index) => (
-                  <ImageUpload key="" name="a" default={item.attributes.url}></ImageUpload>
+                  <ImageUpload
+                    key={index}
+                    default={item.attributes.url}
+                    handleUploadImage={(resImageData) => handleChangeImage(index, resImageData)}
+                    handleResetImage={() => handleRemoveImage(index)}
+                  ></ImageUpload>
                 ))}
                 <CCard
                   className="p-2 mb-3 d-flex justify-content-center align-items-center"
