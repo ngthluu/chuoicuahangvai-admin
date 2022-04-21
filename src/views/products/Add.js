@@ -77,8 +77,8 @@ const Add = () => {
         })
         .then((response) => toast.success('Thao tác thành công'))
         .catch((error) => {
-          const errorMesaage = error.response.data.error.message
-          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+          const errorMessage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMessage}!!`)
         })
     } else {
       axios
@@ -87,8 +87,8 @@ const Add = () => {
         })
         .then((response) => toast.success('Thao tác thành công'))
         .catch((error) => {
-          const errorMesaage = error.response.data.error.message
-          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMesaage}!!`)
+          const errorMessage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMessage}!!`)
         })
     }
   }
