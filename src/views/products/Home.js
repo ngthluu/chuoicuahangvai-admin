@@ -46,7 +46,7 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
+        populate: ['product', 'color', 'pattern', 'stretch', 'width', 'origin', 'images'],
         pagination: {
           page: page,
         },

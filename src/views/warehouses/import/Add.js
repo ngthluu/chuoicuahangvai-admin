@@ -221,7 +221,15 @@ const Add = () => {
               <InputDropdownSearch
                 placeholder="Tìm kiếm sản phẩm"
                 ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
-                ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
+                ajaxDataPopulate={[
+                  'product',
+                  'color',
+                  'pattern',
+                  'stretch',
+                  'width',
+                  'origin',
+                  'images',
+                ]}
                 ajaxDataGetFilters={(value) => {
                   return {
                     $or: [

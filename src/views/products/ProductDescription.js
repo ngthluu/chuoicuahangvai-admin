@@ -5,9 +5,19 @@ import PropTypes from 'prop-types'
 const ProductDescription = (props) => {
   return (
     <>
-      {props.attributes.color != null && (
+      {props.attributes.color.data != null && (
         <div>
-          <strong>Màu sắc: </strong> {props.attributes.color}
+          <strong>Màu sắc: </strong> {props.attributes.color.data.attributes.name}
+          <div
+            style={{
+              display: 'inline-block',
+              marginLeft: 10,
+              verticalAlign: 'middle',
+              backgroundColor: props.attributes.color.data.attributes.color,
+              width: 20,
+              height: 20,
+            }}
+          ></div>
         </div>
       )}
       {props.attributes.pattern.data != null && (

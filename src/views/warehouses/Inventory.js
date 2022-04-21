@@ -53,6 +53,7 @@ const Inventory = () => {
           'sku_quantity',
           'sku_quantity.sku',
           'sku_quantity.sku.product',
+          'sku_quantity.sku.color',
           'sku_quantity.sku.pattern',
           'sku_quantity.sku.stretch',
           'sku_quantity.sku.width',

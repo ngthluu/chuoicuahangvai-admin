@@ -41,7 +41,7 @@ const Add = () => {
         attributes: {
           sku: '',
           price: '',
-          color: '',
+          color: { data: null },
           origin: { data: null },
           width: { data: null },
           stretch: { data: null },
@@ -101,8 +101,9 @@ const Add = () => {
         populate: {
           category: { fields: ['id'] },
           product_skus: {
-            fields: ['sku', 'price', 'color'],
+            fields: ['sku', 'price'],
             populate: {
+              color: { fields: ['id'] },
               pattern: { fields: ['id'] },
               stretch: { fields: ['id'] },
               width: { fields: ['id'] },
@@ -187,7 +188,7 @@ const Add = () => {
                   id={item.id}
                   sku={item.attributes.sku}
                   price={item.attributes.price}
-                  color={item.attributes.color}
+                  color={item.attributes.color.data ? item.attributes.color.id : ''}
                   origin={item.attributes.origin.data ? item.attributes.origin.data.id : ''}
                   width={item.attributes.width.data ? item.attributes.width.data.id : ''}
                   stretch={item.attributes.stretch.data ? item.attributes.stretch.data.id : ''}

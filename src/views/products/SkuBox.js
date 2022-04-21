@@ -47,7 +47,10 @@ const SkuBox = (props) => {
   }
   const handleChangeColor = (e) => {
     let data = [...props.data]
-    data[props.index].attributes.color = e.target.value
+    if (data[props.index].attributes.color.data == null) {
+      data[props.index].attributes.color.data = { id: null }
+    }
+    data[props.index].attributes.color.data.id = e
     props.setData(data)
   }
   const handleChangePattern = (e) => {
@@ -153,15 +156,18 @@ const SkuBox = (props) => {
           </CRow>
           <CRow>
             <CCol md={12} className="mb-3">
-              <CFormLabel>Màu sắc (RGB)</CFormLabel>
-              <CFormInput
-                defaultValue={props.color}
+              <CFormLabel>Màu sắc</CFormLabel>
+              <SelectFetchData
+                name={`color[${props.index}]`}
+                url={`${process.env.REACT_APP_STRAPI_URL}/api/product-colors`}
                 value={props.color}
-                type="text"
-                placeholder="Màu sắc (RGB)"
-                onChange={handleChangeColor}
-                required
-              />
+                setValue={handleChangeColor}
+                processFetchDataResponse={(response) => {
+                  return response.data.data.map((item) => {
+                    return { id: item.id, name: item.attributes.name }
+                  })
+                }}
+              ></SelectFetchData>
               <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
             </CCol>
           </CRow>

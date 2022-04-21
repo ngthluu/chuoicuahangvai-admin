@@ -58,6 +58,7 @@ const View = () => {
           'products.inventory_item.sku_quantity',
           'products.inventory_item.sku_quantity.sku',
           'products.inventory_item.sku_quantity.sku.product',
+          'products.inventory_item.sku_quantity.sku.color',
           'products.inventory_item.sku_quantity.sku.pattern',
           'products.inventory_item.sku_quantity.sku.stretch',
           'products.inventory_item.sku_quantity.sku.width',

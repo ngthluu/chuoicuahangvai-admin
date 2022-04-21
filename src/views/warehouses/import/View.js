@@ -85,7 +85,7 @@ const Add = () => {
             populate: {
               sku: {
                 fields: ['sku'],
-                populate: ['product', 'pattern', 'stretch', 'width', 'origin', 'images'],
+                populate: ['product', 'color', 'pattern', 'stretch', 'width', 'origin', 'images'],
               },
             },
           },
