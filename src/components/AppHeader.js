@@ -39,7 +39,7 @@ const AppHeader = () => {
               <div className="position-relative">
                 <CIcon icon={cilBell} size="lg" />
                 <CBadge color="danger" position="top-end" shape="rounded-circle">
-                  20000
+                  20
                 </CBadge>
               </div>
             </CNavLink>
