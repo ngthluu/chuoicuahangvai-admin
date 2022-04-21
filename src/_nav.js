@@ -13,15 +13,23 @@ import {
   faCircle,
   faCircleNotch,
   faMoneyBill,
+  faNewspaper,
+  faChartLine,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGgCircle, faProductHunt } from '@fortawesome/free-brands-svg-icons'
 
 const _nav = [
   {
-    component: CNavItem,
-    name: 'Dashboard',
-    to: '/dashboard',
-    icon: <FontAwesomeIcon icon={faTachometerAlt} className="nav-icon" />,
+    component: CNavGroup,
+    name: 'Nội dung trang web',
+    icon: <FontAwesomeIcon icon={faNewspaper} className="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Trang chủ',
+        to: '/content/homepage',
+      },
+    ],
   },
   {
     component: CNavItem,
@@ -141,7 +149,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Voucher/Coupon',
+    name: 'Voucher',
     icon: <FontAwesomeIcon icon={faMoneyBill} className="nav-icon" />,
     to: '/voucher',
   },
@@ -159,6 +167,28 @@ const _nav = [
         component: CNavItem,
         name: 'Nợ',
         to: '/customers/debt',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Thống kê',
+    icon: <FontAwesomeIcon icon={faChartLine} className="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Doanh thu / nợ',
+        to: '/statistics/revenue',
+      },
+      {
+        component: CNavItem,
+        name: 'Sản lượng bán hàng',
+        to: '/statistics/soldvolume',
+      },
+      {
+        component: CNavItem,
+        name: 'Khách hàng đăng ký',
+        to: '/statistics/customer',
       },
     ],
   },

@@ -2,6 +2,8 @@ import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
+const ContentHomepage = React.lazy(() => import('./views/content/Homepage'))
+
 const BranchHome = React.lazy(() => import('./views/branches/Home'))
 const BranchAdd = React.lazy(() => import('./views/branches/Add'))
 
@@ -59,9 +61,16 @@ const CustomerHome = React.lazy(() => import('./views/customers/Home'))
 const CustomerDebt = React.lazy(() => import('./views/customers/Debt'))
 const CustomerView = React.lazy(() => import('./views/customers/View'))
 
+const StatisticsRevenue = React.lazy(() => import('./views/statistics/Revenue'))
+const StatisticsSoldvolume = React.lazy(() => import('./views/statistics/Soldvolume'))
+const StatisticsCustomer = React.lazy(() => import('./views/statistics/Customer'))
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+
+  { path: '/content', exact: true, name: 'Nội dung trang web' },
+  { path: '/content/homepage', exact: true, name: 'Trang chủ', component: ContentHomepage },
 
   { path: '/branches', exact: true, name: 'Cửa hàng', component: BranchHome },
   { path: '/branches/add', exact: true, name: 'Thêm cửa hàng', component: BranchAdd },
@@ -282,29 +291,53 @@ const routes = [
   { path: '/users/add', exact: true, name: 'Thêm nhân viên', component: UserAdd },
   { path: '/users/edit', exact: true, name: 'Chỉnh sửa nhân viên', component: UserAdd },
   { path: '/users/salary', exact: true, name: 'Bảng lương', component: UserSalary },
-  { path: '/voucher', exact: true, name: 'Voucher/Coupon', component: VoucherHome },
+  { path: '/voucher', exact: true, name: 'Voucher', component: VoucherHome },
   {
     path: '/voucher/add',
     exact: true,
-    name: 'Thêm voucher/coupon',
+    name: 'Thêm voucher',
     component: VoucherAdd,
   },
   {
     path: '/voucher/view',
     exact: true,
-    name: 'Xem voucher/coupon',
+    name: 'Xem voucher',
     component: VoucherView,
   },
   {
     path: '/voucher/edit',
     exact: true,
-    name: 'Chỉnh sửa voucher/coupon',
+    name: 'Chỉnh sửa voucher',
     component: VoucherAdd,
   },
 
   { path: '/customers', exact: true, name: 'Khách hàng', component: CustomerHome },
   { path: '/customers/view', exact: true, name: 'Xem khách hàng', component: CustomerView },
   { path: '/customers/debt', exact: true, name: 'Nợ', component: CustomerDebt },
+
+  {
+    path: '/statistics',
+    exact: true,
+    name: 'Thống kê',
+  },
+  {
+    path: '/statistics/revenue',
+    exact: true,
+    name: 'Doanh thu / nợ',
+    component: StatisticsRevenue,
+  },
+  {
+    path: '/statistics/soldvolume',
+    exact: true,
+    name: 'Sản lượng bán hàng',
+    component: StatisticsSoldvolume,
+  },
+  {
+    path: '/statistics/customer',
+    exact: true,
+    name: 'Khách hàng đăng ký',
+    component: StatisticsCustomer,
+  },
 ]
 
 export default routes
