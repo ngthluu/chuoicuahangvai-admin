@@ -65,6 +65,8 @@ const StatisticsRevenue = React.lazy(() => import('./views/statistics/Revenue'))
 const StatisticsSoldvolume = React.lazy(() => import('./views/statistics/Soldvolume'))
 const StatisticsCustomer = React.lazy(() => import('./views/statistics/Customer'))
 
+const Notifications = React.lazy(() => import('./views/notifications/Notifications'))
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -337,6 +339,12 @@ const routes = [
     exact: true,
     name: 'Khách hàng đăng ký',
     component: StatisticsCustomer,
+  },
+  {
+    path: '/notifications',
+    exact: true,
+    name: 'Thông báo',
+    component: Notifications,
   },
 ]
 
