@@ -21,6 +21,8 @@ const WarehouseCatalogueAdd = React.lazy(() => import('./views/warehouses/catalo
 
 const CategoryHome = React.lazy(() => import('./views/categories/Home'))
 const CategoryAdd = React.lazy(() => import('./views/categories/Add'))
+const ProductColorHome = React.lazy(() => import('./views/products/color/Home'))
+const ProductColorAdd = React.lazy(() => import('./views/products/color/Add'))
 const ProductPatternHome = React.lazy(() => import('./views/products/pattern/Home'))
 const ProductPatternAdd = React.lazy(() => import('./views/products/pattern/Add'))
 const ProductWidthHome = React.lazy(() => import('./views/products/width/Home'))
@@ -137,6 +139,19 @@ const routes = [
     exact: true,
     name: 'Chỉnh sửa danh mục',
     component: CategoryAdd,
+  },
+  { path: '/product-color', exact: true, name: 'Màu sắc', component: ProductColorHome },
+  {
+    path: '/product-color/add',
+    exact: true,
+    name: 'Thêm màu sắc',
+    component: ProductColorAdd,
+  },
+  {
+    path: '/product-color/edit',
+    exact: true,
+    name: 'Chỉnh sửa màu sắc',
+    component: ProductColorAdd,
   },
   { path: '/product-pattern', exact: true, name: 'Kiểu mẫu', component: ProductPatternHome },
   {

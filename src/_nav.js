@@ -73,6 +73,11 @@ const _nav = [
         items: [
           {
             component: CNavItem,
+            name: 'Màu sắc',
+            to: '/product-color',
+          },
+          {
+            component: CNavItem,
             name: 'Kiểu mẫu',
             to: '/product-pattern',
           },
