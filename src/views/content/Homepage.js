@@ -53,6 +53,7 @@ const Home = () => {
       })),
       signup_section: signupSection,
     }
+    console.log(data.member_responses)
     axios
       .put(`${process.env.REACT_APP_STRAPI_URL}/api/homepage`, {
         data: data,

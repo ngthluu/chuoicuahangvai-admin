@@ -25,7 +25,6 @@ const HomepageCustomerResponse = (props) => {
     let newData = [
       ...props.data,
       {
-        id: null,
         avatar: {
           data: {
             id: null,
