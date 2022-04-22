@@ -68,20 +68,16 @@ const Home = () => {
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Sản lượng bán ra</h4>
+                <h4 className="mb-3">Khách hàng đăng ký</h4>
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Mã đơn hàng..." />
+                      <CFormLabel>Ngày (từ)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày (từ)" />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày đặt (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (từ)" />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Ngày đặt (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (đến)" />
+                      <CFormLabel>Ngày (đến)</CFormLabel>
+                      <CFormInput type="date" placeholder="Ngày (đến)" />
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
