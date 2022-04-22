@@ -56,12 +56,15 @@ const SkuBox = (props) => {
   }
   const handleRemoveImage = (index) => {
     let data = [...props.data]
-    data[props.index].attributes.images.data = [
-      ...data[props.index].attributes.images.data.slice(0, index),
-      ...data[props.index].attributes.images.data.slice(index + 1),
-    ]
+    if (data[props.index].attributes.images.data) {
+      data[props.index].attributes.images.data = [
+        ...data[props.index].attributes.images.data.slice(0, index),
+        ...data[props.index].attributes.images.data.slice(index + 1),
+      ]
+    } else {
+      data[props.index].attributes.images.data = []
+    }
     props.setData(data)
-
     setImagesList([...imagesList.slice(0, index), ...imagesList.slice(index + 1)])
   }
   const handleChangeSKU = (e) => {

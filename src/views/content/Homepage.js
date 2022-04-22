@@ -1,38 +1,148 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
 
-import { CCard, CCardBody, CRow } from '@coreui/react'
+import {
+  CCard,
+  CCardBody,
+  CRow,
+  CCol,
+  CForm,
+  CCardHeader,
+  CFormLabel,
+  CFormInput,
+  CFormSelect,
+  CCardFooter,
+  CButton,
+  CFormFeedback,
+} from '@coreui/react'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
+import TextEditor from 'src/views/template/TextEditor'
+import ImageUpload from 'src/views/template/ImageUpload'
+
+import HomepageNewProductsBanners from 'src/views/content/HomepageNewProductsBanners'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Home = () => {
+  const [headerBanner, setHeaderBanner] = useState('')
+  const [newProductsBanners, setNewProductsBanners] = useState([])
+
+  const [featuresSku, setFeaturesSku] = useState([])
+  const [memberResponses, setMemberResponses] = useState([])
+  const [signupSection, setSignupSection] = useState('')
+
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+    const data = {
+      header_banner: headerBanner,
+      new_products_banners: newProductsBanners,
+      signup_section: signupSection,
+    }
+    axios
+      .put(`${process.env.REACT_APP_STRAPI_URL}/api/homepage`, {
+        data: data,
+      })
+      .then((response) => toast.success('Thao tác thành công'))
+      .catch((error) => toast.error('Thao tác thất bại. Có lỗi xảy ra !!'))
+  }
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      {
+        populate: [
+          'member_responses',
+          'member_responses.avatar',
+          'features_sku',
+          'new_products_banners',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`
+      ${process.env.REACT_APP_STRAPI_URL}/api/homepage?${query}`)
+    const data = response.data.data
+    setHeaderBanner(data.attributes.header_banner)
+    setNewProductsBanners(
+      data.attributes.new_products_banners.data ? data.attributes.new_products_banners.data : [],
+    )
+    setFeaturesSku(data.attributes.features_sku.data ? data.attributes.features_sku.data : [])
+    setMemberResponses(
+      data.attributes.member_responses.data ? data.attributes.member_responses.data : [],
+    )
+    setSignupSection(data.attributes.signup_section)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
-    <>
-      <CCard className="mb-4">
-        <CCardBody>
-          <CRow>
-            <h4 id="traffic" className="card-title mb-4">
-              Chào mừng bạn đến với hệ thống quản lý chuỗi của hàng vải lẻ
-            </h4>
-            <p>
-              Hệ thống quản lý chuỗi cửa hàng vải lẻ cung cấp các tính năng sau:
-              <ul>
-                <li>Quản lý nội dung trên trang bán hàng</li>
-                <li>Quản lý các cửa hàng và kho tương ứng</li>
-                <li>Quản lý các sản phẩm (vải), với các thuộc tính đi kèm</li>
-                <li>Quản lý các đơn bán và trả hàng</li>
-                <li>Quản lý nhân viên, chấm công và nghỉ phép</li>
-                <li>Quản lý khách hàng và nợ của từng khách hàng</li>
-                <li>Phát hành voucher phục vụ việc chăm sóc khách hàng</li>
-                <li>
-                  Thống kê doanh thu, doanh số, nợ, sản lượng bán ra và các thông tin hữu ích khác.
-                </li>
-              </ul>
-              Hệ thống được phát triển và duy trì bởi nhóm Nguyễn Thành Lưu, Lê Bá Thông và Huỳnh
-              Thiên Trình. Mọi thắc mắc vui lòng liên hệ email:{' '}
-              <a href="mailto:luu.nguyen2101@hcmut.edu.vn">luu.nguyen2101@hcmut.edu.vn</a>
-            </p>
-          </CRow>
-        </CCardBody>
-      </CCard>
-    </>
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
+      <CCol md={12}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <h5>Thông tin</h5>
+          </CCardHeader>
+          <CCardBody>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Header banner</CFormLabel>
+                <CFormInput
+                  type="text"
+                  placeholder="Header banner"
+                  value={headerBanner}
+                  onChange={(e) => setHeaderBanner(e.target.value)}
+                  required
+                />
+                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Banner sản phẩm mới</CFormLabel>
+                <HomepageNewProductsBanners
+                  data={newProductsBanners}
+                  setData={setNewProductsBanners}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Phản hồi từ khách hàng</CFormLabel>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Đăng ký nhận bản tin</CFormLabel>
+                <TextEditor value={signupSection} setValue={setSignupSection}></TextEditor>
+              </CCol>
+            </CRow>
+          </CCardBody>
+          <CCardFooter className="d-flex">
+            <CButton color="info" type="submit" className="text-white">
+              <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
+            </CButton>
+          </CCardFooter>
+        </CCard>
+      </CCol>
+    </CForm>
   )
 }
 
