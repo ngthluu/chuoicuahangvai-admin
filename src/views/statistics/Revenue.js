@@ -63,7 +63,6 @@ const Home = () => {
       }
       return item
     })
-    console.log(invoices)
     setInvoicesList(invoices)
     const charts = invoices.reduce((prev, cur) => {
       if (Object.keys(prev).includes(cur.date)) return prev

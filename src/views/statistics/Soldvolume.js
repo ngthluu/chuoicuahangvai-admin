@@ -30,59 +30,58 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf, faSearch, faPlus } from '@fortawesome/free-solid-svg-icons'
 
+import ProductDescription from 'src/views/products/ProductDescription'
+
 const Home = () => {
   const [activeKey, setActiveKey] = useState(2)
-  const [ordersList, setOrdersList] = useState([])
+  const [products, setProducts] = useState([])
   const [chartData, setChartData] = useState([])
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
         populate: [
-          'customer',
-          'branch',
-          'order_statuses',
-          'order_invoice',
-          'order_invoice.order_payment_invoices',
+          'order',
+          'customer_name',
+          'products',
+          'products.inventory_item',
+          'products.inventory_item.sku_quantity',
+          'products.inventory_item.sku_quantity.sku',
+          'products.inventory_item.sku_quantity.sku.product',
+          'products.inventory_item.sku_quantity.sku.images',
+          'products.inventory_item.sku_quantity.sku.pattern',
+          'products.inventory_item.sku_quantity.sku.stretch',
+          'products.inventory_item.sku_quantity.sku.width',
+          'products.inventory_item.sku_quantity.sku.origin',
+          'products.inventory_item.sku_quantity.sku.color',
+          'order_payment_invoices',
         ],
       },
       { encodeValuesOnly: true },
     )
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/orders?${query}`)
-    const orders = response.data.data.map((item) => {
-      item = {
-        ...item,
-        date: new Date(item.attributes.createdAt).toISOString().split('T')[0],
-        total: item.attributes.order_invoice.data.attributes.price,
-        revenue: item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
-          (prev, cur) => prev + parseFloat(cur.attributes.amount),
-          0,
-        ),
-        debt:
-          item.attributes.order_invoice.data.attributes.price -
-          item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
-            (prev, cur) => prev + parseFloat(cur.attributes.amount),
-            0,
-          ),
-      }
-      item.attributes.status = {
-        data: item.attributes.order_statuses.data.sort((a, b) => {
-          return Date.parse(a.attributes.createdAt) < Date.parse(b.attributes.createdAt) ? 1 : -1
-        })[0],
-      }
-      return item
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/order-invoices?${query}`,
+    )
+    let products = {}
+    response.data.data.forEach((itemInvoice) => {
+      const invoiceProducts = itemInvoice.attributes.products
+      invoiceProducts.forEach((itemProduct) => {
+        const length = itemProduct.length
+        const inventoryItem = itemProduct.inventory_item.data
+        const skuQuantityItem = inventoryItem.attributes.sku_quantity
+        const skuItem = skuQuantityItem.sku.data
+        if (products.hasOwnProperty(skuItem.id)) {
+          products[skuItem.id].length += length
+        } else {
+          products[skuItem.id] = {
+            skuItem: skuItem,
+            length: length,
+          }
+        }
+      })
     })
-    setOrdersList(orders)
-    const charts = orders.reduce((prev, cur) => {
-      if (Object.keys(prev).includes(cur.date)) return prev
-      prev[cur.date] = {
-        total: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.total, 0),
-        revenue: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.revenue, 0),
-        debt: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.debt, 0),
-      }
-      return prev
-    }, {})
-    setChartData(charts)
+    console.log(products)
+    setProducts(products)
   }
 
   useEffect(() => {
@@ -150,36 +149,28 @@ const Home = () => {
                   <CTable align="middle" bordered>
                     <CTableHead align="middle">
                       <CTableRow>
-                        <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                        <CTableHeaderCell scope="col"> Hóa đơn </CTableHeaderCell>
-                        <CTableHeaderCell scope="col"> Ngày đặt </CTableHeaderCell>
-                        <CTableHeaderCell scope="col"> Giá trị (đ) </CTableHeaderCell>
-                        <CTableHeaderCell scope="col"> Đã thanh toán (đ) </CTableHeaderCell>
-                        <CTableHeaderCell scope="col"> Nợ (đ) </CTableHeaderCell>
+                        <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
+                        <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
+                        <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
+                        <CTableHeaderCell scope="col"> Chiều dài đã bán </CTableHeaderCell>
                       </CTableRow>
                     </CTableHead>
                     <CTableBody align="middle">
-                      {ordersList.length > 0 ? (
-                        ordersList.map((item, index) => (
-                          <CTableRow key={index}>
-                            <CTableDataCell> {index + 1} </CTableDataCell>
+                      {Object.entries(products).length > 0 ? (
+                        Object.entries(products).map(([key, item]) => (
+                          <CTableRow key={key}>
                             <CTableDataCell>
-                              {item.attributes.order_invoice.data ? (
-                                <Link
-                                  to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
-                                >
-                                  {`S-INVOICE#${item.attributes.order_invoice.data.id}`}
-                                </Link>
-                              ) : (
-                                <></>
-                              )}
+                              <Link to="#">{item.skuItem.attributes.sku}</Link>
                             </CTableDataCell>
                             <CTableDataCell>
-                              {new Date(item.attributes.createdAt).toISOString().split('T')[0]}
+                              {item.skuItem.attributes.product.data.attributes.name}
                             </CTableDataCell>
-                            <CTableDataCell>{item.total.toLocaleString()}</CTableDataCell>
-                            <CTableDataCell>{item.revenue.toLocaleString()}</CTableDataCell>
-                            <CTableDataCell>{item.debt.toLocaleString()}</CTableDataCell>
+                            <CTableDataCell>
+                              <ProductDescription
+                                attributes={item.skuItem.attributes}
+                              ></ProductDescription>
+                            </CTableDataCell>
+                            <CTableDataCell>{item.length} </CTableDataCell>
                           </CTableRow>
                         ))
                       ) : (
@@ -192,33 +183,19 @@ const Home = () => {
                 </CTabPane>
                 <CTabPane role="tabpanel" visible={activeKey === 2}>
                   <CChart
-                    type="line"
+                    type="doughnut"
                     data={{
-                      labels: Object.entries(chartData).map(([key, value]) => key),
+                      labels: Object.entries(products).map(
+                        ([key, value]) =>
+                          `${value.skuItem.attributes.product.data.attributes.name} - ${value.skuItem.attributes.sku}`,
+                      ),
                       datasets: [
                         {
-                          label: 'Doanh số',
-                          backgroundColor: 'rgba(232, 72, 112, 0.2)',
-                          borderColor: 'rgba(232, 72, 112, 1)',
-                          pointBackgroundColor: 'rgba(232, 72, 112, 1)',
-                          pointBorderColor: '#fff',
-                          data: Object.entries(chartData).map(([key, value]) => value.total),
-                        },
-                        {
-                          label: 'Doanh thu',
-                          backgroundColor: 'rgba(72, 184, 232, 0.2)',
-                          borderColor: 'rgba(72, 184, 232, 1)',
-                          pointBackgroundColor: 'rgba(72, 184, 232, 1)',
-                          pointBorderColor: '#fff',
-                          data: Object.entries(chartData).map(([key, value]) => value.revenue),
-                        },
-                        {
-                          label: 'Nợ',
-                          backgroundColor: 'rgba(105, 189, 57, 0.2)',
-                          borderColor: 'rgba(105, 189, 57, 1)',
-                          pointBackgroundColor: 'rgba(105, 189, 57, 1)',
-                          pointBorderColor: '#fff',
-                          data: Object.entries(chartData).map(([key, value]) => value.debt),
+                          backgroundColor: Object.entries(products).map(
+                            ([key, value]) =>
+                              `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+                          ),
+                          data: Object.entries(products).map(([key, value]) => value.length),
                         },
                       ],
                     }}
