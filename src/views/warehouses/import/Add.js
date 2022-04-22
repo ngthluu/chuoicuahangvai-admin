@@ -144,6 +144,7 @@ const Add = () => {
           'products',
           'products.sku',
           'products.sku.product',
+          'products.sku.color',
           'products.sku.pattern',
           'products.sku.stretch',
           'products.sku.width',

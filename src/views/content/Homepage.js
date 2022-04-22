@@ -22,6 +22,7 @@ import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
 import TextEditor from 'src/views/template/TextEditor'
 
 import ImageUploadList from 'src/views/template/ImageUploadList'
+import HomepageFeaturesSku from 'src/views/content/HomepageFeaturesSku'
 import HomepageCustomerResponse from 'src/views/content/HomepageCustomerResponse'
 
 import { ToastContainer, toast } from 'react-toastify'
@@ -47,13 +48,13 @@ const Home = () => {
     const data = {
       header_banner: headerBanner,
       new_products_banners: newProductsBanners,
+      features_sku: featuresSku,
       member_responses: memberResponses.map((item) => ({
         ...item,
         avatar: item.avatar.data ? item.avatar.data.id : null,
       })),
       signup_section: signupSection,
     }
-    console.log(data.member_responses)
     axios
       .put(`${process.env.REACT_APP_STRAPI_URL}/api/homepage`, {
         data: data,
@@ -69,6 +70,12 @@ const Home = () => {
           'member_responses',
           'member_responses.avatar',
           'features_sku',
+          'features_sku.product',
+          'features_sku.color',
+          'features_sku.pattern',
+          'features_sku.stretch',
+          'features_sku.width',
+          'features_sku.origin',
           'new_products_banners',
         ],
       },
@@ -81,7 +88,22 @@ const Home = () => {
     setNewProductsBanners(
       data.attributes.new_products_banners.data ? data.attributes.new_products_banners.data : [],
     )
-    setFeaturesSku(data.attributes.features_sku.data ? data.attributes.features_sku.data : [])
+    setFeaturesSku(
+      data.attributes.features_sku.data
+        ? data.attributes.features_sku.data.map((item) => {
+            const productSku = item.attributes.sku
+            const productName = item.attributes.product.data.attributes.name
+            const productAttributes = item.attributes
+            return {
+              componentId: item.id,
+              id: item.id,
+              sku: productSku,
+              name: productName,
+              attributes: productAttributes,
+            }
+          })
+        : [],
+    )
     setMemberResponses(data.attributes.member_responses ? data.attributes.member_responses : [])
     setSignupSection(data.attributes.signup_section)
   }
@@ -121,6 +143,12 @@ const Home = () => {
               <CCol md={12}>
                 <CFormLabel>Banner sản phẩm mới</CFormLabel>
                 <ImageUploadList data={newProductsBanners} setData={setNewProductsBanners} />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Sản phẩm đặc sắc</CFormLabel>
+                <HomepageFeaturesSku data={featuresSku} setData={setFeaturesSku} />
               </CCol>
             </CRow>
             <CRow className="mb-3">
