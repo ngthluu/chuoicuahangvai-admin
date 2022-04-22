@@ -146,13 +146,14 @@ const Home = () => {
               </CNav>
               <CTabContent>
                 <CTabPane role="tabpanel" visible={activeKey === 1}>
-                  <CTable align="middle" bordered>
+                  <CTable align="middle" style={{ marginTop: 30 }} bordered>
                     <CTableHead align="middle">
                       <CTableRow>
                         <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>
                         <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                         <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                         <CTableHeaderCell scope="col"> Chiều dài đã bán </CTableHeaderCell>
+                        <CTableHeaderCell scope="col"> Phần trăm </CTableHeaderCell>
                       </CTableRow>
                     </CTableHead>
                     <CTableBody align="middle">
@@ -171,6 +172,16 @@ const Home = () => {
                               ></ProductDescription>
                             </CTableDataCell>
                             <CTableDataCell>{item.length} </CTableDataCell>
+                            <CTableDataCell>
+                              {Math.round(
+                                (100 * item.length) /
+                                  Object.entries(products).reduce(
+                                    (prev, [key, item]) => prev + item.length,
+                                    0,
+                                  ),
+                              )}
+                              {'%'}
+                            </CTableDataCell>
                           </CTableRow>
                         ))
                       ) : (
@@ -184,6 +195,7 @@ const Home = () => {
                 <CTabPane role="tabpanel" visible={activeKey === 2}>
                   <CChart
                     type="doughnut"
+                    style={{ width: '400px', margin: 'auto', marginTop: 30 }}
                     data={{
                       labels: Object.entries(products).map(
                         ([key, value]) =>
