@@ -80,7 +80,6 @@ const Home = () => {
         }
       })
     })
-    console.log(products)
     setProducts(products)
   }
 

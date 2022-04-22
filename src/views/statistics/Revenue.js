@@ -178,6 +178,7 @@ const Home = () => {
                 <CTabPane role="tabpanel" visible={activeKey === 2}>
                   <CChart
                     type="line"
+                    style={{ marginTop: 30 }}
                     data={{
                       labels: Object.entries(chartData).map(([key, value]) => key),
                       datasets: [
