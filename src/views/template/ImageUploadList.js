@@ -9,7 +9,7 @@ import ImageUpload from 'src/views/template/ImageUpload'
 import PropTypes from 'prop-types'
 
 const ImageUploadList = (props) => {
-  const [images, setImages] = useState([])
+  const [data, setData] = useState([])
   const addProductImage = () => {
     let newImagesList = [
       ...props.data,
@@ -39,16 +39,16 @@ const ImageUploadList = (props) => {
     let data = [...props.data]
     data.splice(index, 1)
     props.setData(data)
-    setImages([])
+    setData([])
   }
 
   useEffect(() => {
-    setImages(props.data)
+    setData(props.data)
   }, [props.data])
 
   return (
     <div>
-      {images.map((item, index) => (
+      {data.map((item, index) => (
         <ImageUpload
           key={index}
           default={item.attributes.url}

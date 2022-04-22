@@ -21,7 +21,6 @@ const ImageUpload = (props) => {
   const handleChangeInput = async (e) => {
     if (e.target.files.length > 0) {
       let file = e.target.files[0]
-      setImage(URL.createObjectURL(file))
       let formData = new FormData()
       formData.append(`files`, file, file.name)
       const response = await axios.post(
@@ -32,6 +31,7 @@ const ImageUpload = (props) => {
         },
       )
       props.handleUploadImage(response.data[0])
+      setImage(URL.createObjectURL(file))
     }
   }
 

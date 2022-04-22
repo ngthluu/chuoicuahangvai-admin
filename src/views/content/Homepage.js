@@ -22,6 +22,7 @@ import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
 import TextEditor from 'src/views/template/TextEditor'
 
 import ImageUploadList from 'src/views/template/ImageUploadList'
+import HomepageCustomerResponse from 'src/views/content/HomepageCustomerResponse'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -46,6 +47,10 @@ const Home = () => {
     const data = {
       header_banner: headerBanner,
       new_products_banners: newProductsBanners,
+      member_responses: memberResponses.map((item) => ({
+        ...item,
+        avatar: item.avatar.data ? item.avatar.data.id : null,
+      })),
       signup_section: signupSection,
     }
     axios
@@ -76,9 +81,7 @@ const Home = () => {
       data.attributes.new_products_banners.data ? data.attributes.new_products_banners.data : [],
     )
     setFeaturesSku(data.attributes.features_sku.data ? data.attributes.features_sku.data : [])
-    setMemberResponses(
-      data.attributes.member_responses.data ? data.attributes.member_responses.data : [],
-    )
+    setMemberResponses(data.attributes.member_responses ? data.attributes.member_responses : [])
     setSignupSection(data.attributes.signup_section)
   }
 
@@ -122,6 +125,7 @@ const Home = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Phản hồi từ khách hàng</CFormLabel>
+                <HomepageCustomerResponse data={memberResponses} setData={setMemberResponses} />
               </CCol>
             </CRow>
             <CRow className="mb-3">
