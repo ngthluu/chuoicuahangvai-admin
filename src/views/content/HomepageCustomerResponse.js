@@ -82,6 +82,7 @@ const HomepageCustomerResponse = (props) => {
   }
 
   useEffect(() => {
+    console.log(props.data)
     setData(props.data)
   }, [props.data])
 
@@ -96,7 +97,7 @@ const HomepageCustomerResponse = (props) => {
                   type="button"
                   className="float-end"
                   color="danger"
-                  onClick={handleDeleteCustomerResponse}
+                  onClick={() => handleDeleteCustomerResponse(index)}
                 >
                   <FontAwesomeIcon icon={faTimes} color="white" />
                 </CButton>
