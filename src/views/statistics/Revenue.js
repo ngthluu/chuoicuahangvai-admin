@@ -32,53 +32,45 @@ import { faFilePdf, faSearch, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 const Home = () => {
   const [activeKey, setActiveKey] = useState(2)
-  const [ordersList, setOrdersList] = useState([])
+  const [invoicesList, setInvoicesList] = useState([])
   const [chartData, setChartData] = useState([])
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        populate: [
-          'customer',
-          'branch',
-          'order_statuses',
-          'order_invoice',
-          'order_invoice.order_payment_invoices',
-        ],
+        populate: ['order', 'customer_name', 'products', 'order_payment_invoices'],
       },
       { encodeValuesOnly: true },
     )
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/orders?${query}`)
-    const orders = response.data.data.map((item) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/order-invoices?${query}`,
+    )
+    const invoices = response.data.data.map((item) => {
       item = {
         ...item,
         date: new Date(item.attributes.createdAt).toISOString().split('T')[0],
-        total: item.attributes.order_invoice.data.attributes.price,
-        revenue: item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+        total: item.attributes.price,
+        revenue: item.attributes.order_payment_invoices.data.reduce(
           (prev, cur) => prev + parseFloat(cur.attributes.amount),
           0,
         ),
         debt:
-          item.attributes.order_invoice.data.attributes.price -
-          item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+          item.attributes.price -
+          item.attributes.order_payment_invoices.data.reduce(
             (prev, cur) => prev + parseFloat(cur.attributes.amount),
             0,
           ),
       }
-      item.attributes.status = {
-        data: item.attributes.order_statuses.data.sort((a, b) => {
-          return Date.parse(a.attributes.createdAt) < Date.parse(b.attributes.createdAt) ? 1 : -1
-        })[0],
-      }
       return item
     })
-    setOrdersList(orders)
-    const charts = orders.reduce((prev, cur) => {
+    console.log(invoices)
+    setInvoicesList(invoices)
+    const charts = invoices.reduce((prev, cur) => {
       if (Object.keys(prev).includes(cur.date)) return prev
       prev[cur.date] = {
-        total: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.total, 0),
-        revenue: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.revenue, 0),
-        debt: orders.filter((g) => g.date === cur.date).reduce((p, c) => p + c.debt, 0),
+        total: invoices.filter((g) => g.date === cur.date).reduce((p, c) => p + c.total, 0),
+        revenue: invoices.filter((g) => g.date === cur.date).reduce((p, c) => p + c.revenue, 0),
+        debt: invoices.filter((g) => g.date === cur.date).reduce((p, c) => p + c.debt, 0),
       }
       return prev
     }, {})
@@ -159,20 +151,14 @@ const Home = () => {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody align="middle">
-                      {ordersList.length > 0 ? (
-                        ordersList.map((item, index) => (
+                      {invoicesList.length > 0 ? (
+                        invoicesList.map((item, index) => (
                           <CTableRow key={index}>
                             <CTableDataCell> {index + 1} </CTableDataCell>
                             <CTableDataCell>
-                              {item.attributes.order_invoice.data ? (
-                                <Link
-                                  to={`/orders/sell/view_invoice?id=${item.attributes.order_invoice.data.id}`}
-                                >
-                                  {`S-INVOICE#${item.attributes.order_invoice.data.id}`}
-                                </Link>
-                              ) : (
-                                <></>
-                              )}
+                              <Link to={`/orders/sell/view_invoice?id=${item.id}`}>
+                                {`S-INVOICE#${item.id}`}
+                              </Link>
                             </CTableDataCell>
                             <CTableDataCell>
                               {new Date(item.attributes.createdAt).toISOString().split('T')[0]}
