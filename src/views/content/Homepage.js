@@ -20,9 +20,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
 import TextEditor from 'src/views/template/TextEditor'
-import ImageUpload from 'src/views/template/ImageUpload'
 
-import HomepageNewProductsBanners from 'src/views/content/HomepageNewProductsBanners'
+import ImageUploadList from 'src/views/template/ImageUploadList'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -117,10 +116,7 @@ const Home = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Banner sản phẩm mới</CFormLabel>
-                <HomepageNewProductsBanners
-                  data={newProductsBanners}
-                  setData={setNewProductsBanners}
-                />
+                <ImageUploadList data={newProductsBanners} setData={setNewProductsBanners} />
               </CCol>
             </CRow>
             <CRow className="mb-3">

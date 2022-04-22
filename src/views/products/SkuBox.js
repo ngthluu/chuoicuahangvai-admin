@@ -13,60 +13,15 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import ImageUpload from 'src/views/template/ImageUpload'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import ImageUploadList from 'src/views/template/ImageUploadList'
 
 import PropTypes from 'prop-types'
 
 const SkuBox = (props) => {
   const [imagesList, setImagesList] = useState(props.images)
-  const addProductImage = () => {
-    let newImagesList = [
-      ...imagesList,
-      {
-        id: null,
-        attributes: {
-          url: null,
-        },
-      },
-    ]
-    setImagesList(newImagesList)
-  }
-
-  const handleChangeImage = (index, resImageData) => {
-    let data = [...props.data]
-    const newImageData = {
-      id: resImageData.id,
-      attributes: { url: resImageData.url },
-    }
-    // If existed, upload id and url
-    if (imagesList[index].id !== null) {
-      imagesList[index] = newImageData
-      return
-    }
-    if (data[props.index].attributes.images.data == null) {
-      data[props.index].attributes.images.data = [newImageData]
-      props.setData(data)
-      return
-    }
-    data[props.index].attributes.images.data.push(newImageData)
-    props.setData(data)
-  }
-  const handleRemoveImage = (index) => {
-    let data = [...props.data]
-    if (data[props.index].attributes.images.data) {
-      data[props.index].attributes.images.data = [
-        ...data[props.index].attributes.images.data.slice(0, index),
-        ...data[props.index].attributes.images.data.slice(index + 1),
-      ]
-    } else {
-      data[props.index].attributes.images.data = []
-    }
-    props.setData(data)
-    setImagesList([...imagesList.slice(0, index), ...imagesList.slice(index + 1)])
-  }
   const handleChangeSKU = (e) => {
     let data = [...props.data]
     data[props.index].attributes.sku = e.target.value
@@ -140,27 +95,13 @@ const SkuBox = (props) => {
           <CRow>
             <CCol md={12} className="mb-3">
               <CFormLabel>Hình ảnh</CFormLabel>
-              <div>
-                {imagesList.map((item, index) => (
-                  <ImageUpload
-                    key={index}
-                    default={item.attributes.url}
-                    handleUploadImage={(resImageData) => handleChangeImage(index, resImageData)}
-                    handleResetImage={() => handleRemoveImage(index)}
-                  ></ImageUpload>
-                ))}
-                <CCard
-                  className="p-2 mb-3 d-flex justify-content-center align-items-center"
-                  onClick={addProductImage}
-                  role="button"
-                  color="info"
-                  textColor="white"
-                >
-                  <div>
-                    <FontAwesomeIcon icon={faPlus} /> <strong>Hình ảnh</strong>
-                  </div>
-                </CCard>
-              </div>
+              <ImageUploadList
+                data={imagesList}
+                setData={(images) => {
+                  setImagesList(images)
+                  props.data[props.index].attributes.images.data = images
+                }}
+              />
             </CCol>
           </CRow>
           <CRow>

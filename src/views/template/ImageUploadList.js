@@ -8,8 +8,8 @@ import ImageUpload from 'src/views/template/ImageUpload'
 
 import PropTypes from 'prop-types'
 
-const HomepageNewProductsBanners = (props) => {
-  const [banners, setBanners] = useState([])
+const ImageUploadList = (props) => {
+  const [images, setImages] = useState([])
   const addProductImage = () => {
     let newImagesList = [
       ...props.data,
@@ -20,7 +20,6 @@ const HomepageNewProductsBanners = (props) => {
         },
       },
     ]
-    props.setData(newImagesList)
     props.setData(newImagesList)
   }
   const handleChangeImage = (index, resImageData) => {
@@ -40,16 +39,16 @@ const HomepageNewProductsBanners = (props) => {
     let data = [...props.data]
     data.splice(index, 1)
     props.setData(data)
-    setBanners([])
+    setImages([])
   }
 
   useEffect(() => {
-    setBanners(props.data)
+    setImages(props.data)
   }, [props.data])
 
   return (
     <div>
-      {banners.map((item, index) => (
+      {images.map((item, index) => (
         <ImageUpload
           key={index}
           default={item.attributes.url}
@@ -72,9 +71,9 @@ const HomepageNewProductsBanners = (props) => {
   )
 }
 
-HomepageNewProductsBanners.propTypes = {
+ImageUploadList.propTypes = {
   data: PropTypes.array,
   setData: PropTypes.func,
 }
 
-export default HomepageNewProductsBanners
+export default ImageUploadList
