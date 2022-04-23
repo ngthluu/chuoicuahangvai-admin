@@ -126,20 +126,24 @@ const Home = () => {
                         <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.manager.data != null && (
+                        {item.attributes.manager && (
                           <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>
                             {item.attributes.manager.data.attributes.email}
                           </Link>
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.address.address}
-                        <span>, </span>
-                        {item.attributes.address.address_three_levels.data.attributes.ward}
-                        <span>, </span>
-                        {item.attributes.address.address_three_levels.data.attributes.district}
-                        <span>, </span>
-                        {item.attributes.address.address_three_levels.data.attributes.city}
+                        {item.attributes.address && item.attributes.address.address_three_levels && (
+                          <div>
+                            {item.attributes.address.address}
+                            <span>, </span>
+                            {item.attributes.address.address_three_levels.data.attributes.ward}
+                            <span>, </span>
+                            {item.attributes.address.address_three_levels.data.attributes.district}
+                            <span>, </span>
+                            {item.attributes.address.address_three_levels.data.attributes.city}
+                          </div>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>

@@ -176,16 +176,22 @@ const Home = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        <div>
-                          <FontAwesomeIcon icon={faUser} />{' '}
-                          <Link to={`/customers/view?id=${item.attributes.customer.data.id}`}>
-                            {item.attributes.customer.data.attributes.username}
-                          </Link>
-                        </div>
-                        <div>
-                          <FontAwesomeIcon icon={faPhone} />{' '}
-                          {item.attributes.customer.data.attributes.phone}
-                        </div>
+                        {item.attributes.customer ? (
+                          <div>
+                            <div>
+                              <FontAwesomeIcon icon={faUser} />
+                              <Link to={`/customers/view?id=${item.attributes.customer.data.id}`}>
+                                {item.attributes.customer.data.attributes.username}
+                              </Link>
+                            </div>
+                            <div>
+                              <FontAwesomeIcon icon={faPhone} />
+                              {item.attributes.customer.data.attributes.phone}
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.createdAt} </CTableDataCell>
                       <CTableDataCell>
