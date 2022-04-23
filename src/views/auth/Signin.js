@@ -18,7 +18,6 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useCookies } from 'react-cookie'
-import { getPermissionsData } from 'src/permission'
 
 const Signin = () => {
   const [username, setUsername] = useState('')
@@ -26,10 +25,7 @@ const Signin = () => {
   const [invalidLogin, setInvalidLogin] = useState(false)
   const [loginMessage, setLoginMessage] = useState('Đăng nhập thất bại')
   const [isLoading, setIsLoading] = useState(false)
-  const [cookie, setCookie] = useCookies([
-    process.env.REACT_APP_COOKIE_NAME,
-    process.env.REACT_APP_COOKIE_PERMISSION_NAME,
-  ])
+  const [cookie, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value)
@@ -51,13 +47,6 @@ const Signin = () => {
       .then(async (response) => {
         setIsLoading(false)
         setCookie(process.env.REACT_APP_COOKIE_NAME, response.data.jwt, {
-          path: '/',
-          expires: new Date(Date.now() + 16 * 60 * 60 * 1000),
-          secure: true,
-          sameSite: 'strict',
-        })
-        const permissionsData = await getPermissionsData()
-        setCookie(process.env.REACT_APP_COOKIE_PERMISSION_NAME, permissionsData, {
           path: '/',
           expires: new Date(Date.now() + 16 * 60 * 60 * 1000),
           secure: true,

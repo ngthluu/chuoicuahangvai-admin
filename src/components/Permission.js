@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 import axios from 'axios'
 
 export const permissionsTable = {
@@ -40,3 +42,30 @@ export const checkPermission = (nameArray, table) => {
   }
   return true
 }
+
+const Permission = () => {
+  const [cookie, setCookie] = useCookies([process.env.REACT_APP_COOKIE_PERMISSION_NAME])
+
+  const fetchData = async () => {
+    const isSetPermission =
+      process.env.REACT_APP_COOKIE_PERMISSION_NAME in cookie &&
+      cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME] !== 'undefined'
+    if (!isSetPermission) {
+      const permissionsData = await getPermissionsData()
+      setCookie(process.env.REACT_APP_COOKIE_PERMISSION_NAME, permissionsData, {
+        path: '/',
+        expires: new Date(Date.now() + 16 * 60 * 60 * 1000),
+        secure: true,
+        sameSite: 'strict',
+      })
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  return <></>
+}
+
+export default Permission

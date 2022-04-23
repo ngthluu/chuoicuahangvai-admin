@@ -3,10 +3,9 @@ import { NavLink, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { CBadge } from '@coreui/react'
-import axios from 'axios'
 import { useCookies } from 'react-cookie'
 
-import { checkPermission } from 'src/permission'
+import { checkPermission } from 'src/components/Permission'
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
@@ -28,7 +27,7 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, badge, icon, permission, ...rest } = item
     const Component = component
 
-    const [cookie, setPCookie] = useCookies([process.env.REACT_APP_COOKIE_PERMISSION_NAME])
+    const [cookie, setCookie] = useCookies([])
     const [allowed, setAllowed] = useState(
       checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
     )
@@ -53,7 +52,7 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, icon, to, permission, ...rest } = item
     const Component = component
 
-    const [cookie, setPCookie] = useCookies([process.env.REACT_APP_COOKIE_PERMISSION_NAME])
+    const [cookie, setCookie] = useCookies([])
     const [allowed, setAllowed] = useState(
       checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
     )
@@ -74,9 +73,6 @@ export const AppSidebarNav = ({ items }) => {
       <Component key={index}></Component>
     )
   }
-
-  const [cookie, setPCookie] = useCookies([])
-  useEffect(() => {}, [cookie])
 
   return (
     <React.Fragment>

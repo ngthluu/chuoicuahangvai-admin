@@ -16,6 +16,7 @@ import { cilBell, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
+import Permission from 'src/components/Permission'
 import { logo } from 'src/assets/brand/logo'
 
 const AppHeader = () => {
@@ -24,6 +25,7 @@ const AppHeader = () => {
 
   return (
     <CHeader position="sticky" className="mb-4">
+      <Permission></Permission>
       <CContainer fluid>
         <CHeaderToggler
           className="ps-1"
