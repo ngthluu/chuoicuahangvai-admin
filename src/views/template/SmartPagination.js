@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 
 const SmartPagination = (props) => {
   const handleClickPage = (page) => {
-    console.log(page)
     props.setPage(page)
   }
 

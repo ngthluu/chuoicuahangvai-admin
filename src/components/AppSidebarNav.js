@@ -75,6 +75,9 @@ export const AppSidebarNav = ({ items }) => {
     )
   }
 
+  const [cookie, setPCookie] = useCookies([])
+  useEffect(() => {}, [cookie])
+
   return (
     <React.Fragment>
       {items &&

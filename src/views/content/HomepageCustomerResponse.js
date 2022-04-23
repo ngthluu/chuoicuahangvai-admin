@@ -82,7 +82,6 @@ const HomepageCustomerResponse = (props) => {
   }
 
   useEffect(() => {
-    console.log(props.data)
     setData(props.data)
   }, [props.data])
 
