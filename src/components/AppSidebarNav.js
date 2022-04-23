@@ -4,6 +4,9 @@ import PropTypes from 'prop-types'
 
 import { CBadge } from '@coreui/react'
 import axios from 'axios'
+import { useCookies } from 'react-cookie'
+
+import { checkPermission } from 'src/permission'
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
@@ -22,22 +25,11 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   const NavItem = (item, index) => {
-    const { component, name, badge, icon, ...rest } = item
+    const { component, name, badge, icon, permission, ...rest } = item
     const Component = component
 
-    const [allowed, setAllowed] = useState(false)
-    const fetchPermission = async () => {
-      const { permission } = item
-      if (permission) {
-        await axios
-          .head(`${process.env.REACT_APP_STRAPI_URL}${permission}`)
-          .then((response) => setAllowed(true))
-          .catch((error) => setAllowed(false))
-      }
-    }
-    useEffect(() => {
-      fetchPermission()
-    }, [])
+    const [cookie, setPCookie] = useCookies([])
+    const [allowed, setAllowed] = useState(checkPermission(permission, cookie['admin-permissions']))
 
     return allowed ? (
       <Component
@@ -56,10 +48,13 @@ export const AppSidebarNav = ({ items }) => {
     )
   }
   const NavGroup = (item, index) => {
-    const { component, name, icon, to, ...rest } = item
+    const { component, name, icon, to, permission, ...rest } = item
     const Component = component
 
-    return (
+    const [cookie, setPCookie] = useCookies([])
+    const [allowed, setAllowed] = useState(checkPermission(permission, cookie['admin-permissions']))
+
+    return allowed ? (
       <Component
         idx={String(index)}
         key={index}
@@ -71,6 +66,8 @@ export const AppSidebarNav = ({ items }) => {
           item.items ? NavGroup(item, index) : NavItem(item, index),
         )}
       </Component>
+    ) : (
+      <Component key={index}></Component>
     )
   }
 

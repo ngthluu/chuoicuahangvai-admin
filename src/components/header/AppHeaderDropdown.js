@@ -26,9 +26,10 @@ import avatar from './../../assets/images/no-avatar.png'
 import { useCookies } from 'react-cookie'
 
 const AppHeaderDropdown = () => {
-  const [cookies, removeCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+  const [cookie, removeCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
   const handleLogout = () => {
     removeCookie(process.env.REACT_APP_COOKIE_NAME)
+    removeCookie(process.env.REACT_APP_COOKIE_PERMISSION_NAME)
   }
 
   const [modalChangePasswordVisible, setModalChangePasswordVisible] = useState(false)
