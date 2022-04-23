@@ -32,13 +32,40 @@ import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-soli
 import { Link } from 'react-router-dom'
 
 const Home = () => {
-  const [usersList, setUsersList] = useState([])
+  const getTypeText = (value) => {
+    switch (value) {
+      case 'percent':
+        return 'Giảm giá tổng đơn hàng (%)'
+      case 'percent_limit':
+        return 'Giảm giá tổng đơn hàng, có giới hạn số tiền giảm (%)'
+      case 'amount':
+        return 'Giảm giá tổng đơn hàng (đ)'
+      default:
+        return ''
+    }
+  }
+  const getValueText = (type, typeValue) => {
+    switch (type) {
+      case 'percent':
+        return `Giảm giá ${typeValue.percent} %`
+      case 'percent_limit':
+        return `Giảm giá đơn hàng ${
+          typeValue.percent
+        } %, không vượt quá ${typeValue.limit.toLocaleString()} đ`
+      case 'amount':
+        return `Giảm giá đơn hàng ${typeValue.value.toLocaleString()} đ`
+      default:
+        return ''
+    }
+  }
+
+  const [vouchersList, setVouchersList] = useState([])
 
   useEffect(() => {
     async function fetchData() {
-      const query = qs.stringify({ populate: ['role', 'branches'] }, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
-      setUsersList(response.data.data)
+      const query = qs.stringify({}, { encodeValuesOnly: true })
+      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers?${query}`)
+      setVouchersList(response.data.data)
     }
     fetchData()
   }, [])
@@ -50,24 +77,16 @@ const Home = () => {
           <CCardBody>
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
-                <h4 className="mb-3">Quản lý nhân viên</h4>
+                <h4 className="mb-3">Quản lý voucher</h4>
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Họ và tên..." />
+                      <CFormInput type="text" placeholder="Mã voucher..." />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Cửa hàng</CFormLabel>
-                      <CFormSelect options={['Chọn cửa hàng']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Chức vụ</CFormLabel>
-                      <CFormSelect options={['Chọn chức vụ']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                      <CFormLabel>Loại hình</CFormLabel>
+                      <CFormSelect options={['Chọn loại hình']}></CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -77,9 +96,9 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/users/add">
+              <Link to="/voucher/add">
                 <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Nhân viên</strong>
+                  <FontAwesomeIcon icon={faPlus} /> <strong>Voucher</strong>
                 </CButton>
               </Link>
             </div>
@@ -93,27 +112,27 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Email </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên nhân viên </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chức vụ </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Mã </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Kiểu </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Giá trị </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Thời gian bắt đầu </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Thời gian kết thúc </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {usersList.map((item, index) => (
+                {vouchersList.map((item, index) => (
                   <CTableRow key={item.id}>
                     <CTableDataCell> {index + 1} </CTableDataCell>
                     <CTableDataCell>
-                      <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
+                      <Link to="#">{item.attributes.code}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {item.username} </CTableDataCell>
-                    <CTableDataCell> {item.role.name} </CTableDataCell>
-                    <CTableDataCell>{item.branches.map((el) => el.name).join(', ')}</CTableDataCell>
+                    <CTableDataCell> {getTypeText(item.attributes.type)} </CTableDataCell>
                     <CTableDataCell>
-                      <StatusLabel status={item.blocked} />
+                      {getValueText(item.attributes.type, item.attributes.type_value)}
                     </CTableDataCell>
+                    <CTableDataCell>{item.attributes.available_start_date}</CTableDataCell>
+                    <CTableDataCell>{item.attributes.available_end_date}</CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">

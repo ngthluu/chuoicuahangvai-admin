@@ -97,7 +97,7 @@ const Add = () => {
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
-            <CButton href="/users" color="secondary" type="button" className="text-white ml-3">
+            <CButton href="/voucher" color="secondary" type="button" className="text-white ml-3">
               <strong>Hủy bỏ</strong>
             </CButton>
           </CCardFooter>

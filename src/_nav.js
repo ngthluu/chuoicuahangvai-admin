@@ -189,6 +189,7 @@ const _nav = [
     component: CNavItem,
     name: 'Voucher',
     icon: <FontAwesomeIcon icon={faMoneyBill} className="nav-icon" />,
+    permission: ['voucher'],
     to: '/voucher',
   },
   {

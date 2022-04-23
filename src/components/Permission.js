@@ -21,6 +21,7 @@ export const permissionsTable = {
   refund: '/api/refunds',
   user: '/api/users',
   customer: '/api/customer',
+  voucher: '/api/vouchers',
 }
 
 export const getPermissionsData = async () => {
