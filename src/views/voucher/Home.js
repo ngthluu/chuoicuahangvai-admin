@@ -44,7 +44,7 @@ const Home = () => {
         return ''
     }
   }
-  const getValueText = (type, typeValue) => {
+  const getTypeValueText = (type, typeValue) => {
     switch (type) {
       case 'percent':
         return `Giảm giá ${typeValue.percent} %`
@@ -54,6 +54,17 @@ const Home = () => {
         } %, không vượt quá ${typeValue.limit.toLocaleString()} đ`
       case 'amount':
         return `Giảm giá đơn hàng ${typeValue.value.toLocaleString()} đ`
+      default:
+        return ''
+    }
+  }
+
+  const getApplyForValueText = (applyFor, applyForValue) => {
+    switch (applyFor) {
+      case 'new_customers':
+        return `Khách hàng mới (đăng kí 1 tháng)`
+      case 'all_customers_limit_quantity':
+        return `Tất cả khách hàng, giới hạn ${applyForValue.quantity} vouchers`
       default:
         return ''
     }
@@ -113,8 +124,8 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Mã </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Kiểu </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Giá trị </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Áp dụng cho </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian bắt đầu </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian kết thúc </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
@@ -127,9 +138,14 @@ const Home = () => {
                     <CTableDataCell>
                       <Link to="#">{item.attributes.code}</Link>
                     </CTableDataCell>
-                    <CTableDataCell> {getTypeText(item.attributes.type)} </CTableDataCell>
                     <CTableDataCell>
-                      {getValueText(item.attributes.type, item.attributes.type_value)}
+                      {getTypeValueText(item.attributes.type, item.attributes.type_value)}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {getApplyForValueText(
+                        item.attributes.apply_for,
+                        item.attributes.apply_for_value,
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>{item.attributes.available_start_date}</CTableDataCell>
                     <CTableDataCell>{item.attributes.available_end_date}</CTableDataCell>

@@ -12,82 +12,84 @@ import {
   CCardFooter,
   CButton,
   CFormFeedback,
-  CFormCheck,
-  CImage,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
-import PropTypes from 'prop-types'
-import ImageUpload from 'src/views/template/ImageUpload'
-
-const ShiftComponent = (props) => {
-  return (
-    <div className="mb-3">
-      <strong>{props.title}</strong>
-      <div>
-        <CFormCheck type="checkbox" inline label="Ca sáng" />
-        <CFormCheck type="checkbox" inline label="Ca chiều" />
-        <CFormCheck type="checkbox" inline label="Ca tối" />
-      </div>
-    </div>
-  )
-}
-ShiftComponent.propTypes = {
-  title: PropTypes.string,
-}
 
 const Add = () => {
+  const getTypeText = (value) => {
+    switch (value) {
+      case 'percent':
+        return 'Giảm giá tổng đơn hàng (%)'
+      case 'percent_limit':
+        return 'Giảm giá tổng đơn hàng, có giới hạn số tiền giảm (%)'
+      case 'amount':
+        return 'Giảm giá tổng đơn hàng (đ)'
+      default:
+        return ''
+    }
+  }
+  const getApplyForText = (value) => {
+    switch (value) {
+      case 'new_customers':
+        return `Khách hàng mới (đăng kí 1 tháng)`
+      case 'all_customers_limit_quantity':
+        return `Tất cả khách hàng, giới hạn vouchers`
+      default:
+        return ''
+    }
+  }
+
   return (
     <CForm className="row g-3 needs-validation">
       <CCol md={7}>
         <CCard className="mb-4">
           <CCardHeader>
-            <h5>Thông tin nhân viên</h5>
+            <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
               <CCol md={12}>
-                <ImageUpload name="avatar"></ImageUpload>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
                 <CFormLabel>Mã số</CFormLabel>
-                <CFormInput type="text" readOnly />
+                <CFormInput type="text" placeholder="Mã số" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Họ và tên</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập tên nhân viên" />
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Loại</CFormLabel>
+                <CFormSelect>
+                  <option value="">Không có</option>
+                  <option value="percent">{getTypeText('percent')}</option>
+                  <option value="percent_limit">{getTypeText('percent_limit')}</option>
+                  <option value="amount">{getTypeText('amount')}</option>
+                </CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Số điện thoại</CFormLabel>
-                <CFormInput type="text" placeholder="Nhập số điện thoại" />
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Áp dụng cho</CFormLabel>
+                <CFormSelect>
+                  <option value="">Không có</option>
+                  <option value="new_customers">{getApplyForText('new_customers')}</option>
+                  <option value="all_customers_limit_quantity">
+                    {getApplyForText('all_customers_limit_quantity')}
+                  </option>
+                </CFormSelect>
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
             <CRow>
               <CCol md={6} className="mb-3">
-                <CFormLabel>Cửa hàng</CFormLabel>
-                <CFormSelect options={['Chọn cửa hàng']} required></CFormSelect>
+                <CFormLabel>Ngày bắt đầu áp dụng</CFormLabel>
+                <CFormInput type="date" placeholder="Ngày bắt đầu áp dụng" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={6} className="mb-3">
-                <CFormLabel>Chức vụ</CFormLabel>
-                <CFormSelect options={['Chọn chức vụ']} required></CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mức lương (theo ca)</CFormLabel>
-                <CFormInput type="number" placeholder="Nhập mức lương" />
+                <CFormLabel>Ngày kết thúc</CFormLabel>
+                <CFormInput type="date" placeholder="Ngày kết thúc" />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
@@ -101,22 +103,6 @@ const Add = () => {
               <strong>Hủy bỏ</strong>
             </CButton>
           </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol md={5}>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <h5>Ca trực</h5>
-          </CCardHeader>
-          <CCardBody>
-            <ShiftComponent title="Thứ hai" />
-            <ShiftComponent title="Thứ ba" />
-            <ShiftComponent title="Thứ tư" />
-            <ShiftComponent title="Thứ năm" />
-            <ShiftComponent title="Thứ sáu" />
-            <ShiftComponent title="Thứ bảy" />
-            <ShiftComponent title="Chủ nhật" />
-          </CCardBody>
         </CCard>
       </CCol>
     </CForm>
