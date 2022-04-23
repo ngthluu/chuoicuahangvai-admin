@@ -23,11 +23,13 @@ const _nav = [
     component: CNavGroup,
     name: 'Nội dung trang web',
     icon: <FontAwesomeIcon icon={faNewspaper} className="nav-icon" />,
+    permission: '/api/homepage',
     items: [
       {
         component: CNavItem,
         name: 'Trang chủ',
         to: '/content/homepage',
+        permission: '/api/homepage',
       },
     ],
   },
@@ -35,6 +37,7 @@ const _nav = [
     component: CNavItem,
     name: 'Cửa hàng',
     to: '/branches',
+    permission: '/api/branches',
     icon: <FontAwesomeIcon icon={faCodeBranch} className="nav-icon" />,
   },
   {
@@ -46,21 +49,25 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Tồn kho',
+        permission: '/api/warehouse-inventories',
         to: '/warehouses/inventory',
       },
       {
         component: CNavItem,
         name: 'Nhập kho',
+        permission: '/api/warehouse-imports',
         to: '/warehouses/import',
       },
       {
         component: CNavItem,
         name: 'Xuất kho',
+        permission: '/api/warehouse-exports',
         to: '/warehouses/export',
       },
       {
         component: CNavItem,
         name: 'Kiểm kho',
+        permission: '/api/warehouse-catalogues',
         to: '/warehouses/catalogue',
       },
     ],
@@ -74,6 +81,7 @@ const _nav = [
         component: CNavItem,
         name: 'Danh mục',
         to: '/categories',
+        permission: '/api/product-categories',
       },
       {
         component: CNavGroup,
@@ -83,26 +91,31 @@ const _nav = [
             component: CNavItem,
             name: 'Màu sắc',
             to: '/product-color',
+            permission: '/api/product-colors',
           },
           {
             component: CNavItem,
             name: 'Kiểu mẫu',
             to: '/product-pattern',
+            permission: '/api/product-patterns',
           },
           {
             component: CNavItem,
             name: 'Chiều rộng',
             to: '/product-width',
+            permission: '/api/product-widths',
           },
           {
             component: CNavItem,
             name: 'Co giãn',
             to: '/product-stretch',
+            permission: '/api/product-stretches',
           },
           {
             component: CNavItem,
             name: 'Xuất xứ',
             to: '/product-origin',
+            permission: '/api/product-origins',
           },
         ],
       },
@@ -110,6 +123,7 @@ const _nav = [
         component: CNavItem,
         name: 'Sản phẩm',
         to: '/products',
+        permission: '/api/products',
       },
     ],
   },
@@ -121,11 +135,13 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Đơn bán hàng',
+        permission: '/api/orders',
         to: '/orders/sell',
       },
       {
         component: CNavItem,
         name: 'Đơn trả hàng',
+        permission: '/api/refunds',
         to: '/orders/refund',
       },
     ],
@@ -138,11 +154,13 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Danh sách nhân viên',
+        permission: '/api/users',
         to: '/users',
       },
       {
         component: CNavItem,
         name: 'Bảng lương',
+        permission: '/api/users',
         to: '/users/salary',
       },
     ],
@@ -161,11 +179,13 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Danh sách khách hàng',
+        permission: '/api/customer',
         to: '/customers',
       },
       {
         component: CNavItem,
         name: 'Nợ',
+        permission: '/api/customer',
         to: '/customers/debt',
       },
     ],
@@ -178,16 +198,19 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Doanh thu / nợ',
+        permission: '/api/orders',
         to: '/statistics/revenue',
       },
       {
         component: CNavItem,
         name: 'Sản lượng bán hàng',
+        permission: '/api/products',
         to: '/statistics/soldvolume',
       },
       {
         component: CNavItem,
         name: 'Khách hàng đăng ký',
+        permission: '/api/customer',
         to: '/statistics/customer',
       },
     ],

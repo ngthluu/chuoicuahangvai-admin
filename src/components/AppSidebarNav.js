@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { CBadge } from '@coreui/react'
+import axios from 'axios'
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
@@ -20,10 +21,25 @@ export const AppSidebarNav = ({ items }) => {
     )
   }
 
-  const navItem = (item, index) => {
+  const NavItem = (item, index) => {
     const { component, name, badge, icon, ...rest } = item
     const Component = component
-    return (
+
+    const [allowed, setAllowed] = useState(false)
+    const fetchPermission = async () => {
+      const { permission } = item
+      if (permission) {
+        await axios
+          .head(`${process.env.REACT_APP_STRAPI_URL}${permission}`)
+          .then((response) => setAllowed(true))
+          .catch((error) => setAllowed(false))
+      }
+    }
+    useEffect(() => {
+      fetchPermission()
+    }, [])
+
+    return allowed ? (
       <Component
         {...(rest.to &&
           !rest.items && {
@@ -35,11 +51,14 @@ export const AppSidebarNav = ({ items }) => {
       >
         {navLink(name, icon, badge)}
       </Component>
+    ) : (
+      <Component key={index}></Component>
     )
   }
-  const navGroup = (item, index) => {
+  const NavGroup = (item, index) => {
     const { component, name, icon, to, ...rest } = item
     const Component = component
+
     return (
       <Component
         idx={String(index)}
@@ -49,7 +68,7 @@ export const AppSidebarNav = ({ items }) => {
         {...rest}
       >
         {item.items?.map((item, index) =>
-          item.items ? navGroup(item, index) : navItem(item, index),
+          item.items ? NavGroup(item, index) : NavItem(item, index),
         )}
       </Component>
     )
@@ -58,7 +77,7 @@ export const AppSidebarNav = ({ items }) => {
   return (
     <React.Fragment>
       {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        items.map((item, index) => (item.items ? NavGroup(item, index) : NavItem(item, index)))}
     </React.Fragment>
   )
 }
