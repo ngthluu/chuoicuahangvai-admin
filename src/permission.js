@@ -34,6 +34,7 @@ export const getPermissionsData = async () => {
 
 export const checkPermission = (nameArray, table) => {
   if (!nameArray) return false
+  if (!table) return false
   for (let name of nameArray) {
     if (!table.includes(name)) return false
   }

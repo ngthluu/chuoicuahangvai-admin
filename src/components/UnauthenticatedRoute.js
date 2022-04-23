@@ -4,7 +4,10 @@ import { Redirect, Route } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 
 function UnauthenticatedRoute({ ...restOfProps }) {
-  const [cookies, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+  const [cookies, setCookie] = useCookies([
+    process.env.REACT_APP_COOKIE_NAME,
+    process.env.REACT_APP_COOKIE_PERMISSION_NAME,
+  ])
   const isAuthenticated =
     process.env.REACT_APP_COOKIE_NAME in cookies &&
     cookies[process.env.REACT_APP_COOKIE_NAME] !== 'undefined'

@@ -26,7 +26,10 @@ const Signin = () => {
   const [invalidLogin, setInvalidLogin] = useState(false)
   const [loginMessage, setLoginMessage] = useState('Đăng nhập thất bại')
   const [isLoading, setIsLoading] = useState(false)
-  const [cookie, setCookie] = useCookies([])
+  const [cookie, setCookie] = useCookies([
+    process.env.REACT_APP_COOKIE_NAME,
+    process.env.REACT_APP_COOKIE_PERMISSION_NAME,
+  ])
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value)

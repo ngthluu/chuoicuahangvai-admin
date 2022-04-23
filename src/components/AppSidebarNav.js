@@ -28,8 +28,10 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, badge, icon, permission, ...rest } = item
     const Component = component
 
-    const [cookie, setPCookie] = useCookies([])
-    const [allowed, setAllowed] = useState(checkPermission(permission, cookie['admin-permissions']))
+    const [cookie, setPCookie] = useCookies([process.env.REACT_APP_COOKIE_PERMISSION_NAME])
+    const [allowed, setAllowed] = useState(
+      checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
+    )
 
     return allowed ? (
       <Component
@@ -51,8 +53,10 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, icon, to, permission, ...rest } = item
     const Component = component
 
-    const [cookie, setPCookie] = useCookies([])
-    const [allowed, setAllowed] = useState(checkPermission(permission, cookie['admin-permissions']))
+    const [cookie, setPCookie] = useCookies([process.env.REACT_APP_COOKIE_PERMISSION_NAME])
+    const [allowed, setAllowed] = useState(
+      checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
+    )
 
     return allowed ? (
       <Component
