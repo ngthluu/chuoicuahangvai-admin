@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+import qs from 'qs'
+
 import {
   CCard,
   CCardBody,
@@ -17,35 +21,78 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import AddTypes from './AddTypes'
+import AddApplyFor from './AddApplyFor'
+
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Add = () => {
-  const getTypeText = (value) => {
-    switch (value) {
-      case 'percent':
-        return 'Giảm giá tổng đơn hàng (%)'
-      case 'percent_limit':
-        return 'Giảm giá tổng đơn hàng, có giới hạn số tiền giảm (%)'
-      case 'amount':
-        return 'Giảm giá tổng đơn hàng (đ)'
-      default:
-        return ''
-    }
-  }
-  const getApplyForText = (value) => {
-    switch (value) {
-      case 'new_customers':
-        return `Khách hàng mới (đăng kí 1 tháng)`
-      case 'all_customers_limit_quantity':
-        return `Tất cả khách hàng, giới hạn vouchers`
-      default:
-        return ''
-    }
-  }
+  const query = useLocation().search
+  const id = new URLSearchParams(query).get('id')
 
+  const [code, setCode] = useState('')
+
+  const [type, setType] = useState('')
   const [typeValue, setTypeValue] = useState('{}')
 
+  const [applyFor, setApplyFor] = useState('')
+  const [applyForValue, setApplyForValue] = useState('{}')
+
+  const [applyFrom, setApplyFrom] = useState('')
+  const [applyTo, setApplyTo] = useState('')
+
+  const [validated, setValidated] = useState(false)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setValidated(true)
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+      return
+    }
+
+    const data = {
+      code: code,
+      type: type,
+      type_value: typeValue,
+      apply_for: applyFor,
+      apply_for_value: applyForValue,
+      available_start_date: applyFrom,
+      available_end_date: applyTo,
+    }
+
+    if (id === null) {
+      // Add
+      axios
+        .post(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMessage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMessage}!!`)
+        })
+    } else {
+      axios
+        .put(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers/${id}`, {
+          data: data,
+        })
+        .then((response) => toast.success('Thao tác thành công'))
+        .catch((error) => {
+          const errorMessage = error.response.data.error.message
+          toast.error(`Thao tác thất bại. Có lỗi xảy ra: ${errorMessage}!!`)
+        })
+    }
+  }
+
   return (
-    <CForm className="row g-3 needs-validation">
+    <CForm
+      className="row g-3 needs-validation"
+      noValidate
+      validated={validated}
+      onSubmit={handleSubmit}
+    >
+      <ToastContainer />
       <CCol md={7}>
         <CCard className="mb-4">
           <CCardHeader>
@@ -55,44 +102,52 @@ const Add = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Mã số</CFormLabel>
-                <CFormInput type="text" placeholder="Mã số" />
+                <CFormInput
+                  type="text"
+                  placeholder="Mã số"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <AddTypes data={typeValue} setData={setTypeValue}></AddTypes>
-            <CRow>
-              <CCol md={12} className="mb-3">
-                <CFormLabel>Áp dụng cho</CFormLabel>
-                <CFormSelect>
-                  <option value="">Không có</option>
-                  <option value="new_customers">{getApplyForText('new_customers')}</option>
-                  <option value="all_customers_limit_quantity">
-                    {getApplyForText('all_customers_limit_quantity')}
-                  </option>
-                </CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
+            <AddTypes
+              data={type}
+              setData={setType}
+              valueData={typeValue}
+              setValueData={setTypeValue}
+            ></AddTypes>
+            <AddApplyFor
+              data={applyFor}
+              setData={setApplyFor}
+              valueData={applyForValue}
+              setValueData={setApplyForValue}
+            ></AddApplyFor>
             <CRow>
               <CCol md={6} className="mb-3">
                 <CFormLabel>Ngày bắt đầu áp dụng</CFormLabel>
-                <CFormInput type="date" placeholder="Ngày bắt đầu áp dụng" />
+                <CFormInput
+                  type="date"
+                  placeholder="Ngày bắt đầu áp dụng"
+                  value={applyFrom}
+                  onChange={(e) => setApplyFrom(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
               <CCol md={6} className="mb-3">
                 <CFormLabel>Ngày kết thúc</CFormLabel>
-                <CFormInput type="date" placeholder="Ngày kết thúc" />
+                <CFormInput
+                  type="date"
+                  placeholder="Ngày kết thúc"
+                  value={applyTo}
+                  onChange={(e) => setApplyTo(e.target.value)}
+                />
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton
-              color="info"
-              type="button"
-              className="text-white"
-              onClick={(e) => console.log(typeValue)}
-            >
+            <CButton color="info" type="submit" className="text-white">
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>

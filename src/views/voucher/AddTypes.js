@@ -117,7 +117,8 @@ const AddTypes = (props) => {
   const [type, setType] = useState('')
 
   const handleChange = (e) => {
-    props.setData('{}')
+    props.setData(e.target.value)
+    props.setValueData('{}')
     setType(e.target.value)
   }
 
@@ -137,11 +138,11 @@ const AddTypes = (props) => {
       </CRow>
       <CRow>
         {type === 'percent' ? (
-          <TypePercent data={props.data} setData={props.setData}></TypePercent>
+          <TypePercent data={props.valueData} setData={props.setValueData}></TypePercent>
         ) : type === 'percent_limit' ? (
-          <TypePercentLimit data={props.data} setData={props.setData}></TypePercentLimit>
+          <TypePercentLimit data={props.valueData} setData={props.setValueData}></TypePercentLimit>
         ) : type === 'amount' ? (
-          <TypeAmount data={props.data} setData={props.setData}></TypeAmount>
+          <TypeAmount data={props.valueData} setData={props.setValueData}></TypeAmount>
         ) : (
           <></>
         )}
@@ -153,6 +154,8 @@ const AddTypes = (props) => {
 AddTypes.propTypes = {
   data: PropTypes.string,
   setData: PropTypes.func,
+  valueData: PropTypes.func,
+  setValueData: PropTypes.string,
 }
 
 export default AddTypes
