@@ -50,12 +50,9 @@ const AddApplyFor = (props) => {
     }
   }
 
-  const [type, setType] = useState('')
-
   const handleChange = (e) => {
     props.setData(e.target.value)
     props.setValueData('{}')
-    setType(e.target.value)
   }
 
   return (
@@ -63,7 +60,7 @@ const AddApplyFor = (props) => {
       <CRow>
         <CCol md={12} className="mb-3">
           <CFormLabel>Áp dụng cho</CFormLabel>
-          <CFormSelect onChange={handleChange}>
+          <CFormSelect onChange={handleChange} value={props.data}>
             <option value="">Không có</option>
             <option value="new_customers">{getApplyForText('new_customers')}</option>
             <option value="all_customers_limit_quantity">
@@ -74,12 +71,12 @@ const AddApplyFor = (props) => {
         </CCol>
       </CRow>
       <CRow>
-        {type === 'new_customers' ? (
+        {props.data === 'new_customers' ? (
           <ApplyForTypeNewCustomer
             data={props.valueData}
             setData={props.setValueData}
           ></ApplyForTypeNewCustomer>
-        ) : type === 'all_customers_limit_quantity' ? (
+        ) : props.data === 'all_customers_limit_quantity' ? (
           <ApplyForTypeAllCustomersLimitQuantity
             data={props.valueData}
             setData={props.setValueData}
@@ -95,8 +92,8 @@ const AddApplyFor = (props) => {
 AddApplyFor.propTypes = {
   data: PropTypes.string,
   setData: PropTypes.func,
-  valueData: PropTypes.func,
-  setValueData: PropTypes.string,
+  valueData: PropTypes.string,
+  setValueData: PropTypes.func,
 }
 
 export default AddApplyFor

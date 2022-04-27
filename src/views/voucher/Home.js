@@ -155,15 +155,8 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/users/view?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEye} /> Xem
-                          </CDropdownItem>
-                          <CDropdownItem href={`/users/edit?id=${item.id}`}>
+                          <CDropdownItem href={`/voucher/edit?id=${item.id}`}>
                             <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
-                          <StatusAction status={item.status} />
-                          <CDropdownItem href="#">
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
                           </CDropdownItem>
                         </CDropdownMenu>
                       </CDropdown>

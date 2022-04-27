@@ -114,12 +114,9 @@ const AddTypes = (props) => {
     }
   }
 
-  const [type, setType] = useState('')
-
   const handleChange = (e) => {
     props.setData(e.target.value)
     props.setValueData('{}')
-    setType(e.target.value)
   }
 
   return (
@@ -127,7 +124,7 @@ const AddTypes = (props) => {
       <CRow>
         <CCol md={12} className="mb-3">
           <CFormLabel>Loại</CFormLabel>
-          <CFormSelect onChange={handleChange}>
+          <CFormSelect onChange={handleChange} value={props.data}>
             <option value="">Không có</option>
             <option value="percent">{getTypeText('percent')}</option>
             <option value="percent_limit">{getTypeText('percent_limit')}</option>
@@ -137,11 +134,11 @@ const AddTypes = (props) => {
         </CCol>
       </CRow>
       <CRow>
-        {type === 'percent' ? (
+        {props.data === 'percent' ? (
           <TypePercent data={props.valueData} setData={props.setValueData}></TypePercent>
-        ) : type === 'percent_limit' ? (
+        ) : props.data === 'percent_limit' ? (
           <TypePercentLimit data={props.valueData} setData={props.setValueData}></TypePercentLimit>
-        ) : type === 'amount' ? (
+        ) : props.data === 'amount' ? (
           <TypeAmount data={props.valueData} setData={props.setValueData}></TypeAmount>
         ) : (
           <></>
@@ -154,8 +151,8 @@ const AddTypes = (props) => {
 AddTypes.propTypes = {
   data: PropTypes.string,
   setData: PropTypes.func,
-  valueData: PropTypes.func,
-  setValueData: PropTypes.string,
+  valueData: PropTypes.string,
+  setValueData: PropTypes.func,
 }
 
 export default AddTypes

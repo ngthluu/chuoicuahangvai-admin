@@ -85,6 +85,26 @@ const Add = () => {
     }
   }
 
+  const fetchData = async () => {
+    if (id === null) return
+    const query = qs.stringify({}, { encodeValuesOnly: true })
+    const response = await axios.get(`
+      ${process.env.REACT_APP_STRAPI_URL}/api/vouchers/${id}?${query}`)
+    const data = response.data.data
+
+    setCode(data.attributes.code)
+    setType(data.attributes.type)
+    setTypeValue(JSON.stringify(data.attributes.type_value))
+    setApplyFor(data.attributes.apply_for)
+    setApplyForValue(JSON.stringify(data.attributes.apply_for_value))
+    setApplyFrom(data.attributes.available_start_date)
+    setApplyTo(data.attributes.available_end_date)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
     <CForm
       className="row g-3 needs-validation"

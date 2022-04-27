@@ -57,7 +57,6 @@ const UserLeaveHome = React.lazy(() => import('./views/users/leave/Home'))
 
 const VoucherHome = React.lazy(() => import('./views/voucher/Home'))
 const VoucherAdd = React.lazy(() => import('./views/voucher/Add'))
-const VoucherView = React.lazy(() => import('./views/voucher/View'))
 
 const CustomerHome = React.lazy(() => import('./views/customers/Home'))
 const CustomerDebt = React.lazy(() => import('./views/customers/Debt'))
@@ -304,12 +303,6 @@ const routes = [
     exact: true,
     name: 'Thêm voucher',
     component: VoucherAdd,
-  },
-  {
-    path: '/voucher/view',
-    exact: true,
-    name: 'Xem voucher',
-    component: VoucherView,
   },
   {
     path: '/voucher/edit',

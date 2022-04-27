@@ -38,6 +38,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
+    "@fullcalendar/daygrid": "^5.11.0",
+    "@fullcalendar/react": "^5.11.1",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.5",
     "axios": "^0.26.0",
     "chart.js": "^3.6.0",
