@@ -49,9 +49,11 @@ const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
 const OrderRefundViewInvoice = React.lazy(() => import('./views/orders/refund/ViewInvoice'))
 
 const UserHome = React.lazy(() => import('./views/users/Home'))
-const UserSalary = React.lazy(() => import('./views/users/Salary'))
 const UserAdd = React.lazy(() => import('./views/users/Add'))
 const UserView = React.lazy(() => import('./views/users/View'))
+
+const UserScheduleHome = React.lazy(() => import('./views/users/schedule/Home'))
+const UserLeaveHome = React.lazy(() => import('./views/users/leave/Home'))
 
 const VoucherHome = React.lazy(() => import('./views/voucher/Home'))
 const VoucherAdd = React.lazy(() => import('./views/voucher/Add'))
@@ -292,7 +294,10 @@ const routes = [
   { path: '/users/view', exact: true, name: 'Xem nhân viên', component: UserView },
   { path: '/users/add', exact: true, name: 'Thêm nhân viên', component: UserAdd },
   { path: '/users/edit', exact: true, name: 'Chỉnh sửa nhân viên', component: UserAdd },
-  { path: '/users/salary', exact: true, name: 'Bảng lương', component: UserSalary },
+
+  { path: '/users/schedule', exact: true, name: 'Lịch làm việc', component: UserScheduleHome },
+  { path: '/users/leave', exact: true, name: 'Nghỉ phép', component: UserLeaveHome },
+
   { path: '/voucher', exact: true, name: 'Voucher', component: VoucherHome },
   {
     path: '/voucher/add',

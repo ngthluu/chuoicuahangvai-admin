@@ -116,7 +116,7 @@ const StatusAction = (props) => {
 }
 StatusAction.propTypes = { status: PropTypes.number }
 
-const Salary = () => {
+const Home = () => {
   return (
     <CRow>
       <CCol md={12}>
@@ -206,4 +206,4 @@ const Salary = () => {
   )
 }
 
-export default Salary
+export default Home

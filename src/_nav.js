@@ -179,9 +179,15 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Bảng lương',
+        name: 'Lịch làm việc',
         permission: ['user'],
-        to: '/users/salary',
+        to: '/users/schedule',
+      },
+      {
+        component: CNavItem,
+        name: 'Nghỉ phép',
+        permission: ['user'],
+        to: '/users/leave',
       },
     ],
   },
