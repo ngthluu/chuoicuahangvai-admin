@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -16,6 +16,7 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
+import AddTypes from './AddTypes'
 
 const Add = () => {
   const getTypeText = (value) => {
@@ -41,6 +42,8 @@ const Add = () => {
     }
   }
 
+  const [typeValue, setTypeValue] = useState('{}')
+
   return (
     <CForm className="row g-3 needs-validation">
       <CCol md={7}>
@@ -56,18 +59,7 @@ const Add = () => {
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <CRow>
-              <CCol md={12} className="mb-3">
-                <CFormLabel>Loại</CFormLabel>
-                <CFormSelect>
-                  <option value="">Không có</option>
-                  <option value="percent">{getTypeText('percent')}</option>
-                  <option value="percent_limit">{getTypeText('percent_limit')}</option>
-                  <option value="amount">{getTypeText('amount')}</option>
-                </CFormSelect>
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
-              </CCol>
-            </CRow>
+            <AddTypes data={typeValue} setData={setTypeValue}></AddTypes>
             <CRow>
               <CCol md={12} className="mb-3">
                 <CFormLabel>Áp dụng cho</CFormLabel>
@@ -95,7 +87,12 @@ const Add = () => {
             </CRow>
           </CCardBody>
           <CCardFooter className="d-flex">
-            <CButton color="info" type="submit" className="text-white">
+            <CButton
+              color="info"
+              type="button"
+              className="text-white"
+              onClick={(e) => console.log(typeValue)}
+            >
               <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
             </CButton>
             <div className="p-2"></div>
