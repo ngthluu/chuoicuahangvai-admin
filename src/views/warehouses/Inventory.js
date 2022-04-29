@@ -34,11 +34,22 @@ const Inventory = () => {
   const query = useLocation().search
   const branchId = new URLSearchParams(query).get('branch')
 
-  const [branch, setBranch] = useState(branchId ? branchId : '')
+  const [filterBranch, setFilterBranch] = useState(branchId ? branchId : '')
+  const [filterSku, setFilterSku] = useState('')
   const [inventoryItems, setInventoryItems] = useState([])
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      branch: { id: { $eq: filterBranch } },
+      sku_quantity: { sku: { id: { $eq: filterSku } } },
+    }
+    if (filterBranch === '') delete filters.branch
+    if (filterSku === '') delete filters.sku_quantity
+    return filters
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
@@ -46,9 +57,7 @@ const Inventory = () => {
         pagination: {
           page: page,
         },
-        filters: {
-          branch: { id: { $eq: branch === '' ? -1 : branch } },
-        },
+        filters: buildFilters(),
         populate: [
           'sku_quantity',
           'sku_quantity.sku',
@@ -71,7 +80,7 @@ const Inventory = () => {
 
   useEffect(() => {
     fetchData()
-  }, [branch, page])
+  }, [page, filterBranch, filterSku])
 
   return (
     <CRow>
@@ -88,8 +97,8 @@ const Inventory = () => {
                       <SelectFetchData
                         name="branch"
                         url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
-                        value={branch}
-                        setValue={setBranch}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
                         processFetchDataResponse={(response) => {
                           return response.data.data.map((item) => {
                             return { id: item.id, name: item.attributes.name }
@@ -98,9 +107,21 @@ const Inventory = () => {
                       ></SelectFetchData>
                     </div>
                     <div className="p-1">
-                      <CButton type="submit" color="info" className="text-white">
-                        <FontAwesomeIcon icon={faSearch} />
-                      </CButton>
+                      <CFormLabel>SKU</CFormLabel>
+                      <SelectFetchData
+                        name="sku"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus?populate[]=product`}
+                        value={filterSku}
+                        setValue={setFilterSku}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return {
+                              id: item.id,
+                              name: `${item.attributes.product.data.attributes.name} - ${item.attributes.sku}`,
+                            }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                   </div>
                 </CForm>
