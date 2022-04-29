@@ -47,7 +47,10 @@ import SmartPagination from 'src/views/template/SmartPagination'
 const Home = () => {
   const [importsList, setImportsList] = useState([])
 
-  const [branch, setBranch] = useState('')
+  const [filterBranch, setFilterBranch] = useState('')
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
@@ -55,7 +58,12 @@ const Home = () => {
     const query = qs.stringify(
       {
         filters: {
-          branch: { id: { $eq: branch === '' ? -1 : branch } },
+          branch: { id: { $eq: filterBranch === '' ? -1 : filterBranch } },
+          submit_time: {
+            $gte: filterFrom === '' ? '0001-01-01' : filterFrom,
+            $lte: filterTo === '' ? '9999-12-31' : filterTo,
+          },
+          submit_status: filterStatus === '1',
         },
         populate: ['branch', 'submit_user'],
         pagination: {
@@ -73,7 +81,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [branch, page])
+  }, [page, filterBranch, filterFrom, filterTo, filterStatus])
 
   // Delete logic
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
@@ -144,41 +152,52 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý phiếu nhập kho</h4>
-                <CForm className="g-3">
-                  <div className="d-block d-md-flex justify-content-left align-items-end">
-                    <div className="p-1">
-                      <CFormLabel>Cửa hàng</CFormLabel>
-                      <SelectFetchData
-                        name="branch"
-                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
-                        value={branch}
-                        setValue={setBranch}
-                        processFetchDataResponse={(response) => {
-                          return response.data.data.map((item) => {
-                            return { id: item.id, name: item.attributes.name }
-                          })
-                        }}
-                      ></SelectFetchData>
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Ngày nhập kho (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày nhập kho (từ)" />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Ngày nhập kho (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày nhập kho (đến)" />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CButton type="submit" color="info" className="text-white">
-                        <FontAwesomeIcon icon={faSearch} />
-                      </CButton>
-                    </div>
+                <div className="d-block d-md-flex justify-content-left align-items-end">
+                  <div className="p-1">
+                    <CFormLabel>Cửa hàng</CFormLabel>
+                    <SelectFetchData
+                      name="branch"
+                      url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                      value={filterBranch}
+                      setValue={setFilterBranch}
+                      processFetchDataResponse={(response) => {
+                        return response.data.data.map((item) => {
+                          return { id: item.id, name: item.attributes.name }
+                        })
+                      }}
+                    ></SelectFetchData>
                   </div>
-                </CForm>
+                  <div className="p-1">
+                    <CFormLabel>Ngày nhập kho (từ)</CFormLabel>
+                    <CFormInput
+                      value={filterFrom}
+                      onChange={(e) => setFilterFrom(e.target.value)}
+                      type="date"
+                      placeholder="Ngày nhập kho (từ)"
+                    />
+                  </div>
+                  <div className="p-1">
+                    <CFormLabel>Ngày nhập kho (đến)</CFormLabel>
+                    <CFormInput
+                      value={filterTo}
+                      onChange={(e) => setFilterTo(e.target.value)}
+                      type="date"
+                      placeholder="Ngày nhập kho (đến)"
+                    />
+                  </div>
+                  <div className="p-1">
+                    <CFormLabel>Trạng thái</CFormLabel>
+                    <CFormSelect
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      options={[
+                        'Chọn trạng thái',
+                        { label: 'Chưa nhập vào kho', value: 0 },
+                        { label: 'Đã nhập vào kho', value: 1 },
+                      ]}
+                    ></CFormSelect>
+                  </div>
+                </div>
               </div>
               <Link to="/warehouses/import/add">
                 <CButton color="info" className="text-white w-100">
