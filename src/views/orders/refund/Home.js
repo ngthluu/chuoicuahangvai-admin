@@ -45,16 +45,48 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
 
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+  const [filterBranch, setFilterBranch] = useState('')
+  const [filterCustomer, setFilterCustomer] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      createdAt: {
+        $gte: filterFrom,
+        $lte: filterTo,
+      },
+      branch: { id: { $eq: filterBranch } },
+      customer: { id: { $eq: filterCustomer } },
+      refund_statuses: { update_status: { $eq: filterStatus === '1' } },
+    }
+    if (filterFrom === '' && filterTo === '') {
+      delete filters.createdAt
+    } else {
+      if (filterFrom === '') delete filters.createdAt.$gte
+      if (filterTo === '') delete filters.createdAt.$lte
+    }
+    if (filterBranch === '') delete filters.branch
+    if (filterCustomer === '') delete filters.customer
+    if (filterStatus === '') delete filters.refund_statuses
+    return filters
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        filters: buildFilters(),
+        sort: ['createdAt:desc'],
         populate: ['customer', 'branch', 'refund_statuses', 'refund_invoice'],
         pagination: {
           page: page,
@@ -80,7 +112,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterStatus])
 
   // Submit logic
   const [submitModalTargetId, setSubmitModalTargetId] = useState('')
@@ -124,25 +156,76 @@ const Home = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Mã đơn hàng..." />
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày tạo (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày tạo (từ)" />
+                      <CFormLabel>Ngày trả (từ)</CFormLabel>
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày trả (từ)"
+                        value={filterFrom}
+                        onChange={(e) => setFilterFrom(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Ngày tạo (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày tạo (đến)" />
+                      <CFormLabel>Ngày trả (đến)</CFormLabel>
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày trả (đến)"
+                        value={filterTo}
+                        onChange={(e) => setFilterTo(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Khách hàng</CFormLabel>
+                      <InputDropdownSearch
+                        placeholder="Tìm kiếm khách hàng"
+                        ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                        ajaxDataPopulate={['name']}
+                        ajaxDataGetFilters={(value) => {
+                          return {
+                            $or: [
+                              {
+                                name: {
+                                  firstname: { $containsi: value },
+                                  lastname: { $containsi: value },
+                                },
+                              },
+                              { phone: { $containsi: value } },
+                            ],
+                          }
+                        }}
+                        ajaxDataGetItemName={(item) =>
+                          `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                        }
+                        handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                        handleFound={(item) => setFilterCustomer(item.id)}
+                        setTextNameAfterFound={true}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CButton type="submit" color="info" className="text-white">
-                        <FontAwesomeIcon icon={faSearch} />
-                      </CButton>
+                      <CFormSelect
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Chọn trạng thái</option>
+                        <option value="0">Chưa xác nhận</option>
+                        <option value="1">Đã xác nhận</option>
+                      </CFormSelect>
                     </div>
                   </div>
                 </CForm>

@@ -118,10 +118,6 @@ const Home = () => {
     fetchData()
   }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType, filterStatus])
 
-  const handleLoadCustomerData = (customer) => {
-    setFilterCustomer(customer.id)
-  }
-
   return (
     <CRow>
       <CCol md={12}>
@@ -188,7 +184,7 @@ const Home = () => {
                         `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
                       }
                       handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
-                      handleFound={(item) => handleLoadCustomerData(item)}
+                      handleFound={(item) => setFilterCustomer(item.id)}
                       setTextNameAfterFound={true}
                     />
                   </div>
