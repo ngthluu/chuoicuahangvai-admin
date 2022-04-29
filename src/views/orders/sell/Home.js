@@ -65,8 +65,9 @@ const Home = () => {
         $lte: filterTo,
       },
       branch: { id: { $eq: filterBranch } },
-      customer: { id: { $eq: filterBranch } },
+      customer: { id: { $eq: filterCustomer } },
       type: { $eq: filterType },
+      order_statuses: { status: { $eq: filterStatus } },
     }
     if (filterFrom === '' && filterTo === '') {
       delete filters.createdAt
@@ -77,7 +78,7 @@ const Home = () => {
     if (filterBranch === '') delete filters.branch
     if (filterCustomer === '') delete filters.customer
     if (filterType === '') delete filters.type
-    console.log(filters)
+    if (filterStatus === '') delete filters.order_statuses
     return filters
   }
 
@@ -115,7 +116,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType])
+  }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType, filterStatus])
 
   const handleLoadCustomerData = (customer) => {
     setFilterCustomer(customer.id)
