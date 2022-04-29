@@ -173,7 +173,7 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hóa đơn </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chi nhánh </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Khách hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày tạo </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>

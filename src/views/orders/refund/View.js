@@ -118,7 +118,7 @@ const View = () => {
                   <div>{orderCode}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
-                  <div>Trả tại chi nhánh: </div>
+                  <div>Trả tại cửa hàng: </div>
                   <div>{branchName}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
