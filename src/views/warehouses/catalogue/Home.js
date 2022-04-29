@@ -55,17 +55,30 @@ const Home = () => {
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
+  const buildFilters = () => {
+    let filters = {
+      branch: { id: { $eq: filterBranch } },
+      submit_time: {
+        $gte: filterFrom,
+        $lte: filterTo,
+      },
+      submit_status: filterStatus === '1',
+    }
+    if (filterBranch === '') delete filters.branch
+    if (filterStatus === '') delete filters.submit_status
+    if (filterFrom === '' && filterTo === '') {
+      delete filters.submit_time
+    } else {
+      if (filterFrom === '') delete filters.submit_time.$gte
+      if (filterTo === '') delete filters.submit_time.$lte
+    }
+    return filters
+  }
+
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        filters: {
-          branch: { id: { $eq: filterBranch === '' ? -1 : filterBranch } },
-          submit_time: {
-            $gte: filterFrom === '' ? '0001-01-01' : filterFrom,
-            $lte: filterTo === '' ? '9999-12-31' : filterTo,
-          },
-          submit_status: filterStatus === '1',
-        },
+        filters: buildFilters(),
         populate: ['branch', 'submit_user'],
         pagination: {
           page: page,
