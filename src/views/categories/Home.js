@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import qs from 'qs'
 
@@ -38,12 +38,27 @@ import SmartPagination from 'src/views/template/SmartPagination'
 const Home = () => {
   const [categoriesList, setCategoriesList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      name: { $containsi: filterKeySearch },
+    }
+    if (filterKeySearch === '') delete filters.name
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        filters: buildFilters(),
         populate: ['parent'],
         pagination: {
           page: page,
@@ -100,11 +115,16 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Danh mục</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Tìm kiếm theo từ khóa..." />
+                      <CFormInput
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                        type="text"
+                        placeholder="Tìm kiếm theo từ khóa..."
+                      />
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
