@@ -96,7 +96,7 @@ const InputDropdownSearch = (props) => {
   }
 
   return (
-    <div className="mb-3 position-relative">
+    <div className="position-relative">
       <CInputGroup>
         <CFormInput
           placeholder={props.placeholder}

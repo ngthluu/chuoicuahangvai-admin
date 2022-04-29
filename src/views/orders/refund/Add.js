@@ -258,7 +258,7 @@ const Add = () => {
               <CCol md={12} className="mb-3">
                 <h6 className="mb-3">Thông tin người trả</h6>
                 <div className="d-flex justify-content-between align-items-center">
-                  <div className="flex-fill">
+                  <div className="flex-fill mb-3">
                     <InputDropdownSearch
                       placeholder="Tìm kiếm khách hàng"
                       ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}

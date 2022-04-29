@@ -44,6 +44,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
 
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
@@ -54,6 +55,7 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        sort: ['createdAt:desc'],
         populate: [
           'customer',
           'branch',
@@ -85,6 +87,8 @@ const Home = () => {
     fetchData()
   }, [page])
 
+  const handleLoadCustomerData = (customer) => {}
+
   return (
     <CRow>
       <CCol md={12}>
@@ -108,8 +112,63 @@ const Home = () => {
                       <CFormInput type="date" placeholder="Ngày đặt (đến)" />
                     </div>
                     <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
+                    </div>
+                  </div>
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Khách hàng</CFormLabel>
+                      <InputDropdownSearch
+                        placeholder="Tìm kiếm khách hàng"
+                        ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                        ajaxDataPopulate={['name']}
+                        ajaxDataGetFilters={(value) => {
+                          return {
+                            $or: [
+                              {
+                                name: {
+                                  firstname: { $containsi: value },
+                                  lastname: { $containsi: value },
+                                },
+                              },
+                              { phone: { $containsi: value } },
+                            ],
+                          }
+                        }}
+                        ajaxDataGetItemName={(item) =>
+                          `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                        }
+                        handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                        handleFound={(item) => handleLoadCustomerData(item)}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Loại thanh toán</CFormLabel>
+                      <CFormSelect
+                        options={[
+                          'Chọn trạng thái',
+                          { label: 'COD', value: 'cod' },
+                          { label: 'Online (qua VNPAY)', value: 'online' },
+                          { label: 'Mua tại quầy', value: 'pos' },
+                        ]}
+                      ></CFormSelect>
+                    </div>
+                    <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                      <CFormSelect
+                        options={[
+                          'Chọn trạng thái',
+                          { label: 'Khởi tạo', value: 'initialize' },
+                          { label: 'Đã xác nhận', value: 'confirmed' },
+                          { label: 'Đã đóng gói', value: 'packaged' },
+                          { label: 'Đang vận chuyển', value: 'delivery' },
+                          { label: 'Thành công', value: 'success' },
+                          { label: 'Trả về', value: 'return' },
+                          { label: 'Đã hủy', value: 'canceled' },
+                        ]}
+                      ></CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -217,21 +276,27 @@ const Home = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice.data.attributes.price.toLocaleString()}
+                        {item.attributes.order_invoice.data
+                          ? item.attributes.order_invoice.data.attributes.price.toLocaleString()
+                          : ''}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.order_invoice.data.attributes.order_payment_invoices.data
-                          .reduce((prev, cur) => prev + parseFloat(cur.attributes.amount), 0)
-                          .toLocaleString()}
+                        {item.attributes.order_invoice.data
+                          ? item.attributes.order_invoice.data.attributes.order_payment_invoices.data
+                              .reduce((prev, cur) => prev + parseFloat(cur.attributes.amount), 0)
+                              .toLocaleString()
+                          : ''}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {(
-                          item.attributes.order_invoice.data.attributes.price -
-                          item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
-                            (prev, cur) => prev + parseFloat(cur.attributes.amount),
-                            0,
-                          )
-                        ).toLocaleString()}
+                        {item.attributes.order_invoice.data
+                          ? (
+                              item.attributes.order_invoice.data.attributes.price -
+                              item.attributes.order_invoice.data.attributes.order_payment_invoices.data.reduce(
+                                (prev, cur) => prev + parseFloat(cur.attributes.amount),
+                                0,
+                              )
+                            ).toLocaleString()
+                          : ''}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>
