@@ -95,13 +95,12 @@ const Debt = () => {
         return {
           ...item,
           debt_amount: item.orders.reduce((prev, cur) => {
-            return (
-              prev +
-              cur.order_invoice.price -
-              cur.order_invoice.order_payment_invoices.reduce((prev1, cur1) => {
-                return prev1 + parseInt(cur1.amount)
-              }, 0)
-            )
+            return prev + cur.order_invoice
+              ? cur.order_invoice.price -
+                  cur.order_invoice.order_payment_invoices.reduce((prev1, cur1) => {
+                    return prev1 + parseInt(cur1.amount)
+                  }, 0)
+              : 0
           }, 0),
         }
       }),
