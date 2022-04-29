@@ -74,7 +74,7 @@ const View = () => {
     setEmail(data.email)
     setPhone(data.phone)
     setRole(data.role.id)
-    setBranchName(data.branch.name)
+    setBranchName(data.branch ? data.branch.name : '')
     if (data.shift) {
       setShift(data.shift)
     }

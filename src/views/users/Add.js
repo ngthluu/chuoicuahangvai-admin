@@ -117,16 +117,14 @@ const Add = () => {
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user/${id}?${query}`)
     const data = response.data.data
-    if (data.name) {
-      setName(data.name.id)
-      setFirstName(data.name.firstname)
-      setLastName(data.name.lastname)
-    }
+    setName(data.name ? data.name.id : '')
+    setFirstName(data.name ? data.name.firstname : '')
+    setLastName(data.name ? data.name.lastname : '')
     setEmail(data.email)
     setPhone(data.phone)
-    setRole(data.role.id)
-    setBranch(data.branch.id)
-    setBranchName(data.branch.name)
+    setRole(data.role ? data.role.id : '')
+    setBranch(data.branch ? data.branch.id : '')
+    setBranchName(data.branch ? data.branch.name : '')
     if (data.shift) {
       setShift(data.shift)
     }
@@ -203,11 +201,11 @@ const Add = () => {
                 <CFormLabel>Chức vụ</CFormLabel>
                 <SelectFetchData
                   name="role"
-                  url={`${process.env.REACT_APP_STRAPI_URL}/api/users-permissions/roles`}
+                  url={`${process.env.REACT_APP_STRAPI_URL}/api/user-roles`}
                   value={role}
                   setValue={setRole}
                   processFetchDataResponse={(response) => {
-                    return response.data.roles.map((item) => {
+                    return response.data.map((item) => {
                       return { id: item.id, name: item.name }
                     })
                   }}

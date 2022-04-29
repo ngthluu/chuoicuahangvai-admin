@@ -34,18 +34,41 @@ import Modal from 'src/views/template/Modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
   const [usersList, setUsersList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+  const [filterBranch, setFilterBranch] = useState('')
+  const [filterRole, setFilterRole] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      $or: [{ branch: { id: { $eq: filterBranch } } }, { branches: { id: { $eq: filterBranch } } }],
+      role: { id: { $eq: filterRole } },
+      email: { $containsi: filterKeySearch },
+    }
+    if (filterBranch === '') delete filters.$or
+    if (filterRole === '') delete filters.role
+    if (filterKeySearch === '') delete filters.email
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        populate: ['role', 'branches', 'branch'],
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
+        populate: ['role', 'branches', 'branch', 'name'],
         pagination: {
           page: page,
         },
@@ -59,7 +82,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [page, filterBranch, filterRole])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -99,19 +122,44 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý nhân viên</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Họ và tên..." />
+                      <CFormInput
+                        type="text"
+                        placeholder="Họ và tên..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Cửa hàng</CFormLabel>
-                      <CFormSelect options={['Chọn cửa hàng']}></CFormSelect>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CFormLabel>Chức vụ</CFormLabel>
-                      <CFormSelect options={['Chọn chức vụ']}></CFormSelect>
+                      <SelectFetchData
+                        name="role"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/user-roles`}
+                        value={filterRole}
+                        setValue={setFilterRole}
+                        processFetchDataResponse={(response) => {
+                          return response.data.map((item) => {
+                            return { id: item.id, name: item.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -152,7 +200,9 @@ const Home = () => {
                       <CTableDataCell>
                         <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
                       </CTableDataCell>
-                      <CTableDataCell> {item.username} </CTableDataCell>
+                      <CTableDataCell>
+                        {item.name ? `${item.name.firstname} ${item.name.lastname}` : ''}
+                      </CTableDataCell>
                       <CTableDataCell> {item.role.name} </CTableDataCell>
                       <CTableDataCell>
                         {item.role.name === 'Branch Manager'
