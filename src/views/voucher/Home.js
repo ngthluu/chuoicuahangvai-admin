@@ -31,19 +31,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
+import SmartPagination from 'src/views/template/SmartPagination'
+
 const Home = () => {
-  const getTypeText = (value) => {
-    switch (value) {
-      case 'percent':
-        return 'Giảm giá tổng đơn hàng (%)'
-      case 'percent_limit':
-        return 'Giảm giá tổng đơn hàng, có giới hạn số tiền giảm (%)'
-      case 'amount':
-        return 'Giảm giá tổng đơn hàng (đ)'
-      default:
-        return ''
-    }
-  }
   const getTypeValueText = (type, typeValue) => {
     switch (type) {
       case 'percent':
@@ -72,14 +62,42 @@ const Home = () => {
 
   const [vouchersList, setVouchersList] = useState([])
 
-  useEffect(() => {
-    async function fetchData() {
-      const query = qs.stringify({}, { encodeValuesOnly: true })
-      const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers?${query}`)
-      setVouchersList(response.data.data)
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+  const [filterType, setFilterType] = useState('')
+  const [filterApplyFor, setFilterApplyFor] = useState('')
+
+  const [page, setPage] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      code: { $containsi: filterKeySearch },
+      type: { $eq: filterType },
+      apply_for: { $eq: filterApplyFor },
     }
+    if (filterType === '') delete filters.type
+    if (filterApplyFor === '') delete filters.apply_for
+    if (filterKeySearch === '') delete filters.code
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
     fetchData()
-  }, [])
+  }
+
+  const fetchData = async () => {
+    const query = qs.stringify(
+      { sort: ['createdAt:desc'], filters: buildFilters() },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers?${query}`)
+    setVouchersList(response.data.data)
+    setTotalItems(response.data.meta.pagination.total)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [page, filterType, filterApplyFor])
 
   return (
     <CRow>
@@ -89,15 +107,43 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý voucher</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Mã voucher..." />
+                      <CFormInput
+                        type="text"
+                        placeholder="Mã voucher..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Loại hình</CFormLabel>
-                      <CFormSelect options={['Chọn loại hình']}></CFormSelect>
+                      <CFormSelect
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                      >
+                        <option value="">Chọn loại hình</option>
+                        <option value="percent">Giảm giá tổng đơn hàng (%)</option>
+                        <option value="percent_limit">
+                          Giảm giá tổng đơn hàng, có giới hạn số tiền giảm (%)
+                        </option>
+                        <option value="amount">Giảm giá tổng đơn hàng (đ)</option>
+                      </CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Loại áp dụng</CFormLabel>
+                      <CFormSelect
+                        value={filterApplyFor}
+                        onChange={(e) => setFilterApplyFor(e.target.value)}
+                      >
+                        <option value="">Chọn loại áp dụng</option>
+                        <option value="new_customers">Khách hàng mới (đăng kí 1 tháng)</option>
+                        <option value="all_customers_limit_quantity">
+                          Tất cả khách hàng, giới hạn vouchers
+                        </option>
+                      </CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -165,6 +211,14 @@ const Home = () => {
                 ))}
               </CTableBody>
             </CTable>
+            <nav className="float-end">
+              <SmartPagination
+                activePage={page}
+                pageSize={25}
+                totalItems={totalItems}
+                setPage={setPage}
+              />
+            </nav>
           </CCardBody>
         </CCard>
       </CCol>

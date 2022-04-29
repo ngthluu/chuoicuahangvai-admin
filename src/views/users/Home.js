@@ -128,7 +128,7 @@ const Home = () => {
                       <CFormLabel>Tìm kiếm</CFormLabel>
                       <CFormInput
                         type="text"
-                        placeholder="Họ và tên..."
+                        placeholder="Email..."
                         value={filterKeySearch}
                         onChange={(e) => setFilterKeySearch(e.target.value)}
                       />
