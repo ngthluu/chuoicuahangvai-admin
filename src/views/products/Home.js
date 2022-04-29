@@ -35,17 +35,54 @@ import ProductDescription from 'src/views/products/ProductDescription'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
   const [productsList, setProductsList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+  const [filterColor, setFilterColor] = useState('')
+  const [filterPattern, setFilterPattern] = useState('')
+  const [filterWidth, setFilterWidth] = useState('')
+  const [filterStretch, setFilterStretch] = useState('')
+  const [filterOrigin, setFilterOrigin] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      $or: [
+        { sku: { $containsi: filterKeySearch } },
+        { product: { name: { $containsi: filterKeySearch } } },
+      ],
+      color: { id: { $eq: filterColor } },
+      pattern: { id: { $eq: filterPattern } },
+      stretch: { id: { $eq: filterWidth } },
+      width: { id: { $eq: filterStretch } },
+      origin: { id: { $eq: filterOrigin } },
+    }
+    if (filterKeySearch === '') {
+      delete filters.product
+      delete filters.name
+    }
+    if (filterColor === '') delete filters.color
+    if (filterPattern === '') delete filters.pattern
+    if (filterWidth === '') delete filters.stretch
+    if (filterStretch === '') delete filters.width
+    if (filterOrigin === '') delete filters.origin
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        filters: buildFilters(),
         populate: ['product', 'color', 'pattern', 'stretch', 'width', 'origin', 'images'],
         pagination: {
           page: page,
@@ -62,7 +99,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [page, filterColor, filterPattern, filterWidth, filterStretch, filterOrigin])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -102,24 +139,93 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý sản phẩm</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Tìm kiếm theo từ khóa..." />
+                      <CFormInput
+                        type="text"
+                        placeholder="Tìm kiếm theo từ khóa..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Màu sắc</CFormLabel>
-                      <CFormSelect options={['Chọn màu sắc']}></CFormSelect>
+                      <SelectFetchData
+                        name="color"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-colors`}
+                        value={filterColor}
+                        setValue={setFilterColor}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CFormLabel>Kiểu mẫu</CFormLabel>
-                      <CFormSelect options={['Chọn kiểu mẫu']}></CFormSelect>
+                      <SelectFetchData
+                        name="pattern"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-patterns`}
+                        value={filterPattern}
+                        setValue={setFilterPattern}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
                         <FontAwesomeIcon icon={faSearch} />
                       </CButton>
+                    </div>
+                  </div>
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Chiều rộng</CFormLabel>
+                      <SelectFetchData
+                        name="width"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-widths`}
+                        value={filterWidth}
+                        setValue={setFilterWidth}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Co giãn</CFormLabel>
+                      <SelectFetchData
+                        name="stretch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-stretches`}
+                        value={filterStretch}
+                        setValue={setFilterStretch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Xuất xứ</CFormLabel>
+                      <SelectFetchData
+                        name="origin"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/product-origins`}
+                        value={filterOrigin}
+                        setValue={setFilterOrigin}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                   </div>
                 </CForm>
