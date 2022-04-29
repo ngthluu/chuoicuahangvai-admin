@@ -204,12 +204,11 @@ const Home = () => {
                     <CFormSelect
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      options={[
-                        'Chọn trạng thái',
-                        { label: 'Chưa kiểm kho', value: 0 },
-                        { label: 'Đã kiểm kho', value: 1 },
-                      ]}
-                    ></CFormSelect>
+                    >
+                      <option value="">Chọn trạng thái</option>
+                      <option value="0">Chưa kiểm kho</option>
+                      <option value="1">Đã kiểm kho</option>
+                    </CFormSelect>
                   </div>
                 </div>
               </div>

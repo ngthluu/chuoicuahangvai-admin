@@ -38,23 +38,53 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
-import Modal from 'src/views/template/Modal'
-
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import SmartPagination from 'src/views/template/SmartPagination'
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
 
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+  const [filterBranch, setFilterBranch] = useState('')
+  const [filterCustomer, setFilterCustomer] = useState('')
+  const [filterType, setFilterType] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      createdAt: {
+        $gte: filterFrom,
+        $lte: filterTo,
+      },
+      branch: { id: { $eq: filterBranch } },
+      customer: { id: { $eq: filterBranch } },
+      type: { $eq: filterType },
+    }
+    if (filterFrom === '' && filterTo === '') {
+      delete filters.createdAt
+    } else {
+      if (filterFrom === '') delete filters.createdAt.$gte
+      if (filterTo === '') delete filters.createdAt.$lte
+    }
+    if (filterBranch === '') delete filters.branch
+    if (filterCustomer === '') delete filters.customer
+    if (filterType === '') delete filters.type
+    console.log(filters)
+    return filters
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        filters: buildFilters(),
         sort: ['createdAt:desc'],
         populate: [
           'customer',
@@ -85,9 +115,11 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType])
 
-  const handleLoadCustomerData = (customer) => {}
+  const handleLoadCustomerData = (customer) => {
+    setFilterCustomer(customer.id)
+  }
 
   return (
     <CRow>
@@ -97,81 +129,94 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý đơn bán hàng</h4>
-                <CForm className="g-3">
-                  <div className="d-block d-md-flex justify-content-left align-items-end">
-                    <div className="p-1">
-                      <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Mã đơn hàng..." />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Ngày đặt (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (từ)" />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Ngày đặt (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (đến)" />
-                    </div>
-                    <div className="p-1">
-                      <CButton type="submit" color="info" className="text-white">
-                        <FontAwesomeIcon icon={faSearch} />
-                      </CButton>
-                    </div>
+                <div className="d-block d-md-flex justify-content-left align-items-end">
+                  <div className="p-1">
+                    <CFormLabel>Cửa hàng</CFormLabel>
+                    <SelectFetchData
+                      name="branch"
+                      url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                      value={filterBranch}
+                      setValue={setFilterBranch}
+                      processFetchDataResponse={(response) => {
+                        return response.data.data.map((item) => {
+                          return { id: item.id, name: item.attributes.name }
+                        })
+                      }}
+                    ></SelectFetchData>
                   </div>
-                  <div className="d-block d-md-flex justify-content-left align-items-end">
-                    <div className="p-1">
-                      <CFormLabel>Khách hàng</CFormLabel>
-                      <InputDropdownSearch
-                        placeholder="Tìm kiếm khách hàng"
-                        ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
-                        ajaxDataPopulate={['name']}
-                        ajaxDataGetFilters={(value) => {
-                          return {
-                            $or: [
-                              {
-                                name: {
-                                  firstname: { $containsi: value },
-                                  lastname: { $containsi: value },
-                                },
+                  <div className="p-1">
+                    <CFormLabel>Ngày đặt (từ)</CFormLabel>
+                    <CFormInput
+                      type="date"
+                      placeholder="Ngày đặt (từ)"
+                      value={filterFrom}
+                      onChange={(e) => setFilterFrom(e.target.value)}
+                    />
+                  </div>
+                  <div className="p-1">
+                    <CFormLabel>Ngày đặt (đến)</CFormLabel>
+                    <CFormInput
+                      type="date"
+                      placeholder="Ngày đặt (đến)"
+                      value={filterTo}
+                      onChange={(e) => setFilterTo(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="d-block d-md-flex justify-content-left align-items-end">
+                  <div className="p-1">
+                    <CFormLabel>Khách hàng</CFormLabel>
+                    <InputDropdownSearch
+                      placeholder="Tìm kiếm khách hàng"
+                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                      ajaxDataPopulate={['name']}
+                      ajaxDataGetFilters={(value) => {
+                        return {
+                          $or: [
+                            {
+                              name: {
+                                firstname: { $containsi: value },
+                                lastname: { $containsi: value },
                               },
-                              { phone: { $containsi: value } },
-                            ],
-                          }
-                        }}
-                        ajaxDataGetItemName={(item) =>
-                          `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                            },
+                            { phone: { $containsi: value } },
+                          ],
                         }
-                        handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
-                        handleFound={(item) => handleLoadCustomerData(item)}
-                      />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Loại thanh toán</CFormLabel>
-                      <CFormSelect
-                        options={[
-                          'Chọn trạng thái',
-                          { label: 'COD', value: 'cod' },
-                          { label: 'Online (qua VNPAY)', value: 'online' },
-                          { label: 'Mua tại quầy', value: 'pos' },
-                        ]}
-                      ></CFormSelect>
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect
-                        options={[
-                          'Chọn trạng thái',
-                          { label: 'Khởi tạo', value: 'initialize' },
-                          { label: 'Đã xác nhận', value: 'confirmed' },
-                          { label: 'Đã đóng gói', value: 'packaged' },
-                          { label: 'Đang vận chuyển', value: 'delivery' },
-                          { label: 'Thành công', value: 'success' },
-                          { label: 'Trả về', value: 'return' },
-                          { label: 'Đã hủy', value: 'canceled' },
-                        ]}
-                      ></CFormSelect>
-                    </div>
+                      }}
+                      ajaxDataGetItemName={(item) =>
+                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
+                      }
+                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                      handleFound={(item) => handleLoadCustomerData(item)}
+                      setTextNameAfterFound={true}
+                    />
                   </div>
-                </CForm>
+                  <div className="p-1">
+                    <CFormLabel>Loại thanh toán</CFormLabel>
+                    <CFormSelect value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+                      <option value="">Chọn loại</option>
+                      <option value="cod">COD</option>
+                      <option value="online">Online (qua VNPAY)</option>
+                      <option value="pos">Mua tại quầy</option>
+                    </CFormSelect>
+                  </div>
+                  <div className="p-1">
+                    <CFormLabel>Trạng thái</CFormLabel>
+                    <CFormSelect
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                    >
+                      <option value="">Chọn trạng thái</option>
+                      <option value="initialize">Khởi tạo</option>
+                      <option value="confirmed">Đã xác nhận</option>
+                      <option value="packaged">Đã đóng gói</option>
+                      <option value="delivery">Đang vận chuyển</option>
+                      <option value="success">Thành công</option>
+                      <option value="return">Trả về</option>
+                      <option value="canceled">Đã hủy</option>
+                    </CFormSelect>
+                  </div>
+                </div>
               </div>
               <div className="d-block d-md-flex justify-content-between">
                 <Link to="#">
