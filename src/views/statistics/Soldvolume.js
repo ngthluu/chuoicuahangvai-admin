@@ -145,7 +145,7 @@ const Home = () => {
               </CNav>
               <CTabContent>
                 <CTabPane role="tabpanel" visible={activeKey === 1}>
-                  <CTable align="middle" style={{ marginTop: 30 }} bordered>
+                  <CTable align="middle" style={{ marginTop: 30 }} bordered responsive>
                     <CTableHead align="middle">
                       <CTableRow>
                         <CTableHeaderCell scope="col"> Mã SP </CTableHeaderCell>

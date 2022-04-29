@@ -138,7 +138,7 @@ const Home = () => {
               </CNav>
               <CTabContent>
                 <CTabPane role="tabpanel" visible={activeKey === 1}>
-                  <CTable align="middle" bordered>
+                  <CTable align="middle" bordered responsive>
                     <CTableHead align="middle">
                       <CTableRow>
                         <CTableHeaderCell scope="col"> # </CTableHeaderCell>

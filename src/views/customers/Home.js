@@ -169,7 +169,7 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <CTable align="middle" bordered>
+            <CTable align="middle" bordered responsive>
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>

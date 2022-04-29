@@ -145,7 +145,7 @@ const View = () => {
             </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CTable align="middle" bordered>
+                <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
@@ -211,7 +211,7 @@ const View = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Lịch sử cập nhật</CFormLabel>
-                <CTable align="middle" bordered>
+                <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>

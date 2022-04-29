@@ -172,7 +172,7 @@ const ViewInvoice = () => {
             </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
-                <CTable align="middle" bordered>
+                <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
@@ -224,7 +224,7 @@ const ViewInvoice = () => {
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Lịch sử thanh toán</CFormLabel>
-                <CTable align="middle" bordered>
+                <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
