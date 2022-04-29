@@ -33,7 +33,7 @@ const View = () => {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [role, setRole] = useState('')
-  const [salary, setSalary] = useState('')
+  const [branchName, setBranchName] = useState('')
   const [shift, setShift] = useState({
     monday: { morning: false, afternoon: false, night: false },
     tuesday: { morning: false, afternoon: false, night: false },
@@ -59,6 +59,7 @@ const View = () => {
           'shift.friday',
           'shift.saturday',
           'shift.sunday',
+          'branch',
         ],
       },
       { encodeValuesOnly: true },
@@ -73,7 +74,7 @@ const View = () => {
     setEmail(data.email)
     setPhone(data.phone)
     setRole(data.role.id)
-    setSalary(data.salary_per_shift)
+    setBranchName(data.branch.name)
     if (data.shift) {
       setShift(data.shift)
     }
@@ -156,17 +157,10 @@ const View = () => {
                 ></SelectFetchData>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mức lương (theo ca)</CFormLabel>
-                <CFormInput
-                  type="number"
-                  placeholder="Nhập mức lương"
-                  value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
-                  required
-                />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Cửa hàng</CFormLabel>
+                <CFormInput type="text" placeholder="Cửa hàng" value={branchName} required />
               </CCol>
             </CRow>
           </CCardBody>

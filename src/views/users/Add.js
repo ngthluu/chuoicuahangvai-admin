@@ -22,8 +22,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 
 import ShiftComponent from 'src/views/users/ShiftComponent'
-import ImageUpload from 'src/views/template/ImageUpload'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -38,7 +38,8 @@ const Add = () => {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [role, setRole] = useState('')
-  const [salary, setSalary] = useState('')
+  const [branch, setBranch] = useState('')
+  const [branchName, setBranchName] = useState('')
   const [shift, setShift] = useState({
     monday: { morning: false, afternoon: false, night: false },
     tuesday: { morning: false, afternoon: false, night: false },
@@ -65,8 +66,8 @@ const Add = () => {
       email: email,
       phone: phone,
       role: { id: role },
+      branch: { id: branch },
       shift: shift,
-      salary_per_shift: salary,
     }
     if (name !== '') data.name.id = name
 
@@ -109,6 +110,7 @@ const Add = () => {
           'shift.friday',
           'shift.saturday',
           'shift.sunday',
+          'branch',
         ],
       },
       { encodeValuesOnly: true },
@@ -123,7 +125,8 @@ const Add = () => {
     setEmail(data.email)
     setPhone(data.phone)
     setRole(data.role.id)
-    setSalary(data.salary_per_shift)
+    setBranch(data.branch.id)
+    setBranchName(data.branch.name)
     if (data.shift) {
       setShift(data.shift)
     }
@@ -211,17 +214,24 @@ const Add = () => {
                 ></SelectFetchData>
               </CCol>
             </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Mức lương (theo ca)</CFormLabel>
-                <CFormInput
-                  type="number"
-                  placeholder="Nhập mức lương"
-                  value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
-                  required
+            <CRow>
+              <CCol md={12} className="mb-3">
+                <CFormLabel>Cửa hàng</CFormLabel>
+                <InputDropdownSearch
+                  placeholder="Tìm kiếm cửa hàng"
+                  ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                  ajaxDataPopulate={[]}
+                  ajaxDataGetFilters={(value) => {
+                    return {
+                      $or: [{ name: { $containsi: value } }],
+                    }
+                  }}
+                  ajaxDataGetItemName={(item) => `${item.attributes.name}`}
+                  handleNotFound={() => toast.error('Không tìm thấy cửa hàng này !!!')}
+                  handleFound={(item) => setBranch(item.id)}
+                  setTextNameAfterFound={true}
+                  defaultName={branchName}
                 />
-                <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
           </CCardBody>

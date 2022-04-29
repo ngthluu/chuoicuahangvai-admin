@@ -45,7 +45,7 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
-        populate: ['role', 'branches'],
+        populate: ['role', 'branches', 'branch'],
         pagination: {
           page: page,
         },
@@ -155,7 +155,11 @@ const Home = () => {
                       <CTableDataCell> {item.username} </CTableDataCell>
                       <CTableDataCell> {item.role.name} </CTableDataCell>
                       <CTableDataCell>
-                        {item.branches.map((el) => el.name).join(', ')}
+                        {item.role.name === 'Branch Manager'
+                          ? item.branches.map((el) => el.name).join(', ')
+                          : item.branch
+                          ? item.branch.name
+                          : ''}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>
