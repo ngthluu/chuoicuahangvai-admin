@@ -49,12 +49,44 @@ import SmartPagination from 'src/views/template/SmartPagination'
 const Home = () => {
   const [customersList, setCustomersList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
+
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  const buildFilters = () => {
+    let filters = {
+      $or: [
+        { email: { $containsi: filterKeySearch } },
+        {
+          name: {
+            firstname: { $containsi: filterKeySearch },
+          },
+        },
+        {
+          name: {
+            lastname: { $containsi: filterKeySearch },
+          },
+        },
+        { phone: { $containsi: filterKeySearch } },
+      ],
+      blocked: { $eq: filterStatus !== '1' },
+    }
+    if (filterKeySearch === '') delete filters.$or
+    if (filterStatus === '') delete filters.blocked
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
+  }
 
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
         populate: ['name', 'address', 'address.address_three_levels'],
         pagination: {
           page: page,
@@ -69,7 +101,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page])
+  }, [page, filterStatus])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -139,15 +171,27 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý khách hàng</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="MSKH, Họ và tên..." />
+                      <CFormInput
+                        type="text"
+                        placeholder="MSKH, Họ và tên..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                      <CFormSelect
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Chọn trạng thái</option>
+                        <option value="0">Vãng lai</option>
+                        <option value="1">Đã đăng ký</option>
+                      </CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
