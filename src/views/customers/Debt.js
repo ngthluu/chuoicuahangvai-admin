@@ -45,6 +45,8 @@ import SmartPagination from 'src/views/template/SmartPagination'
 const Debt = () => {
   const [customersList, setCustomersList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
+
   const [modalVisible, setModalVisible] = useState(false)
   const [modalCustomerId, setModalCustomerId] = useState('')
   const [modalCustomerName, setModalCustomerName] = useState('')
@@ -74,9 +76,36 @@ const Debt = () => {
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
+  const buildFilters = () => {
+    let filters = {
+      $or: [
+        { email: { $containsi: filterKeySearch } },
+        {
+          name: {
+            firstname: { $containsi: filterKeySearch },
+          },
+        },
+        {
+          name: {
+            lastname: { $containsi: filterKeySearch },
+          },
+        },
+        { phone: { $containsi: filterKeySearch } },
+      ],
+    }
+    if (filterKeySearch === '') delete filters.$or
+    return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
+  }
+
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
         populate: [
           'name',
           'orders',
@@ -149,15 +178,16 @@ const Debt = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý khách hàng (nợ)</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="MSKH, Họ và tên..." />
-                    </div>
-                    <div className="p-1">
-                      <CFormLabel>Trạng thái</CFormLabel>
-                      <CFormSelect options={['Chọn trạng thái']}></CFormSelect>
+                      <CFormInput
+                        type="text"
+                        placeholder="MSKH, Họ và tên..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
