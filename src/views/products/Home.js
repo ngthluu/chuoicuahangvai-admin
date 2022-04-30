@@ -63,10 +63,6 @@ const Home = () => {
       width: { id: { $eq: filterStretch } },
       origin: { id: { $eq: filterOrigin } },
     }
-    if (filterKeySearch === '') {
-      delete filters.product
-      delete filters.name
-    }
     if (filterColor === '') delete filters.color
     if (filterPattern === '') delete filters.pattern
     if (filterWidth === '') delete filters.stretch

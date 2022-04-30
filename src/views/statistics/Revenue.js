@@ -35,9 +35,30 @@ const Home = () => {
   const [invoicesList, setInvoicesList] = useState([])
   const [chartData, setChartData] = useState([])
 
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+
+  const buildFilters = () => {
+    let filters = {
+      createdAt: {
+        $gte: filterFrom,
+        $lte: filterTo,
+      },
+    }
+    if (filterFrom === '' && filterTo === '') {
+      delete filters.createdAt
+    } else {
+      if (filterFrom === '') delete filters.createdAt.$gte
+      if (filterTo === '') delete filters.createdAt.$lte
+    }
+    return filters
+  }
+
   const fetchData = async () => {
+    console.log(buildFilters())
     const query = qs.stringify(
       {
+        filters: buildFilters(),
         populate: ['order', 'customer_name', 'products', 'order_payment_invoices'],
       },
       { encodeValuesOnly: true },
@@ -78,7 +99,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [filterFrom, filterTo])
   return (
     <CRow>
       <CCol md={12}>
@@ -90,21 +111,22 @@ const Home = () => {
                 <CForm className="g-3">
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Tìm kiếm</CFormLabel>
-                      <CFormInput type="text" placeholder="Mã đơn hàng..." />
-                    </div>
-                    <div className="p-1">
                       <CFormLabel>Ngày đặt (từ)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (từ)" />
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày đặt (từ)"
+                        value={filterFrom}
+                        onChange={(e) => setFilterFrom(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
                       <CFormLabel>Ngày đặt (đến)</CFormLabel>
-                      <CFormInput type="date" placeholder="Ngày đặt (đến)" />
-                    </div>
-                    <div className="p-1">
-                      <CButton type="submit" color="info" className="text-white">
-                        <FontAwesomeIcon icon={faSearch} />
-                      </CButton>
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày đặt (đến)"
+                        value={filterTo}
+                        onChange={(e) => setFilterTo(e.target.value)}
+                      />
                     </div>
                   </div>
                 </CForm>
