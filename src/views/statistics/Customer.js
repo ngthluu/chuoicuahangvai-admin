@@ -54,13 +54,7 @@ const Home = () => {
   }
 
   const fetchData = async () => {
-    const query = qs.stringify(
-      {
-        filters: buildFilters(),
-        populate: [],
-      },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/customer?${query}`)
     const customersData = response.data.data.map((item) => {
       return { date: new Date(item.createdAt).toISOString().split('T')[0] }

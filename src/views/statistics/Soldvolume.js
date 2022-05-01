@@ -129,28 +129,7 @@ const Home = () => {
   }, [filterColor, filterPattern, filterWidth, filterStretch, filterOrigin])
 
   const handleExportExcel = async () => {
-    const query = qs.stringify(
-      {
-        filters: buildFilters(),
-        populate: [
-          'order',
-          'customer_name',
-          'products',
-          'products.inventory_item',
-          'products.inventory_item.sku_quantity',
-          'products.inventory_item.sku_quantity.sku',
-          'products.inventory_item.sku_quantity.sku.product',
-          'products.inventory_item.sku_quantity.sku.images',
-          'products.inventory_item.sku_quantity.sku.pattern',
-          'products.inventory_item.sku_quantity.sku.stretch',
-          'products.inventory_item.sku_quantity.sku.width',
-          'products.inventory_item.sku_quantity.sku.origin',
-          'products.inventory_item.sku_quantity.sku.color',
-          'order_payment_invoices',
-        ],
-      },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/statistics-soldvolume-export?${query}`,
       { responseType: 'blob' },
