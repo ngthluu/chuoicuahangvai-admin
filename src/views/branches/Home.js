@@ -123,7 +123,7 @@ const Home = () => {
                     <CTableRow key={item.id}>
                       <CTableDataCell> {index + 1} </CTableDataCell>
                       <CTableDataCell>
-                        <Link to={`/branches/view?id=${item.id}`}>{item.attributes.name}</Link>
+                        <Link to="#">{item.attributes.name}</Link>
                       </CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.manager && (

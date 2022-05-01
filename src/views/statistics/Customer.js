@@ -28,7 +28,7 @@ import { CChart } from '@coreui/react-chartjs'
 import { Link } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilePdf, faSearch, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faFilePdf, faSearch, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
 
 const Home = () => {
   const [activeKey, setActiveKey] = useState(2)
@@ -78,6 +78,26 @@ const Home = () => {
   useEffect(() => {
     fetchData()
   }, [filterFrom, filterTo])
+
+  const handleExportExcel = async () => {
+    const query = qs.stringify(
+      {
+        filters: buildFilters(),
+        populate: [],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/statistics-customer-export?${query}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'report.xlsx')
+    link.click()
+  }
+
   return (
     <CRow>
       <CCol md={12}>
@@ -111,8 +131,13 @@ const Home = () => {
               </div>
               <div className="d-block d-md-flex justify-content-between">
                 <Link to="#">
-                  <CButton color="info" className="text-white w-100 mb-2">
-                    <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                  <CButton
+                    color="info"
+                    className="text-white w-100 mb-2"
+                    onClick={handleExportExcel}
+                  >
+                    <FontAwesomeIcon icon={faFileExcel} />
+                    <strong>Xuất Excel</strong>
                   </CButton>
                 </Link>
               </div>
