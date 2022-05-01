@@ -23,7 +23,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faFileExcel, faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import SelectFetchData from 'src/views/template/SelectFetchData'
@@ -82,6 +82,26 @@ const Inventory = () => {
     fetchData()
   }, [page, filterBranch, filterSku])
 
+  const handleExportExcel = async () => {
+    const query = qs.stringify(
+      {
+        filters: buildFilters(),
+        populate: [
+          'sku_quantity',
+          'sku_quantity.sku',
+          'sku_quantity.sku.product',
+          'sku_quantity.sku.color',
+          'sku_quantity.sku.pattern',
+          'sku_quantity.sku.stretch',
+          'sku_quantity.sku.width',
+          'sku_quantity.sku.origin',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    window.open(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventory-export?${query}`)
+  }
+
   return (
     <CRow>
       <CCol md={12}>
@@ -127,8 +147,8 @@ const Inventory = () => {
                 </CForm>
               </div>
               <Link to="#">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
                 </CButton>
               </Link>
             </div>
