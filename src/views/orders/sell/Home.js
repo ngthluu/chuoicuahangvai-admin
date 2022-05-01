@@ -35,6 +35,7 @@ import {
   faAddressBook,
   faSearch,
   faPlus,
+  faFileExcel,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -117,6 +118,32 @@ const Home = () => {
   useEffect(() => {
     fetchData()
   }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType, filterStatus])
+
+  const handleExportExcel = async () => {
+    const query = qs.stringify(
+      {
+        filters: buildFilters(),
+        sort: ['createdAt:desc'],
+        populate: [
+          'customer',
+          'branch',
+          'order_statuses',
+          'order_invoice',
+          'order_invoice.order_payment_invoices',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/orders-export?${query}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'report.xlsx')
+    link.click()
+  }
 
   return (
     <CRow>
@@ -217,8 +244,12 @@ const Home = () => {
               </div>
               <div className="d-block d-md-flex justify-content-between">
                 <Link to="#">
-                  <CButton color="info" className="text-white w-100 mb-2">
-                    <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                  <CButton
+                    color="info"
+                    className="text-white w-100 mb-2"
+                    onClick={handleExportExcel}
+                  >
+                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
                   </CButton>
                 </Link>
                 <div className="p-1"></div>

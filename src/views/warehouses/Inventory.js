@@ -99,7 +99,15 @@ const Inventory = () => {
       },
       { encodeValuesOnly: true },
     )
-    window.open(`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventory-export?${query}`)
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventory-export?${query}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'report.xlsx')
+    link.click()
   }
 
   return (
