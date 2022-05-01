@@ -271,9 +271,6 @@ const Home = () => {
                             <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            <CDropdownItem href="#">
-                              <FontAwesomeIcon icon={faFilePdf} /> Xuất PDF
-                            </CDropdownItem>
                             {item.attributes.submit_status ? (
                               <></>
                             ) : (
