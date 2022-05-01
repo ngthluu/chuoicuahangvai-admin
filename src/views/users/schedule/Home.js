@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import qs from 'qs'
+
 import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import {
   CCard,
   CCardBody,
@@ -17,9 +20,29 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faDollarSign } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
+import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Home = () => {
+  const [filterBranch, setFilterBranch] = useState('')
+
+  const buildFilters = () => {
+    let filters = {
+      branch: filterBranch,
+    }
+    if (filterBranch === '') delete filters.branch
+    return filters
+  }
+
+  const fetchData = async () => {
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
+    console.log(response.data)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [filterBranch])
+
   return (
     <CRow>
       <CCol md={12}>
@@ -32,7 +55,17 @@ const Home = () => {
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
                       <CFormLabel>Cửa hàng</CFormLabel>
-                      <CFormSelect options={['Chọn cửa hàng']}></CFormSelect>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -49,7 +82,7 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <FullCalendar plugins={[dayGridPlugin]} initialView="dayGridMonth" />
+            <FullCalendar plugins={[timeGridPlugin]} initialView="timeGridWeek" />
           </CCardBody>
         </CCard>
       </CCol>
