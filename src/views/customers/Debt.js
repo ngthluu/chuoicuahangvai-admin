@@ -34,7 +34,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faSearch, faFilePdf } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faSearch, faFilePdf, faFileExcel } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import { ToastContainer, toast } from 'react-toastify'
@@ -124,12 +124,14 @@ const Debt = () => {
         return {
           ...item,
           debt_amount: item.orders.reduce((prev, cur) => {
-            return prev + cur.order_invoice
-              ? cur.order_invoice.price -
-                  cur.order_invoice.order_payment_invoices.reduce((prev1, cur1) => {
-                    return prev1 + parseInt(cur1.amount)
-                  }, 0)
-              : 0
+            if (!cur.order_invoice) return 0
+            return (
+              prev +
+              cur.order_invoice.price -
+              cur.order_invoice.order_payment_invoices.reduce((prev1, cur1) => {
+                return prev1 + parseInt(cur1.amount)
+              }, 0)
+            )
           }, 0),
         }
       }),
@@ -140,6 +142,31 @@ const Debt = () => {
   useEffect(() => {
     fetchData()
   }, [page])
+
+  const handleExportExcel = async () => {
+    const query = qs.stringify(
+      {
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
+        populate: [
+          'name',
+          'orders',
+          'orders.order_invoice',
+          'orders.order_invoice.order_payment_invoices',
+        ],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/customer-export-debt?${query}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'report.xlsx')
+    link.click()
+  }
 
   return (
     <CRow>
@@ -198,8 +225,8 @@ const Debt = () => {
                 </CForm>
               </div>
               <Link to="#">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
                 </CButton>
               </Link>
             </div>

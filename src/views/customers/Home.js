@@ -36,6 +36,7 @@ import {
   faFilePdf,
   faLock,
   faUnlock,
+  faFileExcel,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -140,6 +141,26 @@ const Home = () => {
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
+  const handleExportExcel = async () => {
+    const query = qs.stringify(
+      {
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
+        populate: ['name', 'address', 'address.address_three_levels'],
+      },
+      { encodeValuesOnly: true },
+    )
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/customer-export?${query}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'report.xlsx')
+    link.click()
+  }
+
   return (
     <CRow>
       <ToastContainer />
@@ -202,8 +223,8 @@ const Home = () => {
                 </CForm>
               </div>
               <Link to="#">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faFilePdf} /> <strong>Xuất PDF</strong>
+                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
                 </CButton>
               </Link>
             </div>
