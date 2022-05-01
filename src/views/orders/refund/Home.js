@@ -116,14 +116,7 @@ const Home = () => {
   }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterStatus])
 
   const handleExportExcel = async () => {
-    const query = qs.stringify(
-      {
-        filters: buildFilters(),
-        sort: ['createdAt:desc'],
-        populate: ['customer', 'branch', 'refund_statuses', 'refund_invoice'],
-      },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/refunds-export?${query}`,
       { responseType: 'blob' },

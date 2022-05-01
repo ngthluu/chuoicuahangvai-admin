@@ -83,22 +83,7 @@ const Inventory = () => {
   }, [page, filterBranch, filterSku])
 
   const handleExportExcel = async () => {
-    const query = qs.stringify(
-      {
-        filters: buildFilters(),
-        populate: [
-          'sku_quantity',
-          'sku_quantity.sku',
-          'sku_quantity.sku.product',
-          'sku_quantity.sku.color',
-          'sku_quantity.sku.pattern',
-          'sku_quantity.sku.stretch',
-          'sku_quantity.sku.width',
-          'sku_quantity.sku.origin',
-        ],
-      },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventory-export?${query}`,
       { responseType: 'blob' },

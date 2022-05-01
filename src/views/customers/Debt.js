@@ -144,19 +144,7 @@ const Debt = () => {
   }, [page])
 
   const handleExportExcel = async () => {
-    const query = qs.stringify(
-      {
-        sort: ['createdAt:desc'],
-        filters: buildFilters(),
-        populate: [
-          'name',
-          'orders',
-          'orders.order_invoice',
-          'orders.order_invoice.order_payment_invoices',
-        ],
-      },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/customer-export-debt?${query}`,
       { responseType: 'blob' },
