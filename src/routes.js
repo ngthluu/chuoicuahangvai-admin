@@ -52,8 +52,11 @@ const UserHome = React.lazy(() => import('./views/users/Home'))
 const UserAdd = React.lazy(() => import('./views/users/Add'))
 const UserView = React.lazy(() => import('./views/users/View'))
 
-const UserScheduleHome = React.lazy(() => import('./views/users/schedule/Home'))
 const UserLeaveHome = React.lazy(() => import('./views/users/leave/Home'))
+const UserLeaveAdd = React.lazy(() => import('./views/users/leave/Add'))
+const UserLeaveView = React.lazy(() => import('./views/users/leave/View'))
+
+const UserScheduleHome = React.lazy(() => import('./views/users/schedule/Home'))
 
 const VoucherHome = React.lazy(() => import('./views/voucher/Home'))
 const VoucherAdd = React.lazy(() => import('./views/voucher/Add'))
@@ -293,6 +296,20 @@ const routes = [
   { path: '/users/view', exact: true, name: 'Xem nhân viên', component: UserView },
   { path: '/users/add', exact: true, name: 'Thêm nhân viên', component: UserAdd },
   { path: '/users/edit', exact: true, name: 'Chỉnh sửa nhân viên', component: UserAdd },
+  { path: '/users/leave', exact: true, name: 'Phiếu nghỉ phép', component: UserLeaveHome },
+  {
+    path: '/users/leave/view',
+    exact: true,
+    name: 'Xem phiếu nghỉ phép',
+    component: UserLeaveView,
+  },
+  { path: '/users/leave/add', exact: true, name: 'Thêm phiếu nghỉ phép', component: UserLeaveAdd },
+  {
+    path: '/users/leave/edit',
+    exact: true,
+    name: 'Chỉnh sửa phiếu nghỉ phép',
+    component: UserLeaveAdd,
+  },
 
   { path: '/users/schedule', exact: true, name: 'Lịch làm việc', component: UserScheduleHome },
   { path: '/users/leave', exact: true, name: 'Nghỉ phép', component: UserLeaveHome },

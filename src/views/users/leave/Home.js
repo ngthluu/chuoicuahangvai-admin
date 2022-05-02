@@ -26,7 +26,14 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEye,
+  faEdit,
+  faSearch,
+  faPlus,
+  faTrash,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
@@ -34,28 +41,38 @@ import Modal from 'src/views/template/Modal'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
-  const [usersList, setUsersList] = useState([])
+  const [leaves, setLeaves] = useState([])
 
   const [filterKeySearch, setFilterKeySearch] = useState('')
-  const [filterBranch, setFilterBranch] = useState('')
-  const [filterRole, setFilterRole] = useState('')
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
   const buildFilters = () => {
     let filters = {
-      $or: [{ branch: { id: { $eq: filterBranch } } }, { branches: { id: { $eq: filterBranch } } }],
-      role: { id: { $eq: filterRole } },
-      email: { $containsi: filterKeySearch },
+      user: {
+        email: { $containsi: filterKeySearch },
+      },
+      createdAt: {
+        $gte: filterFrom,
+        $lte: filterTo,
+      },
+      approved: filterStatus === '1',
     }
-    if (filterBranch === '') delete filters.$or
-    if (filterRole === '') delete filters.role
-    if (filterKeySearch === '') delete filters.email
+    if (filterKeySearch === '') delete filters.user
+    if (filterFrom === '' && filterTo === '') {
+      delete filters.createdAt
+    } else {
+      if (filterFrom === '') delete filters.createdAt.$gte
+      if (filterTo === '') delete filters.createdAt.$lte
+    }
+    if (filterStatus === '') delete filters.approved
     return filters
   }
   const handleSubmitFilters = (e) => {
@@ -68,21 +85,21 @@ const Home = () => {
       {
         sort: ['createdAt:desc'],
         filters: buildFilters(),
-        populate: ['role', 'branches', 'branch', 'name'],
+        populate: ['user', 'approved_user'],
         pagination: {
           page: page,
         },
       },
       { encodeValuesOnly: true },
     )
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
-    setUsersList(response.data.data)
-    setTotalItems(0)
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user-leaves?${query}`)
+    setLeaves(response.data.data)
+    setTotalItems(response.data.meta.pagination.total)
   }
 
   useEffect(() => {
     fetchData()
-  }, [page, filterBranch, filterRole])
+  }, [page, filterStatus])
 
   const [deleteModalTargetId, setDeleteModalTargetId] = useState('')
   const [deleteModalTargetName, setDeleteModalTargetName] = useState('')
@@ -95,9 +112,27 @@ const Home = () => {
   }
   const handleDeleteSuccess = () => {
     fetchData()
-    toast.success('Bạn đã xóa nhân viên thành công')
+    toast.success('Bạn đã xóa phiếu nghỉ phép thành công')
   }
   const handleDeleteError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
+  const [approvedModalTargetId, setApprovedModalTargetId] = useState('')
+  const [approvedModalTargetName, setApprovedModalTargetName] = useState('')
+  const [approvedModalVisible, setApprovedModalVisible] = useState(false)
+  const handleClickApproved = (e) => {
+    e.preventDefault()
+    setApprovedModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setApprovedModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setApprovedModalVisible(!approvedModalVisible)
+  }
+  const handleApprovedSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã duyệt phiếu nghỉ phép thành công')
+  }
+  const handleApprovedError = () => {
     fetchData()
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
@@ -108,13 +143,24 @@ const Home = () => {
       <Modal
         visible={deleteModalVisible}
         visibleAction={setDeleteModalVisible}
-        title="Xóa nhân viên"
-        content={`Bạn có muốn xóa nhân viên ${deleteModalTargetName} không ?`}
+        title="Xóa phiếu nghỉ phép"
+        content={`Bạn có muốn xóa phiếu nghỉ phép này không ?`}
         id={deleteModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/users`}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/user-leaves`}
         triggerSuccess={handleDeleteSuccess}
         triggerError={handleDeleteError}
         action="delete"
+      ></Modal>
+      <Modal
+        visible={approvedModalVisible}
+        visibleAction={setApprovedModalVisible}
+        title="Duyệt phiếu nghỉ phép"
+        content={`Bạn có muốn duyệt phiếu nghỉ phép này không ?`}
+        id={approvedModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/user-leaves-approve`}
+        triggerSuccess={handleApprovedSuccess}
+        triggerError={handleApprovedError}
+        action="post"
       ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
@@ -125,32 +171,42 @@ const Home = () => {
                 <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
                     <div className="p-1">
-                      <CFormLabel>Cửa hàng</CFormLabel>
-                      <SelectFetchData
-                        name="branch"
-                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
-                        value={filterBranch}
-                        setValue={setFilterBranch}
-                        processFetchDataResponse={(response) => {
-                          return response.data.data.map((item) => {
-                            return { id: item.id, name: item.attributes.name }
-                          })
-                        }}
-                      ></SelectFetchData>
+                      <CFormLabel>Tìm kiếm</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Email..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
                     </div>
                     <div className="p-1">
-                      <CFormLabel>Chức vụ</CFormLabel>
-                      <SelectFetchData
-                        name="role"
-                        url={`${process.env.REACT_APP_STRAPI_URL}/api/user-roles`}
-                        value={filterRole}
-                        setValue={setFilterRole}
-                        processFetchDataResponse={(response) => {
-                          return response.data.map((item) => {
-                            return { id: item.id, name: item.name }
-                          })
-                        }}
-                      ></SelectFetchData>
+                      <CFormLabel>Ngày tạo (từ)</CFormLabel>
+                      <CFormInput
+                        value={filterFrom}
+                        onChange={(e) => setFilterFrom(e.target.value)}
+                        type="date"
+                        placeholder="Ngày tạo (từ)"
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Ngày tạo (đến)</CFormLabel>
+                      <CFormInput
+                        value={filterTo}
+                        onChange={(e) => setFilterTo(e.target.value)}
+                        type="date"
+                        placeholder="Ngày tạo (đến)"
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Trạng thái</CFormLabel>
+                      <CFormSelect
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Chọn trạng thái</option>
+                        <option value="0">Chưa duyệt</option>
+                        <option value="1">Đã duyệt</option>
+                      </CFormSelect>
                     </div>
                     <div className="p-1">
                       <CButton type="submit" color="info" className="text-white">
@@ -160,9 +216,9 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/users/add">
+              <Link to="/users/leave/add">
                 <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Nhân viên</strong>
+                  <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu nghỉ phép</strong>
                 </CButton>
               </Link>
             </div>
@@ -176,31 +232,51 @@ const Home = () => {
               <CTableHead align="middle">
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Email </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Tên nhân viên </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Chức vụ </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Nhân viên </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Thời gian tạo </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Thời gian nghỉ phép </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Thời gian duyệt </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Người duyệt </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
-                {usersList.length > 0 ? (
-                  usersList.map((item, index) => (
+                {leaves.length > 0 ? (
+                  leaves.map((item, index) => (
                     <CTableRow key={item.id}>
                       <CTableDataCell> {index + 1} </CTableDataCell>
                       <CTableDataCell>
-                        <Link to={`/users/view?id=${item.id}`}>{item.email}</Link>
+                        {item.attributes.user.data ? (
+                          <Link to={`/users/view?id=${item.attributes.user.data.id}`}>
+                            {item.attributes.user.data.attributes.email}
+                          </Link>
+                        ) : (
+                          <></>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.from} - {item.attributes.to}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.name ? `${item.name.firstname} ${item.name.lastname}` : ''}
+                        {item.attributes.approved ? (
+                          <CBadge color="success">Đã duyệt</CBadge>
+                        ) : (
+                          <CBadge color="danger">Chưa duyệt</CBadge>
+                        )}
                       </CTableDataCell>
-                      <CTableDataCell> {item.role.name} </CTableDataCell>
+                      <CTableDataCell>{item.attributes.approved_time}</CTableDataCell>
                       <CTableDataCell>
-                        {item.role.name === 'Branch Manager'
-                          ? item.branches.map((el) => el.name).join(', ')
-                          : item.branch
-                          ? item.branch.name
-                          : ''}
+                        {item.attributes.approved_user.data ? (
+                          <Link
+                            to={`/users/leave/view?id=${item.attributes.approved_user.data.id}`}
+                          >
+                            {item.attributes.approved_user.data.attributes.email}
+                          </Link>
+                        ) : (
+                          <></>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         <CDropdown>
@@ -208,20 +284,34 @@ const Home = () => {
                             Hành động
                           </CDropdownToggle>
                           <CDropdownMenu>
-                            <CDropdownItem href={`/users/view?id=${item.id}`}>
+                            <CDropdownItem href={`/users/leave/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            <CDropdownItem href={`/users/edit?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                            </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickDelete}
-                              data-id={item.id}
-                              data-name={item.username}
-                            >
-                              <FontAwesomeIcon icon={faTrash} /> Xóa
-                            </CDropdownItem>
+                            {!item.attributes.approved ? (
+                              <>
+                                <CDropdownItem href={`/users/leave/edit?id=${item.id}`}>
+                                  <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                                </CDropdownItem>
+                                <CDropdownItem
+                                  href="#"
+                                  onClick={handleClickApproved}
+                                  data-id={item.id}
+                                  data-name={item.id}
+                                >
+                                  <FontAwesomeIcon icon={faCheck} /> Duyệt
+                                </CDropdownItem>
+                                <CDropdownItem
+                                  href="#"
+                                  onClick={handleClickDelete}
+                                  data-id={item.id}
+                                  data-name={item.id}
+                                >
+                                  <FontAwesomeIcon icon={faTrash} /> Xóa
+                                </CDropdownItem>
+                              </>
+                            ) : (
+                              <></>
+                            )}
                           </CDropdownMenu>
                         </CDropdown>
                       </CTableDataCell>
