@@ -4,6 +4,8 @@ import qs from 'qs'
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import rrulePlugin from '@fullcalendar/rrule'
+
 import {
   CCard,
   CCardBody,
@@ -24,19 +26,22 @@ import SelectFetchData from 'src/views/template/SelectFetchData'
 
 const Home = () => {
   const [filterBranch, setFilterBranch] = useState('')
+  const [events, setEvents] = useState([])
 
   const buildFilters = () => {
     let filters = {
-      branch: filterBranch,
+      $or: [{ branch: { id: { $eq: filterBranch } } }, { branches: { id: { $eq: filterBranch } } }],
     }
-    if (filterBranch === '') delete filters.branch
+    if (filterBranch === '') delete filters.$or
     return filters
   }
 
   const fetchData = async () => {
     const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/user?${query}`)
-    console.log(response.data)
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/user-schedule?${query}`,
+    )
+    setEvents(response.data)
   }
 
   useEffect(() => {
@@ -82,7 +87,14 @@ const Home = () => {
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <FullCalendar plugins={[timeGridPlugin]} initialView="timeGridWeek" />
+            <FullCalendar
+              plugins={[timeGridPlugin, rrulePlugin]}
+              initialView="timeGridWeek"
+              slotMinTime="06:00:00"
+              slotMaxTime="24:00:00"
+              allDaySlot={false}
+              events={events}
+            />
           </CCardBody>
         </CCard>
       </CCol>
