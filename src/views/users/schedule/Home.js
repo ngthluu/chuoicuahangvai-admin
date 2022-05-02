@@ -23,6 +23,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import { cibStrapi } from '@coreui/icons'
 
 const Home = () => {
   const [filterBranch, setFilterBranch] = useState('')
@@ -41,6 +42,7 @@ const Home = () => {
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/user-schedule?${query}`,
     )
+    console.log(response.data)
     setEvents(response.data)
   }
 
@@ -88,7 +90,7 @@ const Home = () => {
         <CCard className="mb-4">
           <CCardBody>
             <FullCalendar
-              plugins={[timeGridPlugin, rrulePlugin]}
+              plugins={[rrulePlugin, timeGridPlugin]}
               initialView="timeGridWeek"
               slotMinTime="06:00:00"
               slotMaxTime="24:00:00"
