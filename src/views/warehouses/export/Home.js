@@ -78,7 +78,7 @@ const Home = () => {
     const query = qs.stringify(
       {
         filters: buildFilters(),
-        populate: ['branch', 'submit_user'],
+        populate: ['branch', 'submit_user', 'order'],
         pagination: {
           page: page,
         },
@@ -228,6 +228,7 @@ const Home = () => {
                 <CTableRow>
                   <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> ID </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Đơn hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Cửa hàng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Ngày xuất </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên xuất </CTableHeaderCell>
@@ -242,6 +243,17 @@ const Home = () => {
                       <CTableDataCell> {index + 1} </CTableDataCell>
                       <CTableDataCell>
                         <Link to={`/warehouses/export/view?id=${item.id}`}>EXPORT#{item.id}</Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {item.attributes.order.data ? (
+                          <Link to={`/orders/sell/view?id=${item.attributes.order.data.id}`}>
+                            {`${item.attributes.order.data.attributes.type.toUpperCase()}#${
+                              item.attributes.order.data.id
+                            }`}
+                          </Link>
+                        ) : (
+                          <></>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
