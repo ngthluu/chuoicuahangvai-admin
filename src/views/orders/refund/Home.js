@@ -37,6 +37,7 @@ import {
   faPlus,
   faCheck,
   faFileExcel,
+  faPrint,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -145,6 +146,18 @@ const Home = () => {
   const handleSubmitError = () => {
     fetchData()
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
+  const handleClickPrintInvoice = async (id) => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_STRAPI_URL}/api/refund-print-invoice/${id}`,
+      { responseType: 'blob' },
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'invoice.pdf')
+    link.click()
   }
 
   return (
@@ -342,6 +355,18 @@ const Home = () => {
                                 data-name={`REFUND#${item.id}`}
                               >
                                 <FontAwesomeIcon icon={faCheck} /> Duyệt và nhập kho
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
+                            {item.attributes.refund_invoice.data ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={(e) =>
+                                  handleClickPrintInvoice(item.attributes.refund_invoice.data.id)
+                                }
+                              >
+                                <FontAwesomeIcon icon={faPrint} /> In hóa đơn
                               </CDropdownItem>
                             ) : (
                               <></>
