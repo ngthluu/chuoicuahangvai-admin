@@ -482,12 +482,12 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {!['initialize', 'confirmed', 'packaged', 'canceled'].includes(
-                              item.attributes.status.data.attributes.status,
-                            ) ? (
+                            {item.attributes.order_invoice.data ? (
                               <CDropdownItem
                                 href="#"
-                                onClick={(e) => handleClickPrintInvoice(item.id)}
+                                onClick={(e) =>
+                                  handleClickPrintInvoice(item.attributes.order_invoice.data.id)
+                                }
                               >
                                 <FontAwesomeIcon icon={faPrint} /> In hóa đơn
                               </CDropdownItem>
