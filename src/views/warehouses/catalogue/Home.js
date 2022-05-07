@@ -78,6 +78,7 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        sort: ['createdAt:desc'],
         filters: buildFilters(),
         populate: ['branch', 'submit_user'],
         pagination: {

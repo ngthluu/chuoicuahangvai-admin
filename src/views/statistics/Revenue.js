@@ -57,6 +57,7 @@ const Home = () => {
   const fetchData = async () => {
     const query = qs.stringify(
       {
+        sort: ['createdAt:desc'],
         filters: buildFilters(),
         populate: ['order', 'customer_name', 'products', 'order_payment_invoices'],
       },
