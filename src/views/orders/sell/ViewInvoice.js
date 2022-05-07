@@ -58,7 +58,9 @@ const ViewInvoice = () => {
           'order',
           'customer_name',
           'receive_address',
-          'receive_address.address_three_levels',
+          'receive_address.name',
+          'receive_address.address',
+          'receive_address.address.address_three_levels',
           'products',
           'products.inventory_item',
           'products.inventory_item.sku_quantity',
@@ -90,14 +92,28 @@ const ViewInvoice = () => {
     setCreatedTime(data.attributes.createdAt)
     setPaymentHistory(data.attributes.order_payment_invoices.data)
 
-    setFirstName(data.attributes.customer_name.firstname)
-    setLastName(data.attributes.customer_name.lastname)
-    setPhone(data.attributes.customer_phone)
+    setFirstName(
+      data.attributes.receive_address
+        ? data.attributes.receive_address.name.firstname
+        : data.attributes.customer_name.firstname,
+    )
+    setLastName(
+      data.attributes.receive_address
+        ? data.attributes.receive_address.name.lastname
+        : data.attributes.customer_name.lastname,
+    )
+    setPhone(
+      data.attributes.receive_address
+        ? data.attributes.receive_address.phone
+        : data.attributes.customer_phone,
+    )
     if (data.attributes.receive_address) {
-      setAddress(data.attributes.receive_address.address)
-      setWard(data.attributes.receive_address.address_three_levels.data.attributes.ward)
-      setDistrict(data.attributes.receive_address.address_three_levels.data.attributes.district)
-      setCity(data.attributes.receive_address.address_three_levels.data.attributes.city)
+      setAddress(data.attributes.receive_address.address.address)
+      setWard(data.attributes.receive_address.address.address_three_levels.data.attributes.ward)
+      setDistrict(
+        data.attributes.receive_address.address.address_three_levels.data.attributes.district,
+      )
+      setCity(data.attributes.receive_address.address.address_three_levels.data.attributes.city)
     }
 
     setProducts(
