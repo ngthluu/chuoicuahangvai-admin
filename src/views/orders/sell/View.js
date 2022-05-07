@@ -45,6 +45,14 @@ const View = () => {
   const [note, setNote] = useState('')
   const [statuses, setStatuses] = useState([])
 
+  const [receiveAddressFirstName, setReceiveAddressFirstName] = useState('')
+  const [receiveAddressLastName, setReceiveAddressLastName] = useState('')
+  const [receiveAddressPhone, setReceiveAddressPhone] = useState('')
+  const [receiveAddressAddress, setReceiveAddressAddress] = useState('')
+  const [receiveAddressWard, setReceiveAddressWard] = useState('')
+  const [receiveAddressDistrict, setReceiveAddressDistrict] = useState('')
+  const [receiveAddressCity, setReceiveAddressCity] = useState('')
+
   const fetchData = async () => {
     if (id === null) return
     const query = qs.stringify(
@@ -65,6 +73,10 @@ const View = () => {
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
           'order_statuses',
+          'receive_address',
+          'receive_address.name',
+          'receive_address.address',
+          'receive_address.address.address_three_levels',
         ],
       },
       { encodeValuesOnly: true },
@@ -81,6 +93,22 @@ const View = () => {
     setPhone(data.attributes.customer.data.attributes.phone)
     setFirstName(data.attributes.customer.data.attributes.name.firstname)
     setLastName(data.attributes.customer.data.attributes.name.lastname)
+
+    if (data.attributes.receive_address) {
+      setReceiveAddressFirstName(data.attributes.receive_address.name.firstname)
+      setReceiveAddressLastName(data.attributes.receive_address.name.lastname)
+      setReceiveAddressPhone(data.attributes.receive_address.phone)
+      setReceiveAddressAddress(data.attributes.receive_address.address.address)
+      setReceiveAddressWard(
+        data.attributes.receive_address.address.address_three_levels.data.attributes.ward,
+      )
+      setReceiveAddressDistrict(
+        data.attributes.receive_address.address.address_three_levels.data.attributes.district,
+      )
+      setReceiveAddressCity(
+        data.attributes.receive_address.address.address_three_levels.data.attributes.city,
+      )
+    }
 
     setProducts(
       data.attributes.products.map((item) => {
@@ -142,15 +170,23 @@ const View = () => {
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <div>Họ và tên: </div>
-                  <div>{`${firstName} ${lastName}`}</div>
+                  <div>
+                    {receiveAddressFirstName !== ''
+                      ? `${receiveAddressFirstName} ${receiveAddressLastName}`
+                      : `${firstName} ${lastName}`}
+                  </div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <div>Số điện thoại: </div>
-                  <div>{phone}</div>
+                  <div>{receiveAddressPhone !== '' ? receiveAddressPhone : phone}</div>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <div>Địa chỉ nhận hàng: </div>
-                  <div>ABC</div>
+                  <div>
+                    {receiveAddressWard !== ''
+                      ? `${receiveAddressAddress}, ${receiveAddressWard}, ${receiveAddressDistrict}, ${receiveAddressCity}`
+                      : ''}
+                  </div>
                 </div>
               </CCol>
             </CRow>
