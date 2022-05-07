@@ -199,14 +199,17 @@ const View = () => {
                   <div>Số điện thoại: </div>
                   <div>{receiveAddressPhone !== '' ? receiveAddressPhone : phone}</div>
                 </div>
-                <div className="d-flex justify-content-between mb-3">
-                  <div>Địa chỉ nhận hàng: </div>
-                  <div>
-                    {receiveAddressWard !== ''
-                      ? `${receiveAddressAddress}, ${receiveAddressWard}, ${receiveAddressDistrict}, ${receiveAddressCity}`
-                      : ''}
+                {receiveAddressWard !== '' ? (
+                  <div className="d-flex justify-content-between mb-3">
+                    <div>Địa chỉ nhận hàng: </div>
+                    <div>
+                      {receiveAddressAddress}, {receiveAddressWard}, {receiveAddressDistrict},{' '}
+                      {receiveAddressCity}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <></>
+                )}
               </CCol>
             </CRow>
             <CRow className="mb-3">

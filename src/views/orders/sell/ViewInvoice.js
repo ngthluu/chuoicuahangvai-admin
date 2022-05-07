@@ -46,6 +46,8 @@ const ViewInvoice = () => {
   const [city, setCity] = useState('')
 
   const [products, setProducts] = useState([])
+  const [deliveryMethodAmount, setDeliveryMethodAmount] = useState('')
+  const [deliveryMethod, setDeliveryMethod] = useState('')
 
   const [invoiceTotal, setInvoiceTotal] = useState('')
   const [paymentHistory, setPaymentHistory] = useState([])
@@ -73,6 +75,7 @@ const ViewInvoice = () => {
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
           'order_payment_invoices',
+          'delivery_method',
         ],
       },
       { encodeValuesOnly: true },
@@ -114,6 +117,11 @@ const ViewInvoice = () => {
         data.attributes.receive_address.address.address_three_levels.data.attributes.district,
       )
       setCity(data.attributes.receive_address.address.address_three_levels.data.attributes.city)
+    }
+
+    if (data.attributes.delivery_method) {
+      setDeliveryMethodAmount(data.attributes.delivery_method.amount)
+      setDeliveryMethod(data.attributes.delivery_method.method)
     }
 
     setProducts(
@@ -223,8 +231,7 @@ const ViewInvoice = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products
@@ -233,6 +240,31 @@ const ViewInvoice = () => {
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
+                    {deliveryMethod ? (
+                      <>
+                        <CTableRow>
+                          <CTableHeaderCell colSpan="7"> Phí vận chuyển </CTableHeaderCell>
+                          <CTableHeaderCell scope="col">
+                            {parseInt(deliveryMethodAmount).toLocaleString()}
+                          </CTableHeaderCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
+                          <CTableHeaderCell scope="col">
+                            {(() => {
+                              return products
+                                .reduce(
+                                  (sum, item) => sum + item.price * item.length * 0.01,
+                                  parseInt(deliveryMethodAmount),
+                                )
+                                .toLocaleString()
+                            })()}
+                          </CTableHeaderCell>
+                        </CTableRow>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </CTableFoot>
                 </CTable>
               </CCol>
