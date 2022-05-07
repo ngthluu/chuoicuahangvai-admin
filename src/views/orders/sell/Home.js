@@ -62,6 +62,7 @@ const Home = () => {
   const [filterCustomer, setFilterCustomer] = useState('')
   const [filterType, setFilterType] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
+  const [filterIsDebt, setFilterIsDebt] = useState('')
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
@@ -76,6 +77,7 @@ const Home = () => {
       customer: { id: { $eq: filterCustomer } },
       type: { $eq: filterType },
       order_statuses: { status: { $eq: filterStatus } },
+      isDebt: { $eq: filterIsDebt === '0' },
     }
     if (filterFrom === '' && filterTo === '') {
       delete filters.createdAt
@@ -87,6 +89,7 @@ const Home = () => {
     if (filterCustomer === '') delete filters.customer
     if (filterType === '') delete filters.type
     if (filterStatus === '') delete filters.order_statuses
+    if (filterIsDebt === '') delete filters.isDebt
     return filters
   }
 
@@ -124,7 +127,16 @@ const Home = () => {
 
   useEffect(() => {
     fetchData()
-  }, [page, filterFrom, filterTo, filterBranch, filterCustomer, filterType, filterStatus])
+  }, [
+    page,
+    filterFrom,
+    filterTo,
+    filterBranch,
+    filterCustomer,
+    filterType,
+    filterStatus,
+    filterIsDebt,
+  ])
 
   const handleExportExcel = async () => {
     const query = qs.stringify({ filters: buildFilters() }, { encodeValuesOnly: true })
@@ -339,6 +351,17 @@ const Home = () => {
                     />
                   </div>
                   <div className="p-1">
+                    <CFormLabel>Loại đơn hàng</CFormLabel>
+                    <CFormSelect
+                      value={filterIsDebt}
+                      onChange={(e) => setFilterIsDebt(e.target.value)}
+                    >
+                      <option value="">Chọn loại</option>
+                      <option value="0">Đơn ghi nợ</option>
+                      <option value="1">Đơn thanh toán</option>
+                    </CFormSelect>
+                  </div>
+                  <div className="p-1">
                     <CFormLabel>Loại thanh toán</CFormLabel>
                     <CFormSelect value={filterType} onChange={(e) => setFilterType(e.target.value)}>
                       <option value="">Chọn loại</option>
@@ -414,6 +437,11 @@ const Home = () => {
                         <Link to={`/orders/sell/view?id=${item.id}`}>
                           {`${item.attributes.type.toUpperCase()}#${item.id}`}
                         </Link>
+                        {item.attributes.isDebt ? (
+                          <CBadge color="danger">Đơn ghi nợ</CBadge>
+                        ) : (
+                          <CBadge color="success">Đơn thanh toán</CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.order_invoice.data ? (

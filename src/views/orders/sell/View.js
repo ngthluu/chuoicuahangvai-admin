@@ -53,6 +53,9 @@ const View = () => {
   const [receiveAddressDistrict, setReceiveAddressDistrict] = useState('')
   const [receiveAddressCity, setReceiveAddressCity] = useState('')
 
+  const [deliveryMethodAmount, setDeliveryMethodAmount] = useState('')
+  const [deliveryMethod, setDeliveryMethod] = useState('')
+
   const fetchData = async () => {
     if (id === null) return
     const query = qs.stringify(
@@ -77,6 +80,7 @@ const View = () => {
           'receive_address.name',
           'receive_address.address',
           'receive_address.address.address_three_levels',
+          'delivery_method',
         ],
       },
       { encodeValuesOnly: true },
@@ -108,6 +112,11 @@ const View = () => {
       setReceiveAddressCity(
         data.attributes.receive_address.address.address_three_levels.data.attributes.city,
       )
+    }
+
+    if (data.attributes.delivery_method) {
+      setDeliveryMethodAmount(data.attributes.delivery_method.amount)
+      setDeliveryMethod(data.attributes.delivery_method.method)
     }
 
     setProducts(
@@ -160,6 +169,16 @@ const View = () => {
                   <div>Thời gian khởi tạo: </div>
                   <div>{createdTime}</div>
                 </div>
+                {deliveryMethod !== '' ? (
+                  <div className="d-flex justify-content-between mb-3">
+                    <div>Phương thức vận chuyển: </div>
+                    <div>
+                      {deliveryMethod === 'fast' ? 'Vận chuyển nhanh' : 'Vận chuyển miễn phí'}
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </CCol>
               <CCol md={2}></CCol>
               <CCol md={5} className="mb-3">
@@ -227,8 +246,7 @@ const View = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan="6"> Tổng giá trị </CTableHeaderCell>
-                      <CTableHeaderCell scope="col"> </CTableHeaderCell>
+                      <CTableHeaderCell colSpan="7"> Giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return products
@@ -237,6 +255,31 @@ const View = () => {
                         })()}
                       </CTableHeaderCell>
                     </CTableRow>
+                    {deliveryMethod ? (
+                      <>
+                        <CTableRow>
+                          <CTableHeaderCell colSpan="7"> Phí vận chuyển </CTableHeaderCell>
+                          <CTableHeaderCell scope="col">
+                            {parseInt(deliveryMethodAmount).toLocaleString()}
+                          </CTableHeaderCell>
+                        </CTableRow>
+                        <CTableRow>
+                          <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
+                          <CTableHeaderCell scope="col">
+                            {(() => {
+                              return products
+                                .reduce(
+                                  (sum, item) => sum + item.price * item.length * 0.01,
+                                  parseInt(deliveryMethodAmount),
+                                )
+                                .toLocaleString()
+                            })()}
+                          </CTableHeaderCell>
+                        </CTableRow>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </CTableFoot>
                 </CTable>
               </CCol>
