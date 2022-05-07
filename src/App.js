@@ -17,7 +17,6 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Signin = React.lazy(() => import('./views/auth/Signin'))
-const ForgotPassword = React.lazy(() => import('./views/auth/ForgotPassword'))
 
 class App extends Component {
   render() {
@@ -30,12 +29,6 @@ class App extends Component {
               path="/signin"
               name="Signin Page"
               render={(props) => <Signin {...props} />}
-            />
-            <UnauthenticatedRoute
-              exact
-              path="/forgot-password"
-              name="Forgot Password Page"
-              render={(props) => <ForgotPassword {...props} />}
             />
             <AuthenticatedRoute
               path="/"

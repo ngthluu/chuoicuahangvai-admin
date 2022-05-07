@@ -26,7 +26,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEdit, faSearch, faPlus, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
@@ -102,6 +102,24 @@ const Home = () => {
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
+  const [resetPasswordModalTargetId, setResetPasswordModalTargetId] = useState('')
+  const [resetPasswordModalTargetName, setResetPasswordModalTargetName] = useState('')
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false)
+  const handleClickResetPassword = (e) => {
+    e.preventDefault()
+    setResetPasswordModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setResetPasswordModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setResetPasswordModalVisible(!resetPasswordModalVisible)
+  }
+  const handleResetPasswordSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã reset mật khẩu nhân viên thành công')
+  }
+  const handleResetPasswordError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
       <ToastContainer />
@@ -115,6 +133,17 @@ const Home = () => {
         triggerSuccess={handleDeleteSuccess}
         triggerError={handleDeleteError}
         action="delete"
+      ></Modal>
+      <Modal
+        visible={resetPasswordModalVisible}
+        visibleAction={setResetPasswordModalVisible}
+        title="Reset mật khẩu nhân viên"
+        content={`Bạn có muốn reset mật khẩu nhân viên ${resetPasswordModalTargetName} về 123456 không ?`}
+        id={resetPasswordModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/user-reset-password`}
+        triggerSuccess={handleResetPasswordSuccess}
+        triggerError={handleResetPasswordError}
+        action="post"
       ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
@@ -222,6 +251,14 @@ const Home = () => {
                             </CDropdownItem>
                             <CDropdownItem href={`/users/edit?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                            <CDropdownItem
+                              href="#"
+                              onClick={handleClickResetPassword}
+                              data-id={item.id}
+                              data-name={item.username}
+                            >
+                              <FontAwesomeIcon icon={faUndo} /> Reset mật khẩu
                             </CDropdownItem>
                             <CDropdownItem
                               href="#"

@@ -118,13 +118,6 @@ const Signin = () => {
                           {!isLoading ? 'Đăng nhập' : 'Loading...'}
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        <Link to="/forgot-password">
-                          <CButton color="link" className="px-0">
-                            Quên mật khẩu ?
-                          </CButton>
-                        </Link>
-                      </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
