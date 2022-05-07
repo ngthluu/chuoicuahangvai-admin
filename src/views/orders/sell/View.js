@@ -95,8 +95,16 @@ const View = () => {
 
     setEmail(data.attributes.customer.data.attributes.email)
     setPhone(data.attributes.customer.data.attributes.phone)
-    setFirstName(data.attributes.customer.data.attributes.name.firstname)
-    setLastName(data.attributes.customer.data.attributes.name.lastname)
+    setFirstName(
+      data.attributes.customer.data.attributes.name
+        ? data.attributes.customer.data.attributes.name.firstname
+        : '',
+    )
+    setFirstName(
+      data.attributes.customer.data.attributes.name
+        ? data.attributes.customer.data.attributes.name.lastname
+        : '',
+    )
 
     if (data.attributes.receive_address) {
       setReceiveAddressFirstName(data.attributes.receive_address.name.firstname)
