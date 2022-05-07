@@ -44,6 +44,8 @@ const Add = () => {
   const [branchName, setBranchName] = useState('')
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
+  const [orderId, setOrderId] = useState('')
+  const [orderCode, setOrderCode] = useState('')
 
   const handleDelete = (index) => {
     let newProducts = [...products]
@@ -95,7 +97,7 @@ const Add = () => {
       return
     }
 
-    const data = {
+    let data = {
       branch: { id: branch },
       note: note,
       products: products.map((item) => {
@@ -108,6 +110,9 @@ const Add = () => {
         }
         return data
       }),
+    }
+    if (orderId !== '') {
+      data = { ...data, order: { id: orderId } }
     }
 
     if (id === null) {
@@ -140,6 +145,7 @@ const Add = () => {
       {
         populate: [
           'branch',
+          'order',
           'products',
           'products.inventory_item',
           'products.inventory_item.sku_quantity',
@@ -181,6 +187,14 @@ const Add = () => {
       }),
     )
     setNote(data.attributes.note)
+    setOrderId(data.attributes.order.data ? data.attributes.order.data.id : '')
+    setOrderCode(
+      data.attributes.order.data
+        ? `${data.attributes.order.data.attributes.type.toUpperCase()}#${
+            data.attributes.order.data.id
+          }`
+        : '',
+    )
   }
 
   useEffect(() => {
@@ -201,6 +215,26 @@ const Add = () => {
             <h5>Thông tin</h5>
           </CCardHeader>
           <CCardBody>
+            <CRow className="mb-3">
+              <CCol md={12}>
+                <CFormLabel>Đơn hàng</CFormLabel>
+                <InputDropdownSearch
+                  placeholder="Tìm kiếm đơn hàng"
+                  ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/orders`}
+                  ajaxDataPopulate={[]}
+                  ajaxDataGetFilters={(value) => {
+                    return {
+                      $or: [{ id: { $containsi: value } }],
+                    }
+                  }}
+                  ajaxDataGetItemName={(item) => `${item.attributes.type.toUpperCase()}#${item.id}`}
+                  handleNotFound={() => toast.error('Không tìm thấy đơn hàng này !!!')}
+                  handleFound={(item) => setOrderId(item.id)}
+                  setTextNameAfterFound={true}
+                  defaultName={orderCode}
+                />
+              </CCol>
+            </CRow>
             <CRow className="mb-3">
               <CCol md={12}>
                 <CFormLabel>Cửa hàng</CFormLabel>

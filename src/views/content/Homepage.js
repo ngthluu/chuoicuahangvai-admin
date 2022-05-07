@@ -19,7 +19,6 @@ import {
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faPlus } from '@fortawesome/free-solid-svg-icons'
-import TextEditor from 'src/views/template/TextEditor'
 
 import ImageUploadList from 'src/views/template/ImageUploadList'
 import HomepageFeaturesSku from 'src/views/content/HomepageFeaturesSku'
@@ -34,7 +33,6 @@ const Home = () => {
 
   const [featuresSku, setFeaturesSku] = useState([])
   const [memberResponses, setMemberResponses] = useState([])
-  const [signupSection, setSignupSection] = useState('')
 
   const [validated, setValidated] = useState(false)
   const handleSubmit = (e) => {
@@ -53,7 +51,6 @@ const Home = () => {
         ...item,
         avatar: item.avatar.data ? item.avatar.data.id : null,
       })),
-      signup_section: signupSection,
     }
     axios
       .put(`${process.env.REACT_APP_STRAPI_URL}/api/homepage`, {
@@ -105,7 +102,6 @@ const Home = () => {
         : [],
     )
     setMemberResponses(data.attributes.member_responses ? data.attributes.member_responses : [])
-    setSignupSection(data.attributes.signup_section)
   }
 
   useEffect(() => {
@@ -155,12 +151,6 @@ const Home = () => {
               <CCol md={12}>
                 <CFormLabel>Phản hồi từ khách hàng</CFormLabel>
                 <HomepageCustomerResponse data={memberResponses} setData={setMemberResponses} />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormLabel>Đăng ký nhận bản tin</CFormLabel>
-                <TextEditor value={signupSection} setValue={setSignupSection}></TextEditor>
               </CCol>
             </CRow>
           </CCardBody>
