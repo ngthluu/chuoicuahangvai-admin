@@ -40,6 +40,7 @@ import {
   faPrint,
   faTimes,
   faSave,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
@@ -204,6 +205,24 @@ const Home = () => {
     toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
+  const [deliverySuccessModalTargetId, setDeliverySuccessModalTargetId] = useState('')
+  const [deliverySuccessModalTargetName, setDeliverySuccessModalTargetName] = useState('')
+  const [deliverySuccessModalVisible, setDeliverySuccessModalVisible] = useState(false)
+  const handleClickDeliverySuccess = (e) => {
+    e.preventDefault()
+    setDeliverySuccessModalTargetId(e.currentTarget.getAttribute('data-id'))
+    setDeliverySuccessModalTargetName(e.currentTarget.getAttribute('data-name'))
+    setDeliverySuccessModalVisible(!deliverySuccessModalVisible)
+  }
+  const handleDeliverySuccessSuccess = () => {
+    fetchData()
+    toast.success('Bạn đã cập nhật trạng thái đơn hàng thành công')
+  }
+  const handleDeliverySuccessError = () => {
+    fetchData()
+    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
+  }
+
   return (
     <CRow>
       <ToastContainer />
@@ -238,6 +257,17 @@ const Home = () => {
         url={`${process.env.REACT_APP_STRAPI_URL}/api/order-cancel`}
         triggerSuccess={handleCancelSuccess}
         triggerError={handleCancelError}
+        action="post"
+      ></Modal>
+      <Modal
+        visible={deliverySuccessModalVisible}
+        visibleAction={setDeliverySuccessModalVisible}
+        title="Cập nhật trạng thái đơn hàng"
+        content={`Bạn có muốn cập nhật trạng thái giao hàng thành công cho đơn hàng ${deliverySuccessModalTargetName} không ?`}
+        id={deliverySuccessModalTargetId}
+        url={`${process.env.REACT_APP_STRAPI_URL}/api/order-delivery-success`}
+        triggerSuccess={handleDeliverySuccessSuccess}
+        triggerError={handleDeliverySuccessError}
         action="post"
       ></Modal>
       <CCol md={12}>
@@ -504,6 +534,20 @@ const Home = () => {
                                 data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
                               >
                                 <FontAwesomeIcon icon={faSave} /> Xuất hóa đơn
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
+                            {['delivery'].includes(
+                              item.attributes.status.data.attributes.status,
+                            ) ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDeliverySuccess}
+                                data-id={item.id}
+                                data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
+                              >
+                                <FontAwesomeIcon icon={faCheck} /> Giao hàng thành công
                               </CDropdownItem>
                             ) : (
                               <></>
