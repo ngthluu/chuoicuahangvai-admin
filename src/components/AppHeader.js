@@ -17,14 +17,25 @@ import { cilBell, cilMenu } from '@coreui/icons'
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import Permission from 'src/components/Permission'
-import { logo } from 'src/assets/brand/logo'
+import { socket } from 'src/lib/socket'
+import { toast, ToastContainer } from 'react-toastify'
 
 const AppHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
+  const fetchNotificationData = async () => {
+    console.log('AAA')
+  }
+
+  socket.on('notification', (message) => {
+    toast(message)
+    fetchNotificationData()
+  })
+
   return (
     <CHeader position="sticky" className="mb-4">
+      <ToastContainer></ToastContainer>
       <Permission></Permission>
       <CContainer fluid>
         <CHeaderToggler
