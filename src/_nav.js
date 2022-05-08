@@ -159,6 +159,12 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: 'Giao dịch VNPAY',
+        permission: ['order'],
+        to: '/orders/vnpay',
+      },
+      {
+        component: CNavItem,
         name: 'Đơn trả hàng',
         permission: ['refund'],
         to: '/orders/refund',

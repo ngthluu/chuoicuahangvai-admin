@@ -43,6 +43,8 @@ const OrderSellAdd = React.lazy(() => import('./views/orders/sell/Add'))
 const OrderSellView = React.lazy(() => import('./views/orders/sell/View'))
 const OrderSellViewInvoice = React.lazy(() => import('./views/orders/sell/ViewInvoice'))
 
+const OrderVNPAY = React.lazy(() => import('./views/orders/vnpay/Home'))
+
 const OrderRefund = React.lazy(() => import('./views/orders/refund/Home'))
 const OrderRefundAdd = React.lazy(() => import('./views/orders/refund/Add'))
 const OrderRefundView = React.lazy(() => import('./views/orders/refund/View'))
@@ -241,6 +243,7 @@ const routes = [
   },
 
   { path: '/orders', exact: true, name: 'Đơn hàng' },
+  { path: '/orders/vnpay', exact: true, name: 'Giao dịch VNPAY', component: OrderVNPAY },
   { path: '/orders/sell', exact: true, name: 'Đơn hàng bán', component: OrderSell },
   {
     path: '/orders/sell/add',
