@@ -42,9 +42,6 @@ import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
@@ -113,14 +110,6 @@ const Home = () => {
     setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
     setDeleteModalVisible(!deleteModalVisible)
   }
-  const handleDeleteSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã xóa khách hàng thành công')
-  }
-  const handleDeleteError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   // Submit logic
   const [submitModalTargetId, setSubmitModalTargetId] = useState('')
@@ -131,14 +120,6 @@ const Home = () => {
     setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
     setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
     setSubmitModalVisible(!submitModalVisible)
-  }
-  const handleSubmitSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã cập nhật thành công')
-  }
-  const handleSubmitError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
   const handleExportExcel = async () => {
@@ -156,7 +137,6 @@ const Home = () => {
 
   return (
     <CRow>
-      <ToastContainer />
       <Modal
         visible={deleteModalVisible}
         visibleAction={setDeleteModalVisible}
@@ -164,8 +144,8 @@ const Home = () => {
         content={`Bạn có muốn xóa khách hàng ${deleteModalTargetName} không ?`}
         id={deleteModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
-        triggerSuccess={handleDeleteSuccess}
-        triggerError={handleDeleteError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="delete"
       ></Modal>
       <Modal
@@ -175,8 +155,8 @@ const Home = () => {
         content={`Bạn có muốn cập nhật trạng thái khách hàng ${submitModalTargetName} không ?`}
         id={submitModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/customer/submit`}
-        triggerSuccess={handleSubmitSuccess}
-        triggerError={handleSubmitError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <CCol md={12}>

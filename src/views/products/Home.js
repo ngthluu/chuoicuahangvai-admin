@@ -32,9 +32,6 @@ import { Link } from 'react-router-dom'
 import Modal from 'src/views/template/Modal'
 import ProductDescription from 'src/views/products/ProductDescription'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
@@ -106,18 +103,9 @@ const Home = () => {
     setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
     setDeleteModalVisible(!deleteModalVisible)
   }
-  const handleDeleteSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã xóa sản phẩm thành công')
-  }
-  const handleDeleteError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   return (
     <CRow>
-      <ToastContainer />
       <Modal
         visible={deleteModalVisible}
         visibleAction={setDeleteModalVisible}
@@ -125,8 +113,8 @@ const Home = () => {
         content={`Bạn có muốn xóa sản phẩm ${deleteModalTargetName} và các SKU đi kèm không ?`}
         id={deleteModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/products`}
-        triggerSuccess={handleDeleteSuccess}
-        triggerError={handleDeleteError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="delete"
       ></Modal>
       <CCol md={12}>

@@ -139,14 +139,6 @@ const Home = () => {
     setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
     setSubmitModalVisible(!submitModalVisible)
   }
-  const handleSubmitSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã duyệt thành công')
-  }
-  const handleSubmitError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   const handleClickPrintInvoice = async (id) => {
     const response = await axios.get(
@@ -170,8 +162,8 @@ const Home = () => {
         content={`Bạn có muốn duyệt đơn trả hàng và nhập kho với phiếu ${submitModalTargetName} không ?`}
         id={submitModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/refunds/submit`}
-        triggerSuccess={handleSubmitSuccess}
-        triggerError={handleSubmitError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <CCol md={12}>

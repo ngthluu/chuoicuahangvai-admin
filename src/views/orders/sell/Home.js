@@ -160,14 +160,6 @@ const Home = () => {
     setCreateExportModalTargetName(e.currentTarget.getAttribute('data-name'))
     setCreateExportModalVisible(!createExportModalVisible)
   }
-  const handleCreateExportSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã tạo phiếu xuất kho thành công')
-  }
-  const handleCreateExportError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   const [createInvoiceModalTargetId, setCreateInvoiceModalTargetId] = useState('')
   const [createInvoiceModalTargetName, setCreateInvoiceModalTargetName] = useState('')
@@ -177,14 +169,6 @@ const Home = () => {
     setCreateInvoiceModalTargetId(e.currentTarget.getAttribute('data-id'))
     setCreateInvoiceModalTargetName(e.currentTarget.getAttribute('data-name'))
     setCreateInvoiceModalVisible(!createInvoiceModalVisible)
-  }
-  const handleCreateInvoiceSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã xuất hóa đơn thành công')
-  }
-  const handleCreateInvoiceError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
   const handleClickPrintInvoice = async (id) => {
@@ -208,14 +192,6 @@ const Home = () => {
     setCancelModalTargetName(e.currentTarget.getAttribute('data-name'))
     setCancelModalVisible(!cancelModalVisible)
   }
-  const handleCancelSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã hủy đơn hàng thành công')
-  }
-  const handleCancelError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   const [deliverySuccessModalTargetId, setDeliverySuccessModalTargetId] = useState('')
   const [deliverySuccessModalTargetName, setDeliverySuccessModalTargetName] = useState('')
@@ -225,14 +201,6 @@ const Home = () => {
     setDeliverySuccessModalTargetId(e.currentTarget.getAttribute('data-id'))
     setDeliverySuccessModalTargetName(e.currentTarget.getAttribute('data-name'))
     setDeliverySuccessModalVisible(!deliverySuccessModalVisible)
-  }
-  const handleDeliverySuccessSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã cập nhật trạng thái đơn hàng thành công')
-  }
-  const handleDeliverySuccessError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
   }
 
   return (
@@ -245,8 +213,8 @@ const Home = () => {
         content={`Bạn có muốn tạo phiếu xuất kho cho đơn hàng ${createExportModalTargetName} không ?`}
         id={createExportModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/order-create-export`}
-        triggerSuccess={handleCreateExportSuccess}
-        triggerError={handleCreateExportError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <Modal
@@ -256,8 +224,8 @@ const Home = () => {
         content={`Bạn có muốn xuất hóa đơn cho đơn hàng ${createInvoiceModalTargetName} không ?`}
         id={createInvoiceModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/order-create-invoice`}
-        triggerSuccess={handleCreateInvoiceSuccess}
-        triggerError={handleCreateInvoiceError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <Modal
@@ -267,8 +235,8 @@ const Home = () => {
         content={`Bạn có muốn hủy đơn hàng ${cancelModalTargetName} không ?`}
         id={cancelModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/order-cancel`}
-        triggerSuccess={handleCancelSuccess}
-        triggerError={handleCancelError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <Modal
@@ -278,8 +246,8 @@ const Home = () => {
         content={`Bạn có muốn cập nhật trạng thái giao hàng thành công cho đơn hàng ${deliverySuccessModalTargetName} không ?`}
         id={deliverySuccessModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/order-delivery-success`}
-        triggerSuccess={handleDeliverySuccessSuccess}
-        triggerError={handleDeliverySuccessError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <CCol md={12}>

@@ -38,9 +38,6 @@ import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 import SmartPagination from 'src/views/template/SmartPagination'
 
 const Home = () => {
@@ -110,14 +107,6 @@ const Home = () => {
     setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
     setDeleteModalVisible(!deleteModalVisible)
   }
-  const handleDeleteSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã xóa phiếu nghỉ phép thành công')
-  }
-  const handleDeleteError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   const [approvedModalTargetId, setApprovedModalTargetId] = useState('')
   const [approvedModalTargetName, setApprovedModalTargetName] = useState('')
@@ -128,18 +117,9 @@ const Home = () => {
     setApprovedModalTargetName(e.currentTarget.getAttribute('data-name'))
     setApprovedModalVisible(!approvedModalVisible)
   }
-  const handleApprovedSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã duyệt phiếu nghỉ phép thành công')
-  }
-  const handleApprovedError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   return (
     <CRow>
-      <ToastContainer />
       <Modal
         visible={deleteModalVisible}
         visibleAction={setDeleteModalVisible}
@@ -147,8 +127,8 @@ const Home = () => {
         content={`Bạn có muốn xóa phiếu nghỉ phép này không ?`}
         id={deleteModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/user-leaves`}
-        triggerSuccess={handleDeleteSuccess}
-        triggerError={handleDeleteError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="delete"
       ></Modal>
       <Modal
@@ -158,8 +138,8 @@ const Home = () => {
         content={`Bạn có muốn duyệt phiếu nghỉ phép này không ?`}
         id={approvedModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/user-leaves-approve`}
-        triggerSuccess={handleApprovedSuccess}
-        triggerError={handleApprovedError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <CCol md={12}>

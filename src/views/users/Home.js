@@ -31,9 +31,6 @@ import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
@@ -93,14 +90,6 @@ const Home = () => {
     setDeleteModalTargetName(e.currentTarget.getAttribute('data-name'))
     setDeleteModalVisible(!deleteModalVisible)
   }
-  const handleDeleteSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã xóa nhân viên thành công')
-  }
-  const handleDeleteError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   const [resetPasswordModalTargetId, setResetPasswordModalTargetId] = useState('')
   const [resetPasswordModalTargetName, setResetPasswordModalTargetName] = useState('')
@@ -111,18 +100,9 @@ const Home = () => {
     setResetPasswordModalTargetName(e.currentTarget.getAttribute('data-name'))
     setResetPasswordModalVisible(!resetPasswordModalVisible)
   }
-  const handleResetPasswordSuccess = () => {
-    fetchData()
-    toast.success('Bạn đã reset mật khẩu nhân viên thành công')
-  }
-  const handleResetPasswordError = () => {
-    fetchData()
-    toast.error('Thao tác thất bại. Có lỗi xảy ra !!')
-  }
 
   return (
     <CRow>
-      <ToastContainer />
       <Modal
         visible={deleteModalVisible}
         visibleAction={setDeleteModalVisible}
@@ -130,8 +110,8 @@ const Home = () => {
         content={`Bạn có muốn xóa nhân viên ${deleteModalTargetName} không ?`}
         id={deleteModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/users`}
-        triggerSuccess={handleDeleteSuccess}
-        triggerError={handleDeleteError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="delete"
       ></Modal>
       <Modal
@@ -141,8 +121,8 @@ const Home = () => {
         content={`Bạn có muốn reset mật khẩu nhân viên ${resetPasswordModalTargetName} về 123456 không ?`}
         id={resetPasswordModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/user-reset-password`}
-        triggerSuccess={handleResetPasswordSuccess}
-        triggerError={handleResetPasswordError}
+        triggerSuccess={() => fetchData()}
+        triggerError={() => fetchData()}
         action="post"
       ></Modal>
       <CCol md={12}>
