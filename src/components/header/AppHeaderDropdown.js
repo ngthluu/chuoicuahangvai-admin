@@ -32,10 +32,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const AppHeaderDropdown = () => {
-  const [cookie, removeCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
+  const [cookie, setCookie] = useCookies([process.env.REACT_APP_COOKIE_NAME])
   const handleLogout = () => {
-    removeCookie(process.env.REACT_APP_COOKIE_NAME)
-    removeCookie(process.env.REACT_APP_COOKIE_PERMISSION_NAME)
+    setCookie(process.env.REACT_APP_COOKIE_NAME, undefined, {
+      path: '/',
+    })
   }
 
   const [modalChangePasswordVisible, setModalChangePasswordVisible] = useState(false)

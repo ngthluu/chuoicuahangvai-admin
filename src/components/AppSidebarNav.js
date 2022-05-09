@@ -5,8 +5,6 @@ import PropTypes from 'prop-types'
 import { CBadge } from '@coreui/react'
 import { useCookies } from 'react-cookie'
 
-import { checkPermission } from 'src/components/Permission'
-
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
   const navLink = (name, icon, badge) => {
@@ -28,9 +26,7 @@ export const AppSidebarNav = ({ items }) => {
     const Component = component
 
     const [cookie, setCookie] = useCookies([])
-    const [allowed, setAllowed] = useState(
-      checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
-    )
+    const [allowed, setAllowed] = useState(true)
 
     return allowed ? (
       <Component
@@ -53,9 +49,7 @@ export const AppSidebarNav = ({ items }) => {
     const Component = component
 
     const [cookie, setCookie] = useCookies([])
-    const [allowed, setAllowed] = useState(
-      checkPermission(permission, cookie[process.env.REACT_APP_COOKIE_PERMISSION_NAME]),
-    )
+    const [allowed, setAllowed] = useState(true)
 
     return allowed ? (
       <Component

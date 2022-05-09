@@ -16,7 +16,6 @@ import { cilBell, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
-import Permission from 'src/components/Permission'
 import { socket } from 'src/lib/socket'
 import { toast, ToastContainer } from 'react-toastify'
 
@@ -36,7 +35,6 @@ const AppHeader = () => {
   return (
     <CHeader position="sticky" className="mb-4">
       <ToastContainer></ToastContainer>
-      <Permission></Permission>
       <CContainer fluid>
         <CHeaderToggler
           className="ps-1"
