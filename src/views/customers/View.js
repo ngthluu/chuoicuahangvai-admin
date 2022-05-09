@@ -27,17 +27,10 @@ const View = () => {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [city, setCity] = useState('')
-  const [district, setDistrict] = useState('')
-  const [ward, setWard] = useState('')
-  const [address, setAddress] = useState('')
 
   const fetchData = async () => {
     if (id === null) return
-    const query = qs.stringify(
-      { populate: ['name', 'address', 'address.address_three_levels'] },
-      { encodeValuesOnly: true },
-    )
+    const query = qs.stringify({ populate: ['name'] }, { encodeValuesOnly: true })
     const response = await axios.get(
       `${process.env.REACT_APP_STRAPI_URL}/api/customer/${id}?${query}`,
     )
@@ -46,10 +39,6 @@ const View = () => {
     setLastName(data.name.lastname)
     setEmail(data.email)
     setPhone(data.phone)
-    setCity(data.address ? data.address.address_three_levels.city : '')
-    setDistrict(data.address ? data.address.address_three_levels.district : '')
-    setWard(data.address ? data.address.address_three_levels.id : '')
-    setAddress(data.address ? data.address.address : '')
   }
 
   useEffect(() => {
@@ -108,7 +97,6 @@ const View = () => {
                 <CFormFeedback invalid>Không hợp lệ!</CFormFeedback>
               </CCol>
             </CRow>
-            <Address city={city} district={district} ward={ward} address={address}></Address>
           </CCardBody>
           <CCardFooter className="d-flex">
             <CButton href="/customers" color="secondary" type="button" className="text-white ml-3">

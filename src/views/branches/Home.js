@@ -114,7 +114,7 @@ const Home = () => {
                         <Link to="#">{item.attributes.name}</Link>
                       </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.manager && (
+                        {item.attributes.manager.data && (
                           <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>
                             {item.attributes.manager.data.attributes.email}
                           </Link>

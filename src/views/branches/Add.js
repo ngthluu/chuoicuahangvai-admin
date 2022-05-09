@@ -48,13 +48,15 @@ const Add = () => {
     }
 
     const formData = Object.fromEntries(new FormData(form).entries())
-    const data = {
+    let data = {
       name: formData.name,
       address: {
         address: formData.address,
         address_three_levels: formData.ward,
       },
-      manager: formData.manager,
+    }
+    if (formData.manager !== '') {
+      data = { ...data, manager: formData.manager }
     }
 
     if (id === null) {
@@ -90,7 +92,7 @@ const Add = () => {
     setDistrict(data.attributes.address.address_three_levels.data.attributes.district)
     setWard(data.attributes.address.address_three_levels.data.id)
     setAddress(data.attributes.address.address)
-    setManager(data.attributes.manager.data.id)
+    setManager(data.attributes.manager.data ? data.attributes.manager.data.id : '')
   }
 
   useEffect(() => {

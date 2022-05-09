@@ -85,7 +85,7 @@ const Home = () => {
       {
         sort: ['createdAt:desc'],
         filters: buildFilters(),
-        populate: ['name', 'address', 'address.address_three_levels'],
+        populate: ['name'],
         pagination: {
           page: page,
         },
@@ -214,7 +214,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Họ và tên </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Email </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Số điện thoại </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Địa chỉ </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
@@ -231,21 +230,6 @@ const Home = () => {
                       </CTableDataCell>
                       <CTableDataCell> {item.email} </CTableDataCell>
                       <CTableDataCell> {item.phone} </CTableDataCell>
-                      <CTableDataCell>
-                        {!item.address ? (
-                          ''
-                        ) : (
-                          <>
-                            {item.address.address}
-                            <span>, </span>
-                            {item.address.address_three_levels.ward}
-                            <span>, </span>
-                            {item.address.address_three_levels.district}
-                            <span>, </span>
-                            {item.address.address_three_levels.city}
-                          </>
-                        )}
-                      </CTableDataCell>
                       <CTableDataCell>
                         {!item.blocked ? (
                           <CBadge color="success">Đã đăng ký</CBadge>
