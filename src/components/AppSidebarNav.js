@@ -26,9 +26,9 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, badge, icon, module, ...rest } = item
     const Component = component
 
-    const [allowed, setAllowed] = useState(true)
+    const [allowed, setAllowed] = useState(false)
     const checkAllowed = async () => {
-      setAllowed(await checkPermission(module[0], 'home'))
+      setAllowed(await checkPermission(module, 'home'))
     }
     useEffect(() => {
       checkAllowed()
