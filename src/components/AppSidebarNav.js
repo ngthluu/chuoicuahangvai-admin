@@ -3,7 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { CBadge } from '@coreui/react'
-import { useCookies } from 'react-cookie'
+
+import { checkPermission } from 'src/lib/permission'
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
@@ -22,11 +23,16 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   const NavItem = (item, index) => {
-    const { component, name, badge, icon, permission, ...rest } = item
+    const { component, name, badge, icon, module, ...rest } = item
     const Component = component
 
-    const [cookie, setCookie] = useCookies([])
     const [allowed, setAllowed] = useState(true)
+    const checkAllowed = async () => {
+      setAllowed(await checkPermission(module[0], 'home'))
+    }
+    useEffect(() => {
+      checkAllowed()
+    }, [])
 
     return allowed ? (
       <Component
@@ -45,13 +51,10 @@ export const AppSidebarNav = ({ items }) => {
     )
   }
   const NavGroup = (item, index) => {
-    const { component, name, icon, to, permission, ...rest } = item
+    const { component, name, icon, to, ...rest } = item
     const Component = component
 
-    const [cookie, setCookie] = useCookies([])
-    const [allowed, setAllowed] = useState(true)
-
-    return allowed ? (
+    return (
       <Component
         idx={String(index)}
         key={index}
@@ -63,8 +66,6 @@ export const AppSidebarNav = ({ items }) => {
           item.items ? NavGroup(item, index) : NavItem(item, index),
         )}
       </Component>
-    ) : (
-      <Component key={index}></Component>
     )
   }
 
