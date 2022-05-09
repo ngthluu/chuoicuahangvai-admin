@@ -17,8 +17,6 @@ import {
   CFormFeedback,
 } from '@coreui/react'
 
-import Address from '../template/Address'
-
 const View = () => {
   const query = useLocation().search
   const id = new URLSearchParams(query).get('id')
