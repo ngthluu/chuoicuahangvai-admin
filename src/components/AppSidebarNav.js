@@ -23,12 +23,16 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   const NavItem = (item, index) => {
-    const { component, name, badge, icon, module, ...rest } = item
+    const { component, name, badge, icon, module, setParentAllowed, ...rest } = item
     const Component = component
 
     const [allowed, setAllowed] = useState(false)
     const checkAllowed = async () => {
-      setAllowed(await checkPermission(module, 'home'))
+      const grantedPermission = await checkPermission(module, 'home')
+      if (grantedPermission && typeof setParentAllowed === 'function') {
+        setParentAllowed(true)
+      }
+      setAllowed(grantedPermission)
     }
     useEffect(() => {
       checkAllowed()
@@ -51,8 +55,14 @@ export const AppSidebarNav = ({ items }) => {
     )
   }
   const NavGroup = (item, index) => {
-    const { component, name, icon, to, ...rest } = item
+    const { component, name, icon, to, setParentAllowed, ...rest } = item
     const Component = component
+
+    const [allowed, setAllowed] = useState(false)
+
+    useEffect(() => {
+      if (typeof setParentAllowed === 'function') setParentAllowed(allowed)
+    }, [allowed])
 
     return (
       <Component
@@ -60,10 +70,13 @@ export const AppSidebarNav = ({ items }) => {
         key={index}
         toggler={navLink(name, icon)}
         visible={location.pathname.startsWith(to)}
+        className={allowed ? 'd-block' : 'd-none'}
         {...rest}
       >
         {item.items?.map((item, index) =>
-          item.items ? NavGroup(item, index) : NavItem(item, index),
+          item.items
+            ? NavGroup({ ...item, setParentAllowed: setAllowed }, index)
+            : NavItem({ ...item, setParentAllowed: setAllowed }, index),
         )}
       </Component>
     )
