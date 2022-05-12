@@ -41,6 +41,8 @@ import Modal from 'src/views/template/Modal'
 import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
+import { checkPermission } from 'src/lib/permission'
+
 const Home = () => {
   const [importsList, setImportsList] = useState([])
 
@@ -71,7 +73,22 @@ const Home = () => {
     return filters
   }
 
+  // Permission stuffs
+  const moduleName = 'warehouseImport'
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionEdit, setPermissionEdit] = useState(false)
+  const [permissionSubmit, setPermissionSubmit] = useState(false)
+  const [permissionDelete, setPermissionDelete] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(moduleName, 'add'))
+    setPermissionEdit(await checkPermission(moduleName, 'edit'))
+    setPermissionSubmit(await checkPermission(moduleName, 'submit'))
+    setPermissionDelete(await checkPermission(moduleName, 'delete'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -192,11 +209,15 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-              <Link to="/warehouses/import/add">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu nhập kho</strong>
-                </CButton>
-              </Link>
+              {permissionAdd ? (
+                <Link to="/warehouses/import/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu nhập kho</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -253,25 +274,37 @@ const Home = () => {
                               <></>
                             ) : (
                               <>
-                                <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
-                                  <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                                </CDropdownItem>
-                                <CDropdownItem
-                                  href="#"
-                                  onClick={handleClickSubmit}
-                                  data-id={item.id}
-                                  data-name={`IMPORT#${item.id}`}
-                                >
-                                  <FontAwesomeIcon icon={faCheck} /> Nhập vào kho
-                                </CDropdownItem>
-                                <CDropdownItem
-                                  href="#"
-                                  onClick={handleClickDelete}
-                                  data-id={item.id}
-                                  data-name={`IMPORT#${item.id}`}
-                                >
-                                  <FontAwesomeIcon icon={faTrash} /> Xóa
-                                </CDropdownItem>
+                                {permissionEdit ? (
+                                  <CDropdownItem href={`/warehouses/import/edit?id=${item.id}`}>
+                                    <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
+                                {permissionSubmit ? (
+                                  <CDropdownItem
+                                    href="#"
+                                    onClick={handleClickSubmit}
+                                    data-id={item.id}
+                                    data-name={`IMPORT#${item.id}`}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} /> Nhập vào kho
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
+                                {permissionDelete ? (
+                                  <CDropdownItem
+                                    href="#"
+                                    onClick={handleClickDelete}
+                                    data-id={item.id}
+                                    data-name={`IMPORT#${item.id}`}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} /> Xóa
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
                               </>
                             )}
                           </CDropdownMenu>

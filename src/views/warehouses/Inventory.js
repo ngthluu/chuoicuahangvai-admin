@@ -30,6 +30,8 @@ import SelectFetchData from 'src/views/template/SelectFetchData'
 import ProductDescription from 'src/views/products/ProductDescription'
 import SmartPagination from 'src/views/template/SmartPagination'
 
+import { checkPermission } from 'src/lib/permission'
+
 const Inventory = () => {
   const query = useLocation().search
   const branchId = new URLSearchParams(query).get('branch')
@@ -40,6 +42,14 @@ const Inventory = () => {
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+
+  // Permission stuffs
+  const moduleName = 'warehouseInventory'
+  const [permissionExportExcel, setPermissionExportExcel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionExportExcel(await checkPermission(moduleName, 'export_excel'))
+  }
+  // End permission stuffs
 
   const buildFilters = () => {
     let filters = {
@@ -52,6 +62,7 @@ const Inventory = () => {
   }
 
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         pagination: {
@@ -139,11 +150,15 @@ const Inventory = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
-                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                </CButton>
-              </Link>
+              {permissionExportExcel ? (
+                <Link to="#">
+                  <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
