@@ -43,6 +43,8 @@ import { Link } from 'react-router-dom'
 import Modal from 'src/views/template/Modal'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [customersList, setCustomersList] = useState([])
@@ -80,7 +82,21 @@ const Home = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'customer'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionChangeStatus, setPermissionChangeStatus] = useState(false)
+  const [permissionDelete, setPermissionDelete] = useState(false)
+  const [permissionExpotExcel, setPermissionExpotExcel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionChangeStatus(await checkPermission(cookies, moduleName, 'change_status'))
+    setPermissionDelete(await checkPermission(cookies, moduleName, 'delete'))
+    setPermissionExpotExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -195,11 +211,15 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
-                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                </CButton>
-              </Link>
+              {permissionExpotExcel ? (
+                <Link to="#">
+                  <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -246,30 +266,38 @@ const Home = () => {
                             <CDropdownItem href={`/customers/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickSubmit}
-                              data-id={item.id}
-                              data-name={`${item.name.firstname} ${item.name.lastname}`}
-                            >
-                              {!item.blocked ? (
-                                <>
-                                  <FontAwesomeIcon icon={faLock} /> Chuyển sang khách vãng lai
-                                </>
-                              ) : (
-                                <>
-                                  <FontAwesomeIcon icon={faUnlock} /> Chuyển sang khách đăng ký
-                                </>
-                              )}
-                            </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickDelete}
-                              data-id={item.id}
-                              data-name={`${item.name.firstname} ${item.name.lastname}`}
-                            >
-                              <FontAwesomeIcon icon={faTrash} /> Xóa
-                            </CDropdownItem>
+                            {permissionChangeStatus ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickSubmit}
+                                data-id={item.id}
+                                data-name={`${item.name.firstname} ${item.name.lastname}`}
+                              >
+                                {!item.blocked ? (
+                                  <>
+                                    <FontAwesomeIcon icon={faLock} /> Chuyển sang khách vãng lai
+                                  </>
+                                ) : (
+                                  <>
+                                    <FontAwesomeIcon icon={faUnlock} /> Chuyển sang khách đăng ký
+                                  </>
+                                )}
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
+                            {permissionDelete ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDelete}
+                                data-id={item.id}
+                                data-name={`${item.name.firstname} ${item.name.lastname}`}
+                              >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
                           </CDropdownMenu>
                         </CDropdown>
                       </CTableDataCell>

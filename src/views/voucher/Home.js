@@ -32,6 +32,8 @@ import { faEye, faEdit, faSearch, faPlus, faTrash } from '@fortawesome/free-soli
 import { Link } from 'react-router-dom'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const getTypeValueText = (type, typeValue) => {
@@ -85,7 +87,19 @@ const Home = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'voucher'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionEdit, setPermissionEdit] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionEdit(await checkPermission(cookies, moduleName, 'edit'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       { sort: ['createdAt:desc'], filters: buildFilters() },
       { encodeValuesOnly: true },
@@ -153,11 +167,15 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/voucher/add">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Voucher</strong>
-                </CButton>
-              </Link>
+              {permissionAdd ? (
+                <Link to="/voucher/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Voucher</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -201,9 +219,13 @@ const Home = () => {
                           Hành động
                         </CDropdownToggle>
                         <CDropdownMenu>
-                          <CDropdownItem href={`/voucher/edit?id=${item.id}`}>
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                          </CDropdownItem>
+                          {permissionEdit ? (
+                            <CDropdownItem href={`/voucher/edit?id=${item.id}`}>
+                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                            </CDropdownItem>
+                          ) : (
+                            <></>
+                          )}
                         </CDropdownMenu>
                       </CDropdown>
                     </CTableDataCell>
