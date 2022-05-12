@@ -82,6 +82,7 @@ const View = () => {
                   handleFound={(item) => setUser(item.id)}
                   setTextNameAfterFound={true}
                   defaultName={userName}
+                  view={true}
                 />
               </CCol>
             </CRow>

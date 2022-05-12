@@ -110,22 +110,28 @@ const InputDropdownSearch = (props) => {
             setText(e.target.value)
           }}
         />
-        <CButton
-          type="button"
-          color="danger"
-          className="text-white border-right"
-          onClick={handleClickResetButton}
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </CButton>
-        <CButton
-          type="button"
-          color="info"
-          className="text-white"
-          onClick={handleClickSearchButton}
-        >
-          <FontAwesomeIcon icon={faSearch} />
-        </CButton>
+        {!props.view ? (
+          <>
+            <CButton
+              type="button"
+              color="danger"
+              className="text-white border-right"
+              onClick={handleClickResetButton}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </CButton>
+            <CButton
+              type="button"
+              color="info"
+              className="text-white"
+              onClick={handleClickSearchButton}
+            >
+              <FontAwesomeIcon icon={faSearch} />
+            </CButton>
+          </>
+        ) : (
+          <></>
+        )}
       </CInputGroup>
       <ul style={dropDownUlStyle}>
         {searchData.map((item, index) => (
@@ -148,6 +154,7 @@ InputDropdownSearch.propTypes = {
   handleFound: PropTypes.func,
   setTextNameAfterFound: PropTypes.bool,
   defaultName: PropTypes.string,
+  view: PropTypes.bool,
 }
 
 export default InputDropdownSearch

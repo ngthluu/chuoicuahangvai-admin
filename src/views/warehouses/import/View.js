@@ -145,6 +145,7 @@ const Add = () => {
                   handleFound={(item) => setBranch(item.id)}
                   setTextNameAfterFound={true}
                   defaultName={branchName}
+                  view={true}
                 />
               </CCol>
             </CRow>
@@ -166,6 +167,7 @@ const Add = () => {
                 }
                 handleNotFound={() => toast.error('Không tìm thấy sản phẩm này !!!')}
                 handleFound={(item) => handleAddSKU(item)}
+                view={true}
               />
             </CRow>
             <CRow className="mb-3">
