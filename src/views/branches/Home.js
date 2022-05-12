@@ -28,13 +28,28 @@ import Modal from 'src/views/template/Modal'
 
 import SmartPagination from 'src/views/template/SmartPagination'
 
+import { checkPermission } from 'src/lib/permission'
+
 const Home = () => {
   const [branchesList, setBranchesList] = useState([])
 
   const [page, setPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
 
+  // Permission stuffs
+  const moduleName = 'branch'
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionEdit, setPermissionEdit] = useState(false)
+  const [permissionDelete, setPermissionDelete] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(moduleName, 'add'))
+    setPermissionEdit(await checkPermission(moduleName, 'edit'))
+    setPermissionDelete(await checkPermission(moduleName, 'delete'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         populate: ['address', 'address.address_three_levels', 'manager'],
@@ -83,11 +98,15 @@ const Home = () => {
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý cửa hàng</h4>
               </div>
-              <Link to="/branches/add">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Cửa hàng</strong>
-                </CButton>
-              </Link>
+              {permissionAdd ? (
+                <Link to="/branches/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Cửa hàng</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -139,20 +158,28 @@ const Home = () => {
                             Hành động
                           </CDropdownToggle>
                           <CDropdownMenu>
-                            <CDropdownItem href={`/branches/edit?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                            </CDropdownItem>
+                            {permissionEdit ? (
+                              <CDropdownItem href={`/branches/edit?id=${item.id}`}>
+                                <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
                             <CDropdownItem href={`/warehouses/inventory?branch=${item.id}`}>
                               <FontAwesomeIcon icon={faWarehouse} /> Xem tồn kho
                             </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickDelete}
-                              data-id={item.id}
-                              data-name={item.attributes.name}
-                            >
-                              <FontAwesomeIcon icon={faTrash} /> Xóa
-                            </CDropdownItem>
+                            {permissionDelete ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDelete}
+                                data-id={item.id}
+                                data-name={item.attributes.name}
+                              >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
                           </CDropdownMenu>
                         </CDropdown>
                       </CTableDataCell>
