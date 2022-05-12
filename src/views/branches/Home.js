@@ -29,6 +29,7 @@ import Modal from 'src/views/template/Modal'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [branchesList, setBranchesList] = useState([])
@@ -38,13 +39,14 @@ const Home = () => {
 
   // Permission stuffs
   const moduleName = 'branch'
+  const [cookies, setCookies] = useCookies([])
   const [permissionAdd, setPermissionAdd] = useState(false)
   const [permissionEdit, setPermissionEdit] = useState(false)
   const [permissionDelete, setPermissionDelete] = useState(false)
   const fetchPermissionData = async () => {
-    setPermissionAdd(await checkPermission(moduleName, 'add'))
-    setPermissionEdit(await checkPermission(moduleName, 'edit'))
-    setPermissionDelete(await checkPermission(moduleName, 'delete'))
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionEdit(await checkPermission(cookies, moduleName, 'edit'))
+    setPermissionDelete(await checkPermission(cookies, moduleName, 'delete'))
   }
   // End permission stuffs
 

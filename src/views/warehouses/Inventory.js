@@ -31,6 +31,7 @@ import ProductDescription from 'src/views/products/ProductDescription'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Inventory = () => {
   const query = useLocation().search
@@ -45,9 +46,10 @@ const Inventory = () => {
 
   // Permission stuffs
   const moduleName = 'warehouseInventory'
+  const [cookies, setCookies] = useCookies([])
   const [permissionExportExcel, setPermissionExportExcel] = useState(false)
   const fetchPermissionData = async () => {
-    setPermissionExportExcel(await checkPermission(moduleName, 'export_excel'))
+    setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
   }
   // End permission stuffs
 

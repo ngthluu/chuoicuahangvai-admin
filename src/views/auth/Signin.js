@@ -40,7 +40,7 @@ const Signin = () => {
     setInvalidLogin(false)
     setIsLoading(true)
     axios
-      .post(`${process.env.REACT_APP_STRAPI_URL}/api/auth/local`, {
+      .post(`${process.env.REACT_APP_STRAPI_URL}/api/auth/user/login`, {
         identifier: username,
         password: password,
       })

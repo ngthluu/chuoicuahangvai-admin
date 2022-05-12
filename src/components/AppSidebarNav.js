@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { CBadge } from '@coreui/react'
 
 import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation()
@@ -27,8 +28,9 @@ export const AppSidebarNav = ({ items }) => {
     const Component = component
 
     const [allowed, setAllowed] = useState(false)
+    const [cookies, setCookies] = useCookies([])
     const checkAllowed = async () => {
-      const grantedPermission = await checkPermission(module, 'home')
+      const grantedPermission = await checkPermission(cookies, module, 'home')
       if (grantedPermission && typeof setParentAllowed === 'function') {
         setParentAllowed(true)
       }

@@ -42,6 +42,7 @@ import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
 
 import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [importsList, setImportsList] = useState([])
@@ -75,15 +76,16 @@ const Home = () => {
 
   // Permission stuffs
   const moduleName = 'warehouseImport'
+  const [cookies, setCookies] = useCookies([])
   const [permissionAdd, setPermissionAdd] = useState(false)
   const [permissionEdit, setPermissionEdit] = useState(false)
   const [permissionSubmit, setPermissionSubmit] = useState(false)
   const [permissionDelete, setPermissionDelete] = useState(false)
   const fetchPermissionData = async () => {
-    setPermissionAdd(await checkPermission(moduleName, 'add'))
-    setPermissionEdit(await checkPermission(moduleName, 'edit'))
-    setPermissionSubmit(await checkPermission(moduleName, 'submit'))
-    setPermissionDelete(await checkPermission(moduleName, 'delete'))
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionEdit(await checkPermission(cookies, moduleName, 'edit'))
+    setPermissionSubmit(await checkPermission(cookies, moduleName, 'submit'))
+    setPermissionDelete(await checkPermission(cookies, moduleName, 'delete'))
   }
   // End permission stuffs
 
