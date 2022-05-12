@@ -32,6 +32,8 @@ import { faFilePdf, faSearch, faPlus, faFileExcel } from '@fortawesome/free-soli
 
 import ProductDescription from 'src/views/products/ProductDescription'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [activeKey, setActiveKey] = useState(2)
@@ -77,7 +79,17 @@ const Home = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'statisticsSoldvolume'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionExportExcel, setPermissionExportExcel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         filters: buildFilters(),
@@ -241,15 +253,19 @@ const Home = () => {
                 </CForm>
               </div>
               <div className="d-block d-md-flex justify-content-between">
-                <Link to="#">
-                  <CButton
-                    color="info"
-                    className="text-white w-100 mb-2"
-                    onClick={handleExportExcel}
-                  >
-                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                  </CButton>
-                </Link>
+                {permissionExportExcel ? (
+                  <Link to="#">
+                    <CButton
+                      color="info"
+                      className="text-white w-100 mb-2"
+                      onClick={handleExportExcel}
+                    >
+                      <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </CCardBody>

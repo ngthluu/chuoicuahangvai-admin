@@ -29,6 +29,8 @@ import { Link } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf, faSearch, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
+import { useCookies } from 'react-cookie'
+import { checkPermission } from 'src/lib/permission'
 
 const Home = () => {
   const [activeKey, setActiveKey] = useState(2)
@@ -54,7 +56,17 @@ const Home = () => {
     return filters
   }
 
+  // Permission stuffs
+  const moduleName = 'statisticsRevenue'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionExportExcel, setPermissionExportExcel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -146,15 +158,19 @@ const Home = () => {
                 </CForm>
               </div>
               <div className="d-block d-md-flex justify-content-between">
-                <Link to="#">
-                  <CButton
-                    color="info"
-                    className="text-white w-100 mb-2"
-                    onClick={handleExportExcel}
-                  >
-                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                  </CButton>
-                </Link>
+                {permissionExportExcel ? (
+                  <Link to="#">
+                    <CButton
+                      color="info"
+                      className="text-white w-100 mb-2"
+                      onClick={handleExportExcel}
+                    >
+                      <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </CCardBody>
