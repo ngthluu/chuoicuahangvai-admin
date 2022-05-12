@@ -49,6 +49,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import SmartPagination from 'src/views/template/SmartPagination'
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
@@ -84,7 +86,23 @@ const Home = () => {
     return filters
   }
 
+  // Permission stuffs
+  const moduleName = 'refund'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionExportExcel, setPermissionExportExcel] = useState(false)
+  const [permissionApprove, setPermissionApprove] = useState(false)
+  const [permissionExportPdfInvoice, setPermissionExportPdfInvoice] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+    setPermissionApprove(await checkPermission(cookies, moduleName, 'approve'))
+    setPermissionExportPdfInvoice(await checkPermission(cookies, moduleName, 'export_pdf_invoice'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         filters: buildFilters(),
@@ -250,21 +268,29 @@ const Home = () => {
                 </CForm>
               </div>
               <div className="d-block d-md-flex justify-content-between">
-                <Link to="#">
-                  <CButton
-                    color="info"
-                    className="text-white w-100 mb-2"
-                    onClick={handleExportExcel}
-                  >
-                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                  </CButton>
-                </Link>
+                {permissionExportExcel ? (
+                  <Link to="#">
+                    <CButton
+                      color="info"
+                      className="text-white w-100 mb-2"
+                      onClick={handleExportExcel}
+                    >
+                      <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
                 <div className="p-1"></div>
-                <Link to="/orders/refund/add">
-                  <CButton color="info" className="text-white w-100">
-                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn trả hàng</strong>
-                  </CButton>
-                </Link>
+                {permissionAdd ? (
+                  <Link to="/orders/refund/add">
+                    <CButton color="info" className="text-white w-100">
+                      <FontAwesomeIcon icon={faPlus} /> <strong>Đơn trả hàng</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </CCardBody>
@@ -345,7 +371,8 @@ const Home = () => {
                             <CDropdownItem href={`/orders/refund/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            {!item.attributes.status.data.attributes.update_status ? (
+                            {permissionApprove &&
+                            !item.attributes.status.data.attributes.update_status ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={handleClickSubmit}
@@ -357,7 +384,7 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {item.attributes.refund_invoice.data ? (
+                            {permissionApprove && item.attributes.refund_invoice.data ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={(e) =>

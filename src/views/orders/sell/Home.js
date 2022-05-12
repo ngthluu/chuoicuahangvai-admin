@@ -52,6 +52,8 @@ import Modal from 'src/views/template/Modal'
 import SmartPagination from 'src/views/template/SmartPagination'
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
 import SelectFetchData from 'src/views/template/SelectFetchData'
+import { useCookies } from 'react-cookie'
+import { checkPermission } from 'src/lib/permission'
 
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
@@ -93,7 +95,29 @@ const Home = () => {
     return filters
   }
 
+  // Permission stuffs
+  const moduleName = 'order'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionExportExcel, setPermissionExportExcel] = useState(false)
+  const [permissionCreateExport, setPermissionCreateExport] = useState(false)
+  const [permissionCreateInvoice, setPermissionCreateInvoice] = useState(false)
+  const [permissionCheckSuccess, setPermissionCheckSuccess] = useState(false)
+  const [permissionExportPdfInvoice, setPermissionExportPdfInvoice] = useState(false)
+  const [permissionCancel, setPermissionCancel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+    setPermissionCreateExport(await checkPermission(cookies, moduleName, 'create_export'))
+    setPermissionCreateInvoice(await checkPermission(cookies, moduleName, 'create_invoice'))
+    setPermissionCheckSuccess(await checkPermission(cookies, moduleName, 'check_success'))
+    setPermissionExportPdfInvoice(await checkPermission(cookies, moduleName, 'export_pdf_invoice'))
+    setPermissionCancel(await checkPermission(cookies, moduleName, 'cancel'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         filters: buildFilters(),
@@ -357,21 +381,30 @@ const Home = () => {
                 </div>
               </div>
               <div className="d-block d-md-flex justify-content-between">
-                <Link to="#">
-                  <CButton
-                    color="info"
-                    className="text-white w-100 mb-2"
-                    onClick={handleExportExcel}
-                  >
-                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                  </CButton>
-                </Link>
+                {permissionExportExcel ? (
+                  <Link to="#">
+                    <CButton
+                      color="info"
+                      className="text-white w-100 mb-2"
+                      onClick={handleExportExcel}
+                    >
+                      <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
+
                 <div className="p-1"></div>
-                <Link to="/orders/sell/add">
-                  <CButton color="info" className="text-white w-100">
-                    <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
-                  </CButton>
-                </Link>
+                {permissionAdd ? (
+                  <Link to="/orders/sell/add">
+                    <CButton color="info" className="text-white w-100">
+                      <FontAwesomeIcon icon={faPlus} /> <strong>Đơn hàng</strong>
+                    </CButton>
+                  </Link>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </CCardBody>
@@ -496,7 +529,8 @@ const Home = () => {
                             <CDropdownItem href={`/orders/sell/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            {item.attributes.status.data.attributes.status === 'initialize' ? (
+                            {permissionCreateExport &&
+                            item.attributes.status.data.attributes.status === 'initialize' ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={handleClickCreateExport}
@@ -508,7 +542,7 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {item.attributes.order_invoice.data ? (
+                            {permissionExportPdfInvoice && item.attributes.order_invoice.data ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={(e) =>
@@ -520,9 +554,8 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {['packaged'].includes(
-                              item.attributes.status.data.attributes.status,
-                            ) ? (
+                            {permissionCreateInvoice &&
+                            ['packaged'].includes(item.attributes.status.data.attributes.status) ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={handleClickCreateInvoice}
@@ -534,9 +567,8 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {['delivery'].includes(
-                              item.attributes.status.data.attributes.status,
-                            ) ? (
+                            {permissionCheckSuccess &&
+                            ['delivery'].includes(item.attributes.status.data.attributes.status) ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={handleClickDeliverySuccess}
@@ -548,7 +580,8 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {['initialize', 'confirmed'].includes(
+                            {permissionCancel &&
+                            ['initialize', 'confirmed'].includes(
                               item.attributes.status.data.attributes.status,
                             ) ? (
                               <CDropdownItem
