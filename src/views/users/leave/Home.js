@@ -39,6 +39,8 @@ import { Link } from 'react-router-dom'
 import Modal from 'src/views/template/Modal'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import { useCookies } from 'react-cookie'
+import { checkPermission } from 'src/lib/permission'
 
 const Home = () => {
   const [leaves, setLeaves] = useState([])
@@ -77,7 +79,23 @@ const Home = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'userLeave'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionEdit, setPermissionEdit] = useState(false)
+  const [permissionDelete, setPermissionDelete] = useState(false)
+  const [permissionApprove, setPermissionApprove] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionEdit(await checkPermission(cookies, moduleName, 'edit'))
+    setPermissionDelete(await checkPermission(cookies, moduleName, 'delete'))
+    setPermissionApprove(await checkPermission(cookies, moduleName, 'approve'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -196,11 +214,15 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/users/leave/add">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu nghỉ phép</strong>
-                </CButton>
-              </Link>
+              {permissionAdd ? (
+                <Link to="/users/leave/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Phiếu nghỉ phép</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -269,25 +291,37 @@ const Home = () => {
                             </CDropdownItem>
                             {!item.attributes.approved ? (
                               <>
-                                <CDropdownItem href={`/users/leave/edit?id=${item.id}`}>
-                                  <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                                </CDropdownItem>
-                                <CDropdownItem
-                                  href="#"
-                                  onClick={handleClickApproved}
-                                  data-id={item.id}
-                                  data-name={item.id}
-                                >
-                                  <FontAwesomeIcon icon={faCheck} /> Duyệt
-                                </CDropdownItem>
-                                <CDropdownItem
-                                  href="#"
-                                  onClick={handleClickDelete}
-                                  data-id={item.id}
-                                  data-name={item.id}
-                                >
-                                  <FontAwesomeIcon icon={faTrash} /> Xóa
-                                </CDropdownItem>
+                                {permissionEdit ? (
+                                  <CDropdownItem href={`/users/leave/edit?id=${item.id}`}>
+                                    <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
+                                {permissionApprove ? (
+                                  <CDropdownItem
+                                    href="#"
+                                    onClick={handleClickApproved}
+                                    data-id={item.id}
+                                    data-name={item.id}
+                                  >
+                                    <FontAwesomeIcon icon={faCheck} /> Duyệt
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
+                                {permissionDelete ? (
+                                  <CDropdownItem
+                                    href="#"
+                                    onClick={handleClickDelete}
+                                    data-id={item.id}
+                                    data-name={item.id}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} /> Xóa
+                                  </CDropdownItem>
+                                ) : (
+                                  <></>
+                                )}
                               </>
                             ) : (
                               <></>

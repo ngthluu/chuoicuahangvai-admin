@@ -33,6 +33,8 @@ import Modal from 'src/views/template/Modal'
 
 import SelectFetchData from 'src/views/template/SelectFetchData'
 import SmartPagination from 'src/views/template/SmartPagination'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Home = () => {
   const [usersList, setUsersList] = useState([])
@@ -60,7 +62,23 @@ const Home = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'user'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionAdd, setPermissionAdd] = useState(false)
+  const [permissionEdit, setPermissionEdit] = useState(false)
+  const [permissionResetPassword, setPermissionResetPassword] = useState(false)
+  const [permissionDelete, setPermissionDelete] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
+    setPermissionEdit(await checkPermission(cookies, moduleName, 'edit'))
+    setPermissionResetPassword(await checkPermission(cookies, moduleName, 'reset_password'))
+    setPermissionDelete(await checkPermission(cookies, moduleName, 'delete'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -178,11 +196,15 @@ const Home = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="/users/add">
-                <CButton color="info" className="text-white w-100">
-                  <FontAwesomeIcon icon={faPlus} /> <strong>Nhân viên</strong>
-                </CButton>
-              </Link>
+              {permissionAdd ? (
+                <Link to="/users/add">
+                  <CButton color="info" className="text-white w-100">
+                    <FontAwesomeIcon icon={faPlus} /> <strong>Nhân viên</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -229,25 +251,37 @@ const Home = () => {
                             <CDropdownItem href={`/users/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
-                            <CDropdownItem href={`/users/edit?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                            </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickResetPassword}
-                              data-id={item.id}
-                              data-name={item.username}
-                            >
-                              <FontAwesomeIcon icon={faUndo} /> Reset mật khẩu
-                            </CDropdownItem>
-                            <CDropdownItem
-                              href="#"
-                              onClick={handleClickDelete}
-                              data-id={item.id}
-                              data-name={item.username}
-                            >
-                              <FontAwesomeIcon icon={faTrash} /> Xóa
-                            </CDropdownItem>
+                            {permissionEdit ? (
+                              <CDropdownItem href={`/users/edit?id=${item.id}`}>
+                                <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
+                            {permissionResetPassword ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickResetPassword}
+                                data-id={item.id}
+                                data-name={item.username}
+                              >
+                                <FontAwesomeIcon icon={faUndo} /> Reset mật khẩu
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
+                            {permissionDelete ? (
+                              <CDropdownItem
+                                href="#"
+                                onClick={handleClickDelete}
+                                data-id={item.id}
+                                data-name={item.username}
+                              >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                              </CDropdownItem>
+                            ) : (
+                              <></>
+                            )}
                           </CDropdownMenu>
                         </CDropdown>
                       </CTableDataCell>

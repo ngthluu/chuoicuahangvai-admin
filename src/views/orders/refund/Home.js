@@ -384,7 +384,7 @@ const Home = () => {
                             ) : (
                               <></>
                             )}
-                            {permissionApprove && item.attributes.refund_invoice.data ? (
+                            {permissionExportPdfInvoice && item.attributes.refund_invoice.data ? (
                               <CDropdownItem
                                 href="#"
                                 onClick={(e) =>
