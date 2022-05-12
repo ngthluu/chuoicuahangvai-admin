@@ -41,6 +41,8 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import SmartPagination from 'src/views/template/SmartPagination'
+import { checkPermission } from 'src/lib/permission'
+import { useCookies } from 'react-cookie'
 
 const Debt = () => {
   const [customersList, setCustomersList] = useState([])
@@ -101,7 +103,19 @@ const Debt = () => {
     fetchData()
   }
 
+  // Permission stuffs
+  const moduleName = 'customerDebt'
+  const [cookies, setCookies] = useCookies([])
+  const [permissionUpdateDebt, setPermissionUpdateDebt] = useState(false)
+  const [permissionExpotExcel, setPermissionExpotExcel] = useState(false)
+  const fetchPermissionData = async () => {
+    setPermissionUpdateDebt(await checkPermission(cookies, moduleName, 'update_debt'))
+    setPermissionExpotExcel(await checkPermission(cookies, moduleName, 'export_excel'))
+  }
+  // End permission stuffs
+
   const fetchData = async () => {
+    await fetchPermissionData()
     const query = qs.stringify(
       {
         sort: ['createdAt:desc'],
@@ -212,11 +226,15 @@ const Debt = () => {
                   </div>
                 </CForm>
               </div>
-              <Link to="#">
-                <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
-                  <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
-                </CButton>
-              </Link>
+              {permissionExpotExcel ? (
+                <Link to="#">
+                  <CButton color="info" className="text-white w-100" onClick={handleExportExcel}>
+                    <FontAwesomeIcon icon={faFileExcel} /> <strong>Xuất Excel</strong>
+                  </CButton>
+                </Link>
+              ) : (
+                <></>
+              )}
             </div>
           </CCardBody>
         </CCard>
@@ -261,9 +279,13 @@ const Debt = () => {
                               Hành động
                             </CDropdownToggle>
                             <CDropdownMenu>
-                              <CDropdownItem href="#" onClick={() => handleOpenModal(item)}>
-                                <FontAwesomeIcon icon={faEdit} /> Cập nhật số tiền nợ
-                              </CDropdownItem>
+                              {permissionUpdateDebt ? (
+                                <CDropdownItem href="#" onClick={() => handleOpenModal(item)}>
+                                  <FontAwesomeIcon icon={faEdit} /> Cập nhật số tiền nợ
+                                </CDropdownItem>
+                              ) : (
+                                <></>
+                              )}
                             </CDropdownMenu>
                           </CDropdown>
                         ) : (
