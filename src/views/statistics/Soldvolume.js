@@ -304,7 +304,9 @@ const Home = () => {
                         Object.entries(products).map(([key, item]) => (
                           <CTableRow key={key}>
                             <CTableDataCell>
-                              <Link to="#">{item.skuItem.attributes.sku}</Link>
+                              <Link to={`/products/view?id=${item.skuItem.id}`}>
+                                {item.skuItem.attributes.sku}
+                              </Link>
                             </CTableDataCell>
                             <CTableDataCell>
                               {item.skuItem.attributes.product.data.attributes.name}

@@ -185,7 +185,9 @@ const Inventory = () => {
                     <CTableRow key={index}>
                       <CTableDataCell>#{item.id}</CTableDataCell>
                       <CTableDataCell>
-                        <Link to="#">{item.attributes.sku_quantity.sku.data.attributes.sku}</Link>
+                        <Link to={`/products/view?id=${item.attributes.sku_quantity.sku.data.id}`}>
+                          {item.attributes.sku_quantity.sku.data.attributes.sku}
+                        </Link>
                       </CTableDataCell>
                       <CTableDataCell>
                         {

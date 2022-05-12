@@ -54,19 +54,24 @@ const ImageUploadList = (props) => {
           default={item.attributes.url}
           handleUploadImage={(resImageData) => handleChangeImage(index, resImageData)}
           handleResetImage={() => handleRemoveImage(index)}
+          view={props.view}
         ></ImageUpload>
       ))}
-      <CCard
-        className="p-2 mb-3 d-flex justify-content-center align-items-center"
-        onClick={addProductImage}
-        role="button"
-        color="info"
-        textColor="white"
-      >
-        <div>
-          <FontAwesomeIcon icon={faPlus} /> <strong>Hình ảnh</strong>
-        </div>
-      </CCard>
+      {!props.view ? (
+        <CCard
+          className="p-2 mb-3 d-flex justify-content-center align-items-center"
+          onClick={addProductImage}
+          role="button"
+          color="info"
+          textColor="white"
+        >
+          <div>
+            <FontAwesomeIcon icon={faPlus} /> <strong>Hình ảnh</strong>
+          </div>
+        </CCard>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
@@ -74,6 +79,7 @@ const ImageUploadList = (props) => {
 ImageUploadList.propTypes = {
   data: PropTypes.array,
   setData: PropTypes.func,
+  view: PropTypes.bool,
 }
 
 export default ImageUploadList

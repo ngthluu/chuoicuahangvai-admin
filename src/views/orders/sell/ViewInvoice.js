@@ -215,7 +215,7 @@ const ViewInvoice = () => {
                         <CTableDataCell> {index + 1} </CTableDataCell>
                         <CTableDataCell> #{item.id} </CTableDataCell>
                         <CTableDataCell>
-                          <Link to="#">{item.sku}</Link>
+                          <Link to={`/products/view?id=${item.id}`}>{item.sku}</Link>
                         </CTableDataCell>
                         <CTableDataCell>{item.name} </CTableDataCell>
                         <CTableDataCell>

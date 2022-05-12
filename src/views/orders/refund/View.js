@@ -161,7 +161,7 @@ const View = () => {
                       <CTableRow key={index}>
                         <CTableDataCell> {index + 1} </CTableDataCell>
                         <CTableDataCell>
-                          <Link to="#">{item.sku}</Link>
+                          <Link to={`/products/view?id=${item.id}`}>{item.sku}</Link>
                         </CTableDataCell>
                         <CTableDataCell>
                           {item.name}

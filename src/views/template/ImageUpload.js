@@ -15,6 +15,7 @@ const ImageUpload = (props) => {
   const fileInputRef = useRef(null)
 
   const handleClickImage = (e) => {
+    if (props.view) return
     fileInputRef.current.click()
   }
 
@@ -47,13 +48,18 @@ const ImageUpload = (props) => {
       style={{ width: 'fit-content', display: 'inline-block' }}
     >
       <CImage className="mb-3" width="180" src={image} onClick={handleClickImage}></CImage>
-      <CButton
-        className="position-absolute btn-sm btn-danger"
-        style={{ right: 0 }}
-        onClick={handleResetImage}
-      >
-        <FontAwesomeIcon icon={faTimes} color="white" />
-      </CButton>
+      {!props.view ? (
+        <CButton
+          className="position-absolute btn-sm btn-danger"
+          style={{ right: 0 }}
+          onClick={handleResetImage}
+        >
+          <FontAwesomeIcon icon={faTimes} color="white" />
+        </CButton>
+      ) : (
+        <></>
+      )}
+
       <CFormInput type="file" ref={fileInputRef} hidden onChange={handleChangeInput} />
     </div>
   )
@@ -63,6 +69,7 @@ ImageUpload.propTypes = {
   default: PropTypes.string,
   handleUploadImage: PropTypes.func,
   handleResetImage: PropTypes.func,
+  view: PropTypes.bool,
 }
 
 export default ImageUpload

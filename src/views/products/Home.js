@@ -292,9 +292,7 @@ const Home = () => {
                             Hành động
                           </CDropdownToggle>
                           <CDropdownMenu>
-                            <CDropdownItem
-                              href={`/products/view?id=${item.attributes.product.data.id}`}
-                            >
+                            <CDropdownItem href={`/products/view?id=${item.id}`}>
                               <FontAwesomeIcon icon={faEye} /> Xem
                             </CDropdownItem>
                             {permissionEdit ? (
