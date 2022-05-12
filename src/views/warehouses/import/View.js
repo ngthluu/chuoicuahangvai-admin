@@ -150,27 +150,6 @@ const Add = () => {
               </CCol>
             </CRow>
             <CRow className="mb-3">
-              <InputDropdownSearch
-                placeholder="Tìm kiếm sản phẩm"
-                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/product-skus`}
-                ajaxDataPopulate={['product', 'pattern', 'stretch', 'width', 'origin', 'images']}
-                ajaxDataGetFilters={(value) => {
-                  return {
-                    $or: [
-                      { sku: { $containsi: value } },
-                      { product: { name: { $containsi: value } } },
-                    ],
-                  }
-                }}
-                ajaxDataGetItemName={(item) =>
-                  `${item.attributes.product.data.attributes.name} (${item.attributes.sku})`
-                }
-                handleNotFound={() => toast.error('Không tìm thấy sản phẩm này !!!')}
-                handleFound={(item) => handleAddSKU(item)}
-                view={true}
-              />
-            </CRow>
-            <CRow className="mb-3">
               <CCol md={12}>
                 <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">

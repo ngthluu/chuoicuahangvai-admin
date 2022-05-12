@@ -153,45 +153,6 @@ const Add = () => {
               </CCol>
             </CRow>
             <CRow className="mb-3">
-              <InputDropdownSearch
-                placeholder="Tìm kiếm cây vải trong cửa hàng"
-                ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-inventories`}
-                ajaxDataPopulate={[
-                  'sku_quantity',
-                  'sku_quantity.sku',
-                  'sku_quantity.sku.product',
-                  'sku_quantity.sku.color',
-                  'sku_quantity.sku.pattern',
-                  'sku_quantity.sku.stretch',
-                  'sku_quantity.sku.width',
-                  'sku_quantity.sku.origin',
-                  'sku_quantity.sku.images',
-                ]}
-                ajaxDataGetFilters={(value) => {
-                  return {
-                    $and: [
-                      {
-                        $or: [
-                          { id: { $containsi: value } },
-                          { sku_quantity: { sku: { sku: { $containsi: value } } } },
-                          { sku_quantity: { sku: { product: { name: { $containsi: value } } } } },
-                        ],
-                      },
-                      {
-                        branch: { id: branch === '' ? -1 : branch },
-                      },
-                    ],
-                  }
-                }}
-                ajaxDataGetItemName={(item) =>
-                  `#${item.id} - (${item.attributes.sku_quantity.sku.data.attributes.sku} - ${item.attributes.sku_quantity.sku.data.attributes.product.data.attributes.name}) - Còn ${item.attributes.sku_quantity.length} cm`
-                }
-                handleNotFound={() => toast.error('Không tìm thấy cây vải này !!!')}
-                handleFound={(item) => handleAddInventoryItem(item)}
-                view={true}
-              />
-            </CRow>
-            <CRow className="mb-3">
               <CCol md={12}>
                 <CTable align="middle" bordered responsive>
                   <CTableHead align="middle" color="info">
