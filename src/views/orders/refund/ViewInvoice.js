@@ -27,6 +27,7 @@ import {
 
 import { Link } from 'react-router-dom'
 import ProductDescription from 'src/views/products/ProductDescription'
+import ActionButtons from './ActionButtons'
 
 const ViewInvoice = () => {
   const query = useLocation().search
@@ -48,6 +49,7 @@ const ViewInvoice = () => {
   const [products, setProducts] = useState([])
 
   const [invoiceTotal, setInvoiceTotal] = useState('')
+  const [statuses, setStatuses] = useState([])
 
   const fetchData = async () => {
     if (id === null) return
@@ -55,6 +57,7 @@ const ViewInvoice = () => {
       {
         populate: [
           'refund',
+          'refund.refund_statuses',
           'customer_name',
           'receive_address',
           'receive_address.address_three_levels',
@@ -104,6 +107,7 @@ const ViewInvoice = () => {
         }
       }),
     )
+    setStatuses(data.attributes.refund.data.attributes.refund_statuses.data)
   }
 
   useEffect(() => {
@@ -114,8 +118,20 @@ const ViewInvoice = () => {
     <CForm className="row g-3 needs-validation">
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
-            <h5>Thông tin đơn trả</h5>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
+            <h5>Thông tin hóa đơn</h5>
+            <div>
+              <ActionButtons
+                id={orderId}
+                status={
+                  statuses.length > 0
+                    ? statuses[statuses.length - 1].attributes.update_status
+                    : false
+                }
+                invoice_id={id}
+                fetchData={fetchData}
+              ></ActionButtons>
+            </div>
           </CCardHeader>
           <CCardBody>
             <CRow>
@@ -215,16 +231,6 @@ const ViewInvoice = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <CButton
-              href="/orders/refund"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>

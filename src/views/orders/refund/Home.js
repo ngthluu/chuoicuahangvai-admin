@@ -13,10 +13,6 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
   CButton,
   CBadge,
   CForm,
@@ -26,22 +22,8 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEye,
-  faEdit,
-  faFilePdf,
-  faUser,
-  faPhone,
-  faAddressBook,
-  faSearch,
-  faPlus,
-  faCheck,
-  faFileExcel,
-  faPrint,
-} from '@fortawesome/free-solid-svg-icons'
+import { faUser, faPhone, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-
-import Modal from 'src/views/template/Modal'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -91,13 +73,9 @@ const Home = () => {
   const [cookies, setCookies] = useCookies([])
   const [permissionAdd, setPermissionAdd] = useState(false)
   const [permissionExportExcel, setPermissionExportExcel] = useState(false)
-  const [permissionApprove, setPermissionApprove] = useState(false)
-  const [permissionExportPdfInvoice, setPermissionExportPdfInvoice] = useState(false)
   const fetchPermissionData = async () => {
     setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
     setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
-    setPermissionApprove(await checkPermission(cookies, moduleName, 'approve'))
-    setPermissionExportPdfInvoice(await checkPermission(cookies, moduleName, 'export_pdf_invoice'))
   }
   // End permission stuffs
 
@@ -147,43 +125,9 @@ const Home = () => {
     link.click()
   }
 
-  // Submit logic
-  const [submitModalTargetId, setSubmitModalTargetId] = useState('')
-  const [submitModalTargetName, setSubmitModalTargetName] = useState('')
-  const [submitModalVisible, setSubmitModalVisible] = useState(false)
-  const handleClickSubmit = (e) => {
-    e.preventDefault()
-    setSubmitModalTargetId(e.currentTarget.getAttribute('data-id'))
-    setSubmitModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setSubmitModalVisible(!submitModalVisible)
-  }
-
-  const handleClickPrintInvoice = async (id) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_STRAPI_URL}/api/refund-print-invoice/${id}`,
-      { responseType: 'blob' },
-    )
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'invoice.pdf')
-    link.click()
-  }
-
   return (
     <CRow>
       <ToastContainer />
-      <Modal
-        visible={submitModalVisible}
-        visibleAction={setSubmitModalVisible}
-        title="Duyệt đơn trả hàng"
-        content={`Bạn có muốn duyệt đơn trả hàng và nhập kho với phiếu ${submitModalTargetName} không ?`}
-        id={submitModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/refunds/submit`}
-        triggerSuccess={() => fetchData()}
-        triggerError={() => fetchData()}
-        action="post"
-      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -310,7 +254,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Ngày tạo </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Cập nhật cuối </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
@@ -361,43 +304,6 @@ const Home = () => {
                       </CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.status.data.attributes.update_time}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <CDropdown>
-                          <CDropdownToggle color="info" variant="outline">
-                            Hành động
-                          </CDropdownToggle>
-                          <CDropdownMenu>
-                            <CDropdownItem href={`/orders/refund/view?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEye} /> Xem
-                            </CDropdownItem>
-                            {permissionApprove &&
-                            !item.attributes.status.data.attributes.update_status ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickSubmit}
-                                data-id={item.id}
-                                data-name={`REFUND#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faCheck} /> Duyệt và nhập kho
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                            {permissionExportPdfInvoice && item.attributes.refund_invoice.data ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={(e) =>
-                                  handleClickPrintInvoice(item.attributes.refund_invoice.data.id)
-                                }
-                              >
-                                <FontAwesomeIcon icon={faPrint} /> In hóa đơn
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                          </CDropdownMenu>
-                        </CDropdown>
                       </CTableDataCell>
                     </CTableRow>
                   ))

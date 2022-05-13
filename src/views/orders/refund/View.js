@@ -27,6 +27,7 @@ import {
 
 import { Link } from 'react-router-dom'
 import ProductDescription from 'src/views/products/ProductDescription'
+import ActionButtons from './ActionButtons'
 
 const View = () => {
   const query = useLocation().search
@@ -44,6 +45,7 @@ const View = () => {
   const [products, setProducts] = useState([])
   const [note, setNote] = useState('')
   const [statuses, setStatuses] = useState([])
+  const [orderInvoice, setOrderInvoce] = useState('')
 
   const fetchData = async () => {
     if (id === null) return
@@ -64,6 +66,7 @@ const View = () => {
           'products.sku.images',
           'refund_statuses',
           'refund_statuses.update_user',
+          'refund_invoice',
         ],
       },
       { encodeValuesOnly: true },
@@ -80,6 +83,10 @@ const View = () => {
     setPhone(data.attributes.customer.data.attributes.phone)
     setFirstName(data.attributes.customer.data.attributes.name.firstname)
     setLastName(data.attributes.customer.data.attributes.name.lastname)
+
+    if (data.attributes.refund_invoice.data) {
+      setOrderInvoce(data.attributes.refund_invoice.data.id)
+    }
 
     setProducts(
       data.attributes.products.map((item) => {
@@ -106,8 +113,20 @@ const View = () => {
     <CForm className="row g-3 needs-validation">
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
-            <h5>Thông tin đơn trả hàng</h5>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
+            <h5>Thông tin đơn hàng</h5>
+            <div>
+              <ActionButtons
+                id={id}
+                status={
+                  statuses.length > 0
+                    ? statuses[statuses.length - 1].attributes.update_status
+                    : false
+                }
+                invoice_id={orderInvoice}
+                fetchData={fetchData}
+              ></ActionButtons>
+            </div>
           </CCardHeader>
           <CCardBody>
             <CRow>
@@ -242,16 +261,6 @@ const View = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <CButton
-              href="/orders/refund"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>

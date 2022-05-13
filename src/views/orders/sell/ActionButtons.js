@@ -9,6 +9,8 @@ import { faArrowLeft, faPrint, faTimes, faSave, faCheck } from '@fortawesome/fre
 import Modal from 'src/views/template/Modal'
 import { useCookies } from 'react-cookie'
 import { checkPermission } from 'src/lib/permission'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import PropTypes from 'prop-types'
 
@@ -55,15 +57,22 @@ const ActionButtons = (props) => {
   }
 
   const handleClickPrintInvoice = async (id) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_STRAPI_URL}/api/order-print-invoice/${id}`,
-      { responseType: 'blob' },
-    )
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'invoice.pdf')
-    link.click()
+    const promise = axios
+      .get(`${process.env.REACT_APP_STRAPI_URL}/api/order-print-invoice/${id}`, {
+        responseType: 'blob',
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'invoice.pdf')
+        link.click()
+      })
+    toast.promise(promise, {
+      pending: 'Đang thực thi tác vụ, vui lòng chờ một chút...',
+      success: 'Tác vụ thành công',
+      error: 'Tác vụ thất bại',
+    })
   }
 
   const [cancelModalTargetId, setCancelModalTargetId] = useState('')
@@ -88,6 +97,7 @@ const ActionButtons = (props) => {
 
   return (
     <>
+      <ToastContainer />
       <Modal
         visible={createExportModalVisible}
         visibleAction={setCreateExportModalVisible}
