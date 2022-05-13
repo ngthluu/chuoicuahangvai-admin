@@ -27,6 +27,7 @@ import {
 
 import { Link } from 'react-router-dom'
 import ProductDescription from 'src/views/products/ProductDescription'
+import ActionButtons from './ActionButtons'
 
 const View = () => {
   const query = useLocation().search
@@ -55,6 +56,7 @@ const View = () => {
 
   const [deliveryMethodAmount, setDeliveryMethodAmount] = useState('')
   const [deliveryMethod, setDeliveryMethod] = useState('')
+  const [orderInvoice, setOrderInvoce] = useState('')
 
   const fetchData = async () => {
     if (id === null) return
@@ -81,6 +83,7 @@ const View = () => {
           'receive_address.address',
           'receive_address.address.address_three_levels',
           'delivery_method',
+          'order_invoice',
         ],
       },
       { encodeValuesOnly: true },
@@ -127,6 +130,10 @@ const View = () => {
       setDeliveryMethod(data.attributes.delivery_method.method)
     }
 
+    if (data.attributes.order_invoice.data) {
+      setOrderInvoce(data.attributes.order_invoice.data.id)
+    }
+
     setProducts(
       data.attributes.products.map((item) => {
         const inventoryItem = item.inventory_item.data
@@ -158,8 +165,17 @@ const View = () => {
     <CForm className="row g-3 needs-validation">
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
             <h5>Thông tin đơn hàng</h5>
+            <div>
+              <ActionButtons
+                id={id}
+                code={orderCode}
+                status={statuses.length > 0 ? statuses[statuses.length - 1].attributes.status : ''}
+                invoice_id={orderInvoice}
+                fetchData={fetchData}
+              ></ActionButtons>
+            </div>
           </CCardHeader>
           <CCardBody>
             <CRow>
@@ -344,16 +360,6 @@ const View = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <CButton
-              href="/orders/sell"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>

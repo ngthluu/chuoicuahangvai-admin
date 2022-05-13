@@ -26,28 +26,11 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEye,
-  faEdit,
-  faFilePdf,
-  faUser,
-  faPhone,
-  faAddressBook,
-  faSearch,
-  faPlus,
-  faFileExcel,
-  faArrowLeft,
-  faPrint,
-  faTimes,
-  faSave,
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons'
+import { faUser, faPhone, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
-import Modal from 'src/views/template/Modal'
 
 import SmartPagination from 'src/views/template/SmartPagination'
 import InputDropdownSearch from 'src/views/template/InputDropdownSearch'
@@ -100,19 +83,9 @@ const Home = () => {
   const [cookies, setCookies] = useCookies([])
   const [permissionAdd, setPermissionAdd] = useState(false)
   const [permissionExportExcel, setPermissionExportExcel] = useState(false)
-  const [permissionCreateExport, setPermissionCreateExport] = useState(false)
-  const [permissionCreateInvoice, setPermissionCreateInvoice] = useState(false)
-  const [permissionCheckSuccess, setPermissionCheckSuccess] = useState(false)
-  const [permissionExportPdfInvoice, setPermissionExportPdfInvoice] = useState(false)
-  const [permissionCancel, setPermissionCancel] = useState(false)
   const fetchPermissionData = async () => {
     setPermissionAdd(await checkPermission(cookies, moduleName, 'add'))
     setPermissionExportExcel(await checkPermission(cookies, moduleName, 'export_excel'))
-    setPermissionCreateExport(await checkPermission(cookies, moduleName, 'create_export'))
-    setPermissionCreateInvoice(await checkPermission(cookies, moduleName, 'create_invoice'))
-    setPermissionCheckSuccess(await checkPermission(cookies, moduleName, 'check_success'))
-    setPermissionExportPdfInvoice(await checkPermission(cookies, moduleName, 'export_pdf_invoice'))
-    setPermissionCancel(await checkPermission(cookies, moduleName, 'cancel'))
   }
   // End permission stuffs
 
@@ -175,105 +148,9 @@ const Home = () => {
     link.click()
   }
 
-  const [createExportModalTargetId, setCreateExportModalTargetId] = useState('')
-  const [createExportModalTargetName, setCreateExportModalTargetName] = useState('')
-  const [createExportModalVisible, setCreateExportModalVisible] = useState(false)
-  const handleClickCreateExport = (e) => {
-    e.preventDefault()
-    setCreateExportModalTargetId(e.currentTarget.getAttribute('data-id'))
-    setCreateExportModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setCreateExportModalVisible(!createExportModalVisible)
-  }
-
-  const [createInvoiceModalTargetId, setCreateInvoiceModalTargetId] = useState('')
-  const [createInvoiceModalTargetName, setCreateInvoiceModalTargetName] = useState('')
-  const [createInvoiceModalVisible, setCreateInvoiceModalVisible] = useState(false)
-  const handleClickCreateInvoice = (e) => {
-    e.preventDefault()
-    setCreateInvoiceModalTargetId(e.currentTarget.getAttribute('data-id'))
-    setCreateInvoiceModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setCreateInvoiceModalVisible(!createInvoiceModalVisible)
-  }
-
-  const handleClickPrintInvoice = async (id) => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_STRAPI_URL}/api/order-print-invoice/${id}`,
-      { responseType: 'blob' },
-    )
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'invoice.pdf')
-    link.click()
-  }
-
-  const [cancelModalTargetId, setCancelModalTargetId] = useState('')
-  const [cancelModalTargetName, setCancelModalTargetName] = useState('')
-  const [cancelModalVisible, setCancelModalVisible] = useState(false)
-  const handleClickCancel = (e) => {
-    e.preventDefault()
-    setCancelModalTargetId(e.currentTarget.getAttribute('data-id'))
-    setCancelModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setCancelModalVisible(!cancelModalVisible)
-  }
-
-  const [deliverySuccessModalTargetId, setDeliverySuccessModalTargetId] = useState('')
-  const [deliverySuccessModalTargetName, setDeliverySuccessModalTargetName] = useState('')
-  const [deliverySuccessModalVisible, setDeliverySuccessModalVisible] = useState(false)
-  const handleClickDeliverySuccess = (e) => {
-    e.preventDefault()
-    setDeliverySuccessModalTargetId(e.currentTarget.getAttribute('data-id'))
-    setDeliverySuccessModalTargetName(e.currentTarget.getAttribute('data-name'))
-    setDeliverySuccessModalVisible(!deliverySuccessModalVisible)
-  }
-
   return (
     <CRow>
       <ToastContainer />
-      <Modal
-        visible={createExportModalVisible}
-        visibleAction={setCreateExportModalVisible}
-        title="Tạo phiếu xuất kho"
-        content={`Bạn có muốn tạo phiếu xuất kho cho đơn hàng ${createExportModalTargetName} không ?`}
-        id={createExportModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/order-create-export`}
-        triggerSuccess={() => fetchData()}
-        triggerError={() => fetchData()}
-        action="post"
-      ></Modal>
-      <Modal
-        visible={createInvoiceModalVisible}
-        visibleAction={setCreateInvoiceModalVisible}
-        title="Xuất hóa đơn"
-        content={`Bạn có muốn xuất hóa đơn cho đơn hàng ${createInvoiceModalTargetName} không ?`}
-        id={createInvoiceModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/order-create-invoice`}
-        triggerSuccess={() => fetchData()}
-        triggerError={() => fetchData()}
-        action="post"
-      ></Modal>
-      <Modal
-        visible={cancelModalVisible}
-        visibleAction={setCancelModalVisible}
-        title="Hủy đơn hàng"
-        content={`Bạn có muốn hủy đơn hàng ${cancelModalTargetName} không ?`}
-        id={cancelModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/order-cancel`}
-        triggerSuccess={() => fetchData()}
-        triggerError={() => fetchData()}
-        action="post"
-      ></Modal>
-      <Modal
-        visible={deliverySuccessModalVisible}
-        visibleAction={setDeliverySuccessModalVisible}
-        title="Cập nhật trạng thái đơn hàng"
-        content={`Bạn có muốn cập nhật trạng thái giao hàng thành công cho đơn hàng ${deliverySuccessModalTargetName} không ?`}
-        id={deliverySuccessModalTargetId}
-        url={`${process.env.REACT_APP_STRAPI_URL}/api/order-delivery-success`}
-        triggerSuccess={() => fetchData()}
-        triggerError={() => fetchData()}
-        action="post"
-      ></Modal>
       <CCol md={12}>
         <CCard className="mb-4">
           <CCardBody>
@@ -426,7 +303,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Giá trị (đ) </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Đã thanh toán (đ) </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nợ (đ) </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
@@ -438,11 +314,13 @@ const Home = () => {
                         <Link to={`/orders/sell/view?id=${item.id}`}>
                           {`${item.attributes.type.toUpperCase()}#${item.id}`}
                         </Link>
-                        {item.attributes.isDebt ? (
-                          <CBadge color="danger">Đơn ghi nợ</CBadge>
-                        ) : (
-                          <CBadge color="success">Đơn thanh toán</CBadge>
-                        )}
+                        <div>
+                          {item.attributes.isDebt ? (
+                            <CBadge color="danger">Đơn ghi nợ</CBadge>
+                          ) : (
+                            <CBadge color="success">Đơn thanh toán</CBadge>
+                          )}
+                        </div>
                       </CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.order_invoice.data ? (
@@ -519,84 +397,6 @@ const Home = () => {
                               )
                             ).toLocaleString()
                           : ''}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <CDropdown>
-                          <CDropdownToggle color="info" variant="outline">
-                            Hành động
-                          </CDropdownToggle>
-                          <CDropdownMenu>
-                            <CDropdownItem href={`/orders/sell/view?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEye} /> Xem
-                            </CDropdownItem>
-                            {permissionCreateExport &&
-                            item.attributes.status.data.attributes.status === 'initialize' ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickCreateExport}
-                                data-id={item.id}
-                                data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faArrowLeft} /> Tạo phiếu xuất kho
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                            {permissionExportPdfInvoice && item.attributes.order_invoice.data ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={(e) =>
-                                  handleClickPrintInvoice(item.attributes.order_invoice.data.id)
-                                }
-                              >
-                                <FontAwesomeIcon icon={faPrint} /> In hóa đơn
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                            {permissionCreateInvoice &&
-                            ['packaged'].includes(item.attributes.status.data.attributes.status) ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickCreateInvoice}
-                                data-id={item.id}
-                                data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faSave} /> Xuất hóa đơn
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                            {permissionCheckSuccess &&
-                            ['delivery'].includes(item.attributes.status.data.attributes.status) ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickDeliverySuccess}
-                                data-id={item.id}
-                                data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faCheck} /> Giao hàng thành công
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                            {permissionCancel &&
-                            ['initialize', 'confirmed'].includes(
-                              item.attributes.status.data.attributes.status,
-                            ) ? (
-                              <CDropdownItem
-                                href="#"
-                                onClick={handleClickCancel}
-                                data-id={item.id}
-                                data-name={`${item.attributes.type.toUpperCase()}#${item.id}`}
-                              >
-                                <FontAwesomeIcon icon={faTimes} /> Hủy đơn hàng
-                              </CDropdownItem>
-                            ) : (
-                              <></>
-                            )}
-                          </CDropdownMenu>
-                        </CDropdown>
                       </CTableDataCell>
                     </CTableRow>
                   ))
