@@ -213,17 +213,6 @@ const Add = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <div className="p-2"></div>
-            <CButton
-              href="/warehouses/catalogue"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>

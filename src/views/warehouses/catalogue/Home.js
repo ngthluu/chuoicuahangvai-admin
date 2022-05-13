@@ -47,7 +47,6 @@ import { useCookies } from 'react-cookie'
 const Home = () => {
   const [catalogueList, setCatalogueList] = useState([])
 
-  const [branch, setBranch] = useState('')
   const [filterBranch, setFilterBranch] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
   const [filterTo, setFilterTo] = useState('')
@@ -237,7 +236,6 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Ngày kiểm </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Nhân viên kiểm </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
@@ -246,9 +244,15 @@ const Home = () => {
                     <CTableRow key={index}>
                       <CTableDataCell> {index + 1} </CTableDataCell>
                       <CTableDataCell>
-                        <Link to={`/warehouses/catalogue/view?id=${item.id}`}>
-                          CATALOGUE#{item.id}
-                        </Link>
+                        {permissionEdit && !item.attributes.submit_status ? (
+                          <Link to={`/warehouses/catalogue/edit?id=${item.id}`}>
+                            CATALOUGE#{item.id}
+                          </Link>
+                        ) : (
+                          <Link to={`/warehouses/catalogue/view?id=${item.id}`}>
+                            CATALOUGE#{item.id}
+                          </Link>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
@@ -265,55 +269,6 @@ const Home = () => {
                         ) : (
                           <CBadge color="danger">Chưa kiểm kho</CBadge>
                         )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <CDropdown>
-                          <CDropdownToggle color="info" variant="outline">
-                            Hành động
-                          </CDropdownToggle>
-                          <CDropdownMenu>
-                            <CDropdownItem href={`/warehouses/catalogue/view?id=${item.id}`}>
-                              <FontAwesomeIcon icon={faEye} /> Xem
-                            </CDropdownItem>
-                            {item.attributes.submit_status ? (
-                              <></>
-                            ) : (
-                              <>
-                                {permissionEdit ? (
-                                  <CDropdownItem href={`/warehouses/catalogue/edit?id=${item.id}`}>
-                                    <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                                  </CDropdownItem>
-                                ) : (
-                                  <></>
-                                )}
-                                {permissionSubmit ? (
-                                  <CDropdownItem
-                                    href="#"
-                                    onClick={handleClickSubmit}
-                                    data-id={item.id}
-                                    data-name={`CATALOGUE#${item.id}`}
-                                  >
-                                    <FontAwesomeIcon icon={faCheck} /> Kiểm kho
-                                  </CDropdownItem>
-                                ) : (
-                                  <></>
-                                )}
-                                {permissionDelete ? (
-                                  <CDropdownItem
-                                    href="#"
-                                    onClick={handleClickDelete}
-                                    data-id={item.id}
-                                    data-name={`CATALOGUE#${item.id}`}
-                                  >
-                                    <FontAwesomeIcon icon={faTrash} /> Xóa
-                                  </CDropdownItem>
-                                ) : (
-                                  <></>
-                                )}
-                              </>
-                            )}
-                          </CDropdownMenu>
-                        </CDropdown>
                       </CTableDataCell>
                     </CTableRow>
                   ))

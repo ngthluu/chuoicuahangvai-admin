@@ -35,6 +35,7 @@ import ProductDescription from 'src/views/products/ProductDescription'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ActionButtons from './ActionButtons'
 
 const Add = () => {
   const query = useLocation().search
@@ -193,8 +194,15 @@ const Add = () => {
       <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
             <h5>Thông tin</h5>
+            {id !== null ? (
+              <div>
+                <ActionButtons id={id}></ActionButtons>
+              </div>
+            ) : (
+              <></>
+            )}
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
