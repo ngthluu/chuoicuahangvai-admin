@@ -131,9 +131,7 @@ const Home = () => {
                   branchesList.map((item, index) => (
                     <CTableRow key={item.id}>
                       <CTableDataCell> {index + 1} </CTableDataCell>
-                      <CTableDataCell>
-                        <Link to="#">{item.attributes.name}</Link>
-                      </CTableDataCell>
+                      <CTableDataCell>{item.attributes.name}</CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.manager.data && (
                           <Link to={`/users/view?id=${item.attributes.manager.data.id}`}>

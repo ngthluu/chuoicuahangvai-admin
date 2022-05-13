@@ -262,9 +262,7 @@ const Home = () => {
                           <></>
                         )}
                       </CTableDataCell>
-                      <CTableDataCell>
-                        <Link to="#">{item.attributes.branch.data.attributes.name}</Link>
-                      </CTableDataCell>
+                      <CTableDataCell>{item.attributes.branch.data.attributes.name}</CTableDataCell>
                       <CTableDataCell> {item.attributes.submit_time} </CTableDataCell>
                       <CTableDataCell>
                         {item.attributes.submit_user.data
