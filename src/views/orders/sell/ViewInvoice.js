@@ -27,6 +27,7 @@ import {
 
 import { Link } from 'react-router-dom'
 import ProductDescription from 'src/views/products/ProductDescription'
+import ActionButtons from './ActionButtons'
 
 const ViewInvoice = () => {
   const query = useLocation().search
@@ -51,6 +52,7 @@ const ViewInvoice = () => {
 
   const [invoiceTotal, setInvoiceTotal] = useState('')
   const [paymentHistory, setPaymentHistory] = useState([])
+  const [statuses, setStatuses] = useState([])
 
   const fetchData = async () => {
     if (id === null) return
@@ -58,6 +60,7 @@ const ViewInvoice = () => {
       {
         populate: [
           'order',
+          'order.order_statuses',
           'customer_name',
           'receive_address',
           'receive_address.name',
@@ -143,6 +146,7 @@ const ViewInvoice = () => {
         return productItem
       }),
     )
+    setStatuses(data.attributes.order.data.attributes.order_statuses.data)
   }
 
   useEffect(() => {
@@ -153,8 +157,17 @@ const ViewInvoice = () => {
     <CForm className="row g-3 needs-validation">
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
-            <h5>Thông tin đơn hàng</h5>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
+            <h5>Thông tin hóa đơn</h5>
+            <div>
+              <ActionButtons
+                id={orderId}
+                code={orderCode}
+                status={statuses.length > 0 ? statuses[statuses.length - 1].attributes.status : ''}
+                invoice_id={id}
+                fetchData={fetchData}
+              ></ActionButtons>
+            </div>
           </CCardHeader>
           <CCardBody>
             <CRow>
@@ -327,16 +340,6 @@ const ViewInvoice = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <CButton
-              href="/orders/sell"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>
