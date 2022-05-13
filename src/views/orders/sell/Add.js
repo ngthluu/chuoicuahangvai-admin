@@ -79,9 +79,16 @@ const Add = () => {
       sku: productSku,
       name: productName,
       attributes: productAttributes,
+      price: skuItem.attributes.price,
       length: 0,
       current_length: currentInventoryLength,
     })
+    setProducts(newProducts)
+  }
+
+  const handleChangePrice = (index, value) => {
+    let newProducts = [...products]
+    newProducts[index].price = parseInt(value)
     setProducts(newProducts)
   }
 
@@ -111,6 +118,7 @@ const Add = () => {
         let data = {
           inventory_item: { id: item.id },
           length: item.length,
+          unit_price: item.price,
         }
         if (item.componentId != null) {
           data.id = item.componentId
@@ -237,7 +245,13 @@ const Add = () => {
                           {item.name}
                           <ProductDescription attributes={item.attributes}></ProductDescription>
                         </CTableDataCell>
-                        <CTableDataCell> {item.attributes.price.toLocaleString()} </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput
+                            type="number"
+                            value={item.price}
+                            onChange={(e) => handleChangePrice(index, e.target.value)}
+                          ></CFormInput>
+                        </CTableDataCell>
                         <CTableDataCell>{item.current_length}</CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
@@ -247,7 +261,7 @@ const Add = () => {
                           ></CFormInput>
                         </CTableDataCell>
                         <CTableDataCell>
-                          {(item.attributes.price * item.length * 0.01).toLocaleString()}
+                          {(item.price * item.length * 0.01).toLocaleString()}
                         </CTableDataCell>
                         <CTableDataCell>
                           <CButton
@@ -266,11 +280,12 @@ const Add = () => {
                       <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
-                          return products.reduce(
-                            (sum, item) =>
-                              sum + parseInt(item.length) * item.attributes.price * 0.01,
-                            0,
-                          )
+                          return products
+                            .reduce(
+                              (sum, item) => sum + parseInt(item.length) * item.price * 0.01,
+                              0,
+                            )
+                            .toLocaleString()
                         })()}
                       </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> </CTableHeaderCell>
@@ -362,10 +377,7 @@ const Add = () => {
                   placeholder="Tổng"
                   value={(() => {
                     return products
-                      .reduce(
-                        (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
-                        0,
-                      )
+                      .reduce((sum, item) => sum + parseInt(item.length) * item.price * 0.01, 0)
                       .toLocaleString()
                   })()}
                   required
@@ -391,7 +403,7 @@ const Add = () => {
                   required
                   value={(() => {
                     return (-products.reduce(
-                      (sum, item) => sum + parseInt(item.length) * item.attributes.price * 0.01,
+                      (sum, item) => sum + parseInt(item.length) * item.price * 0.01,
                       -paymentCost,
                     )).toLocaleString()
                   })()}

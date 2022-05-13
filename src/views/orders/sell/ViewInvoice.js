@@ -138,7 +138,7 @@ const ViewInvoice = () => {
           name: productName,
           attributes: productAttributes,
           length: item.length,
-          price: skuItem.attributes.price,
+          price: item.unit_price,
         }
         return productItem
       }),
