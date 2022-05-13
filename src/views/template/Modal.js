@@ -16,12 +16,18 @@ const Modal = (props) => {
     if (props.action === 'delete') {
       promise = axios
         .delete(url)
-        .then((response) => props.triggerSuccess())
+        .then((response) => {
+          if (props.isHideToastAfterSuccess) toast.dismiss()
+          props.triggerSuccess()
+        })
         .catch((error) => props.triggerError())
     } else if (props.action === 'post') {
       promise = axios
         .post(url)
-        .then((response) => props.triggerSuccess())
+        .then((response) => {
+          if (props.isHideToastAfterSuccess) toast.dismiss()
+          props.triggerSuccess()
+        })
         .catch((error) => props.triggerError())
     }
 
@@ -67,6 +73,7 @@ Modal.propTypes = {
   triggerSuccess: PropTypes.func,
   triggerError: PropTypes.func,
   action: PropTypes.string,
+  isHideToastAfterSuccess: PropTypes.bool,
 }
 
 export default Modal
