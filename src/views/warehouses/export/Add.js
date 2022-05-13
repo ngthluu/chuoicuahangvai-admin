@@ -35,6 +35,7 @@ import ProductDescription from 'src/views/products/ProductDescription'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ActionButtons from './ActionButtons'
 
 const Add = () => {
   const query = useLocation().search
@@ -71,6 +72,7 @@ const Add = () => {
       sku: productSku,
       name: productName,
       attributes: productAttributes,
+      price: skuItem.attributes.price,
       length: 0,
       current_length: currentInventoryLength,
     })
@@ -103,6 +105,7 @@ const Add = () => {
       products: products.map((item) => {
         let data = {
           inventory_item: { id: item.id },
+          unit_price: item.price,
           length: item.length,
         }
         if (item.componentId != null) {
@@ -211,8 +214,15 @@ const Add = () => {
       <ToastContainer />
       <CCol md={12}>
         <CCard className="mb-4">
-          <CCardHeader>
+          <CCardHeader className="d-flex justify-content-between align-items-center">
             <h5>Thông tin</h5>
+            {id !== null ? (
+              <div>
+                <ActionButtons id={id}></ActionButtons>
+              </div>
+            ) : (
+              <></>
+            )}
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
