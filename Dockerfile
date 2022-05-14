@@ -4,5 +4,4 @@ COPY . .
 RUN npm install
 RUN npm run build
 RUN npm install -g serve
-RUN npm install -g pm2
-CMD ["pm2-runtime", "serve", "-s", "build", "-l", "8888"]
+CMD ["serve", "-s", "build"]
