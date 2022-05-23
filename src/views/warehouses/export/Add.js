@@ -216,13 +216,13 @@ const Add = () => {
         <CCard className="mb-4">
           <CCardHeader className="d-flex justify-content-between align-items-center">
             <h5>Thông tin</h5>
-            {id !== null ? (
-              <div>
-                <ActionButtons id={id}></ActionButtons>
-              </div>
-            ) : (
-              <></>
-            )}
+            <div className="d-flex justify-content-between align-items-center">
+              <CButton color="info" type="submit" className="text-white">
+                <FontAwesomeIcon icon={faSave} /> Lưu thông tin
+              </CButton>
+              <div className="p-1"></div>
+              {id !== null ? <ActionButtons id={id}></ActionButtons> : <></>}
+            </div>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
@@ -379,20 +379,6 @@ const Add = () => {
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter className="d-flex">
-            <CButton color="info" type="submit" className="text-white">
-              <FontAwesomeIcon icon={faSave} /> <strong>Lưu thông tin</strong>
-            </CButton>
-            <div className="p-2"></div>
-            <CButton
-              href="/warehouses/export"
-              color="secondary"
-              type="button"
-              className="text-white ml-3"
-            >
-              <strong>Hủy bỏ</strong>
-            </CButton>
-          </CCardFooter>
         </CCard>
       </CCol>
     </CForm>

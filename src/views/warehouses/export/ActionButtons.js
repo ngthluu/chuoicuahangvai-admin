@@ -77,7 +77,7 @@ const ActionButtons = (props) => {
         visible={submitModalVisible}
         visibleAction={setSubmitModalVisible}
         title="Xuất kho"
-        content={`Bạn có muốn xuất kho với phiếu ${submitModalTargetName} không ?`}
+        content={`Bạn có muốn xuất kho với phiếu ${submitModalTargetName} không ? (lưu ý: phải lưu thông tin đơn xuất kho trước)`}
         id={submitModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-exports/submit`}
         triggerSuccess={() => history.push(`/warehouses/export/view?id=${props.id}`)}

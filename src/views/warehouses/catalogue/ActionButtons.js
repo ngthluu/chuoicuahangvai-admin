@@ -70,7 +70,7 @@ const ActionButtons = (props) => {
         visible={submitModalVisible}
         visibleAction={setSubmitModalVisible}
         title="Kiểm kho"
-        content={`Bạn có muốn kiểm kho với phiếu ${submitModalTargetName} không ?`}
+        content={`Bạn có muốn kiểm kho với phiếu ${submitModalTargetName} không ? (lưu ý: phải lưu thông tin đơn kiểm kho trước)`}
         id={submitModalTargetId}
         url={`${process.env.REACT_APP_STRAPI_URL}/api/warehouse-catalogues/submit`}
         triggerSuccess={() => history.push(`/warehouses/catalogue/view?id=${props.id}`)}
