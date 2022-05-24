@@ -310,9 +310,8 @@ const View = () => {
                           return products
                             .reduce(
                               (sum, item) => sum + item.price * item.length * 0.01,
-                              deliveryMethod
-                                ? parseInt(deliveryMethodAmount)
-                                : 0 - parseInt(discountValue),
+                              (deliveryMethod ? parseInt(deliveryMethodAmount) : 0) -
+                                parseInt(discountValue),
                             )
                             .toLocaleString()
                         })()}
