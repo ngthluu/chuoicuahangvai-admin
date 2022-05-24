@@ -54,6 +54,8 @@ const ViewInvoice = () => {
   const [paymentHistory, setPaymentHistory] = useState([])
   const [statuses, setStatuses] = useState([])
 
+  const [discountValue, setDiscountValue] = useState('')
+
   const fetchData = async () => {
     if (id === null) return
     const query = qs.stringify(
@@ -147,6 +149,7 @@ const ViewInvoice = () => {
       }),
     )
     setStatuses(data.attributes.order.data.attributes.order_statuses.data)
+    setDiscountValue(data.attributes.discount_value ? data.attributes.discount_value : 0)
   }
 
   useEffect(() => {
@@ -261,23 +264,31 @@ const ViewInvoice = () => {
                             {parseInt(deliveryMethodAmount).toLocaleString()}
                           </CTableHeaderCell>
                         </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
-                          <CTableHeaderCell scope="col">
-                            {(() => {
-                              return products
-                                .reduce(
-                                  (sum, item) => sum + item.price * item.length * 0.01,
-                                  parseInt(deliveryMethodAmount),
-                                )
-                                .toLocaleString()
-                            })()}
-                          </CTableHeaderCell>
-                        </CTableRow>
                       </>
                     ) : (
                       <></>
                     )}
+                    <CTableRow>
+                      <CTableHeaderCell colSpan="7"> Giảm giá </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        -{parseInt(discountValue).toLocaleString()}
+                      </CTableHeaderCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell colSpan="7"> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">
+                        {(() => {
+                          return products
+                            .reduce(
+                              (sum, item) => sum + item.price * item.length * 0.01,
+                              deliveryMethod
+                                ? parseInt(deliveryMethodAmount)
+                                : 0 - parseInt(discountValue),
+                            )
+                            .toLocaleString()
+                        })()}
+                      </CTableHeaderCell>
+                    </CTableRow>
                   </CTableFoot>
                 </CTable>
               </CCol>
