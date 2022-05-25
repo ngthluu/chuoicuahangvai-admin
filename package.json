@@ -62,8 +62,7 @@
     "react-toastify": "^8.2.0",
     "redux": "4.1.2",
     "rrule": "^2.6.9",
-    "simplebar-react": "^2.3.6",
-    "socket.io-client": "^4.5.0"
+    "simplebar-react": "^2.3.6"
   },
   "devDependencies": {
     "auto-changelog": "~2.3.0",

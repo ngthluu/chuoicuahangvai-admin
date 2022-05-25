@@ -23,15 +23,6 @@ const AppHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
-  const fetchNotificationData = async () => {
-    console.log('AAA')
-  }
-
-  socket.on('notification', (message) => {
-    toast(message)
-    fetchNotificationData()
-  })
-
   return (
     <CHeader position="sticky" className="mb-4">
       <ToastContainer></ToastContainer>
@@ -44,18 +35,6 @@ const AppHeader = () => {
         </CHeaderToggler>
         <CHeaderBrand className="mx-auto d-md-none" to="/"></CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto"></CHeaderNav>
-        <CHeaderNav>
-          <CNavItem>
-            <CNavLink href="/notifications">
-              <div className="position-relative">
-                <CIcon icon={cilBell} size="lg" />
-                <CBadge color="danger" position="top-end" shape="rounded-circle">
-                  20
-                </CBadge>
-              </div>
-            </CNavLink>
-          </CNavItem>
-        </CHeaderNav>
         <CHeaderNav className="ms-3">
           <AppHeaderDropdown />
         </CHeaderNav>
