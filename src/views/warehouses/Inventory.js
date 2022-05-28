@@ -17,13 +17,11 @@ import {
   CButton,
   CForm,
   CFormLabel,
-  CImage,
-  CFormSelect,
-  CTableFoot,
+  CFormInput,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFileExcel, faFilePdf, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faFileExcel } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import SelectFetchData from 'src/views/template/SelectFetchData'
@@ -37,6 +35,7 @@ const Inventory = () => {
   const query = useLocation().search
   const branchId = new URLSearchParams(query).get('branch')
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
   const [filterBranch, setFilterBranch] = useState(branchId ? branchId : '')
   const [filterSku, setFilterSku] = useState('')
   const [inventoryItems, setInventoryItems] = useState([])
@@ -55,12 +54,18 @@ const Inventory = () => {
 
   const buildFilters = () => {
     let filters = {
+      $or: [{ id: { $containsi: filterKeySearch } }],
       branch: { id: { $eq: filterBranch } },
       sku_quantity: { sku: { id: { $eq: filterSku } } },
     }
+    if (filterKeySearch === '') delete filters.$or
     if (filterBranch === '') delete filters.branch
     if (filterSku === '') delete filters.sku_quantity
     return filters
+  }
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
   }
 
   const fetchData = async () => {
@@ -116,8 +121,17 @@ const Inventory = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý tồn kho</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Tìm kiếm</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Tìm kiếm ID trong kho..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
+                    </div>
                     <div className="p-1">
                       <CFormLabel>Cửa hàng</CFormLabel>
                       <SelectFetchData
@@ -148,6 +162,11 @@ const Inventory = () => {
                           })
                         }}
                       ></SelectFetchData>
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                 </CForm>

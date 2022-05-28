@@ -17,10 +17,11 @@ import {
   CFormInput,
   CFormSelect,
   CBadge,
+  CForm,
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import Modal from 'src/views/template/Modal'
@@ -34,6 +35,7 @@ import { useCookies } from 'react-cookie'
 const Home = () => {
   const [importsList, setImportsList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
   const [filterBranch, setFilterBranch] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
   const [filterTo, setFilterTo] = useState('')
@@ -43,6 +45,7 @@ const Home = () => {
 
   const buildFilters = () => {
     let filters = {
+      $or: [{ id: { $containsi: filterKeySearch } }],
       branch: { id: { $eq: filterBranch } },
       submit_time: {
         $gte: filterFrom,
@@ -50,6 +53,7 @@ const Home = () => {
       },
       submit_status: filterStatus === '1',
     }
+    if (filterKeySearch === '') delete filters.$or
     if (filterBranch === '') delete filters.branch
     if (filterStatus === '') delete filters.submit_status
     if (filterFrom === '' && filterTo === '') {
@@ -59,6 +63,11 @@ const Home = () => {
       if (filterTo === '') delete filters.submit_time.$lte
     }
     return filters
+  }
+
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
   }
 
   // Permission stuffs
@@ -104,51 +113,69 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý phiếu nhập kho</h4>
-                <div className="d-block d-md-flex justify-content-left align-items-end">
-                  <div className="p-1">
-                    <CFormLabel>Cửa hàng</CFormLabel>
-                    <SelectFetchData
-                      name="branch"
-                      url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
-                      value={filterBranch}
-                      setValue={setFilterBranch}
-                      processFetchDataResponse={(response) => {
-                        return response.data.data.map((item) => {
-                          return { id: item.id, name: item.attributes.name }
-                        })
-                      }}
-                    ></SelectFetchData>
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Tìm kiếm</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Tìm kiếm ID..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Ngày nhập kho (từ)</CFormLabel>
+                      <CFormInput
+                        value={filterFrom}
+                        onChange={(e) => setFilterFrom(e.target.value)}
+                        type="date"
+                        placeholder="Ngày nhập kho (từ)"
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Ngày nhập kho (đến)</CFormLabel>
+                      <CFormInput
+                        value={filterTo}
+                        onChange={(e) => setFilterTo(e.target.value)}
+                        type="date"
+                        placeholder="Ngày nhập kho (đến)"
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
+                    </div>
                   </div>
-                  <div className="p-1">
-                    <CFormLabel>Ngày nhập kho (từ)</CFormLabel>
-                    <CFormInput
-                      value={filterFrom}
-                      onChange={(e) => setFilterFrom(e.target.value)}
-                      type="date"
-                      placeholder="Ngày nhập kho (từ)"
-                    />
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Trạng thái</CFormLabel>
+                      <CFormSelect
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Chọn trạng thái</option>
+                        <option value="0">Chưa nhập kho</option>
+                        <option value="1">Đã nhập kho</option>
+                      </CFormSelect>
+                    </div>
                   </div>
-                  <div className="p-1">
-                    <CFormLabel>Ngày nhập kho (đến)</CFormLabel>
-                    <CFormInput
-                      value={filterTo}
-                      onChange={(e) => setFilterTo(e.target.value)}
-                      type="date"
-                      placeholder="Ngày nhập kho (đến)"
-                    />
-                  </div>
-                  <div className="p-1">
-                    <CFormLabel>Trạng thái</CFormLabel>
-                    <CFormSelect
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                    >
-                      <option value="">Chọn trạng thái</option>
-                      <option value="0">Chưa nhập kho</option>
-                      <option value="1">Đã nhập kho</option>
-                    </CFormSelect>
-                  </div>
-                </div>
+                </CForm>
               </div>
               {permissionAdd ? (
                 <Link to="/warehouses/import/add">
