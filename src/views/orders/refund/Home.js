@@ -22,7 +22,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faPhone, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faPhone, faPlus, faFileExcel, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import { ToastContainer, toast } from 'react-toastify'
@@ -37,6 +37,7 @@ import { useCookies } from 'react-cookie'
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
   const [filterTo, setFilterTo] = useState('')
   const [filterBranch, setFilterBranch] = useState('')
@@ -48,6 +49,7 @@ const Home = () => {
 
   const buildFilters = () => {
     let filters = {
+      $or: [{ id: { $containsi: filterKeySearch } }],
       createdAt: {
         $gte: filterFrom,
         $lte: filterTo,
@@ -56,6 +58,7 @@ const Home = () => {
       customer: { id: { $eq: filterCustomer } },
       refund_statuses: { update_status: { $eq: filterStatus === '1' } },
     }
+    if (filterKeySearch === '') delete filters.$or
     if (filterFrom === '' && filterTo === '') {
       delete filters.createdAt
     } else {
@@ -66,6 +69,11 @@ const Home = () => {
     if (filterCustomer === '') delete filters.customer
     if (filterStatus === '') delete filters.refund_statuses
     return filters
+  }
+
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
   }
 
   // Permission stuffs
@@ -134,8 +142,17 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý đơn trả hàng</h4>
-                <CForm className="g-3">
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
                   <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Tìm kiếm</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Tìm kiếm ID..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
+                    </div>
                     <div className="p-1">
                       <CFormLabel>Cửa hàng</CFormLabel>
                       <SelectFetchData
@@ -167,6 +184,11 @@ const Home = () => {
                         value={filterTo}
                         onChange={(e) => setFilterTo(e.target.value)}
                       />
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
                     </div>
                   </div>
                   <div className="d-block d-md-flex justify-content-left align-items-end">

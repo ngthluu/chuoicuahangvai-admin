@@ -26,7 +26,7 @@ import {
 } from '@coreui/react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faPhone, faPlus, faFileExcel } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faPhone, faPlus, faFileExcel, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 import { ToastContainer, toast } from 'react-toastify'
@@ -41,6 +41,7 @@ import { checkPermission } from 'src/lib/permission'
 const Home = () => {
   const [ordersList, setOrdersList] = useState([])
 
+  const [filterKeySearch, setFilterKeySearch] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
   const [filterTo, setFilterTo] = useState('')
   const [filterBranch, setFilterBranch] = useState('')
@@ -54,6 +55,7 @@ const Home = () => {
 
   const buildFilters = () => {
     let filters = {
+      $or: [{ id: { $containsi: filterKeySearch } }],
       createdAt: {
         $gte: filterFrom,
         $lte: filterTo,
@@ -64,6 +66,7 @@ const Home = () => {
       order_statuses: { status: { $eq: filterStatus } },
       isDebt: { $eq: filterIsDebt === '0' },
     }
+    if (filterKeySearch === '') delete filters.$or
     if (filterFrom === '' && filterTo === '') {
       delete filters.createdAt
     } else {
@@ -76,6 +79,11 @@ const Home = () => {
     if (filterStatus === '') delete filters.order_statuses
     if (filterIsDebt === '') delete filters.isDebt
     return filters
+  }
+
+  const handleSubmitFilters = (e) => {
+    e.preventDefault()
+    fetchData()
   }
 
   // Permission stuffs
@@ -157,105 +165,124 @@ const Home = () => {
             <div className="d-block d-md-flex justify-content-between">
               <div className="mb-2">
                 <h4 className="mb-3">Quản lý đơn bán hàng</h4>
-                <div className="d-block d-md-flex justify-content-left align-items-end">
-                  <div className="p-1">
-                    <CFormLabel>Cửa hàng</CFormLabel>
-                    <SelectFetchData
-                      name="branch"
-                      url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
-                      value={filterBranch}
-                      setValue={setFilterBranch}
-                      processFetchDataResponse={(response) => {
-                        return response.data.data.map((item) => {
-                          return { id: item.id, name: item.attributes.name }
-                        })
-                      }}
-                    ></SelectFetchData>
+                <CForm className="g-3" onSubmit={handleSubmitFilters}>
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Tìm kiếm</CFormLabel>
+                      <CFormInput
+                        type="text"
+                        placeholder="Tìm kiếm ID..."
+                        value={filterKeySearch}
+                        onChange={(e) => setFilterKeySearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Cửa hàng</CFormLabel>
+                      <SelectFetchData
+                        name="branch"
+                        url={`${process.env.REACT_APP_STRAPI_URL}/api/branches`}
+                        value={filterBranch}
+                        setValue={setFilterBranch}
+                        processFetchDataResponse={(response) => {
+                          return response.data.data.map((item) => {
+                            return { id: item.id, name: item.attributes.name }
+                          })
+                        }}
+                      ></SelectFetchData>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Ngày đặt (từ)</CFormLabel>
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày đặt (từ)"
+                        value={filterFrom}
+                        onChange={(e) => setFilterFrom(e.target.value)}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Ngày đặt (đến)</CFormLabel>
+                      <CFormInput
+                        type="date"
+                        placeholder="Ngày đặt (đến)"
+                        value={filterTo}
+                        onChange={(e) => setFilterTo(e.target.value)}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CButton type="submit" color="info" className="text-white">
+                        <FontAwesomeIcon icon={faSearch} />
+                      </CButton>
+                    </div>
                   </div>
-                  <div className="p-1">
-                    <CFormLabel>Ngày đặt (từ)</CFormLabel>
-                    <CFormInput
-                      type="date"
-                      placeholder="Ngày đặt (từ)"
-                      value={filterFrom}
-                      onChange={(e) => setFilterFrom(e.target.value)}
-                    />
-                  </div>
-                  <div className="p-1">
-                    <CFormLabel>Ngày đặt (đến)</CFormLabel>
-                    <CFormInput
-                      type="date"
-                      placeholder="Ngày đặt (đến)"
-                      value={filterTo}
-                      onChange={(e) => setFilterTo(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="d-block d-md-flex justify-content-left align-items-end">
-                  <div className="p-1">
-                    <CFormLabel>Khách hàng</CFormLabel>
-                    <InputDropdownSearch
-                      placeholder="Tìm kiếm khách hàng"
-                      ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
-                      ajaxDataPopulate={['name']}
-                      ajaxDataGetFilters={(value) => {
-                        return {
-                          $or: [
-                            {
-                              name: {
-                                firstname: { $containsi: value },
-                                lastname: { $containsi: value },
+                  <div className="d-block d-md-flex justify-content-left align-items-end">
+                    <div className="p-1">
+                      <CFormLabel>Khách hàng</CFormLabel>
+                      <InputDropdownSearch
+                        placeholder="Tìm kiếm khách hàng"
+                        ajaxDataUrl={`${process.env.REACT_APP_STRAPI_URL}/api/customer`}
+                        ajaxDataPopulate={['name']}
+                        ajaxDataGetFilters={(value) => {
+                          return {
+                            $or: [
+                              {
+                                name: {
+                                  firstname: { $containsi: value },
+                                  lastname: { $containsi: value },
+                                },
                               },
-                            },
-                            { phone: { $containsi: value } },
-                          ],
+                              { phone: { $containsi: value } },
+                            ],
+                          }
+                        }}
+                        ajaxDataGetItemName={(item) =>
+                          `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
                         }
-                      }}
-                      ajaxDataGetItemName={(item) =>
-                        `${item.phone} - ${item.name.firstname} ${item.name.lastname}`
-                      }
-                      handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
-                      handleFound={(item) => setFilterCustomer(item.id)}
-                      setTextNameAfterFound={true}
-                    />
+                        handleNotFound={() => toast.error('Không tìm thấy khách hàng này !!!')}
+                        handleFound={(item) => setFilterCustomer(item.id)}
+                        setTextNameAfterFound={true}
+                      />
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Loại đơn hàng</CFormLabel>
+                      <CFormSelect
+                        value={filterIsDebt}
+                        onChange={(e) => setFilterIsDebt(e.target.value)}
+                      >
+                        <option value="">Chọn loại</option>
+                        <option value="0">Đơn ghi nợ</option>
+                        <option value="1">Đơn thanh toán</option>
+                      </CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Loại thanh toán</CFormLabel>
+                      <CFormSelect
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                      >
+                        <option value="">Chọn loại</option>
+                        <option value="cod">COD</option>
+                        <option value="online">Online (qua VNPAY)</option>
+                        <option value="pos">Mua tại quầy</option>
+                      </CFormSelect>
+                    </div>
+                    <div className="p-1">
+                      <CFormLabel>Trạng thái</CFormLabel>
+                      <CFormSelect
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Chọn trạng thái</option>
+                        <option value="initialize">Khởi tạo</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="packaged">Đã đóng gói</option>
+                        <option value="delivery">Đang vận chuyển</option>
+                        <option value="success">Thành công</option>
+                        <option value="return">Trả về</option>
+                        <option value="canceled">Đã hủy</option>
+                      </CFormSelect>
+                    </div>
                   </div>
-                  <div className="p-1">
-                    <CFormLabel>Loại đơn hàng</CFormLabel>
-                    <CFormSelect
-                      value={filterIsDebt}
-                      onChange={(e) => setFilterIsDebt(e.target.value)}
-                    >
-                      <option value="">Chọn loại</option>
-                      <option value="0">Đơn ghi nợ</option>
-                      <option value="1">Đơn thanh toán</option>
-                    </CFormSelect>
-                  </div>
-                  <div className="p-1">
-                    <CFormLabel>Loại thanh toán</CFormLabel>
-                    <CFormSelect value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-                      <option value="">Chọn loại</option>
-                      <option value="cod">COD</option>
-                      <option value="online">Online (qua VNPAY)</option>
-                      <option value="pos">Mua tại quầy</option>
-                    </CFormSelect>
-                  </div>
-                  <div className="p-1">
-                    <CFormLabel>Trạng thái</CFormLabel>
-                    <CFormSelect
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                    >
-                      <option value="">Chọn trạng thái</option>
-                      <option value="initialize">Khởi tạo</option>
-                      <option value="confirmed">Đã xác nhận</option>
-                      <option value="packaged">Đã đóng gói</option>
-                      <option value="delivery">Đang vận chuyển</option>
-                      <option value="success">Thành công</option>
-                      <option value="return">Trả về</option>
-                      <option value="canceled">Đã hủy</option>
-                    </CFormSelect>
-                  </div>
-                </div>
+                </CForm>
               </div>
               <div className="d-block d-md-flex justify-content-between">
                 {permissionExportExcel ? (
