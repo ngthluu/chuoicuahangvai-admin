@@ -30,6 +30,7 @@ import SmartPagination from 'src/views/template/SmartPagination'
 
 import { checkPermission } from 'src/lib/permission'
 import { useCookies } from 'react-cookie'
+import InventoryItemUpdateHistory from './InventoryItemUpdateHistory'
 
 const Inventory = () => {
   const query = useLocation().search
@@ -195,7 +196,7 @@ const Inventory = () => {
                   <CTableHeaderCell scope="col"> Tên SP </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Mô tả </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Chiều dài còn lại (cm) </CTableHeaderCell>
-                  <CTableHeaderCell scope="col"> Thời gian cập nhật gần nhất </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Lịch sử cập nhật </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody align="middle">
@@ -220,7 +221,12 @@ const Inventory = () => {
                         ></ProductDescription>
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.sku_quantity.length} </CTableDataCell>
-                      <CTableDataCell> {item.attributes.updatedAt} </CTableDataCell>
+                      <CTableDataCell>
+                        <InventoryItemUpdateHistory
+                          id={item.id}
+                          createdDate={item.attributes.createdAt}
+                        />
+                      </CTableDataCell>
                     </CTableRow>
                   ))
                 ) : (
