@@ -56,7 +56,7 @@ const Home = () => {
       },
       branch: { id: { $eq: filterBranch } },
       customer: { id: { $eq: filterCustomer } },
-      refund_statuses: { update_status: { $eq: filterStatus === '1' } },
+      current_status: { $eq: filterStatus === '1' },
     }
     if (filterKeySearch === '') delete filters.$or
     if (filterFrom === '' && filterTo === '') {
@@ -67,7 +67,7 @@ const Home = () => {
     }
     if (filterBranch === '') delete filters.branch
     if (filterCustomer === '') delete filters.customer
-    if (filterStatus === '') delete filters.refund_statuses
+    if (filterStatus === '') delete filters.current_status
     return filters
   }
 
@@ -93,7 +93,7 @@ const Home = () => {
       {
         filters: buildFilters(),
         sort: ['createdAt:desc'],
-        populate: ['customer', 'branch', 'refund_statuses', 'refund_invoice'],
+        populate: ['customer', 'branch', 'refund_invoice'],
         pagination: {
           page: page,
         },
@@ -101,18 +101,7 @@ const Home = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/refunds?${query}`)
-    setOrdersList(
-      response.data.data.map((item) => {
-        item.attributes.status = {
-          data: item.attributes.refund_statuses.data.sort((a, b) => {
-            return Date.parse(a.attributes.update_time) < Date.parse(b.attributes.update_time)
-              ? 1
-              : -1
-          })[0],
-        }
-        return item
-      }),
-    )
+    setOrdersList(response.data.data)
     setTotalItems(response.data.meta.pagination.total)
   }
 
@@ -318,15 +307,13 @@ const Home = () => {
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.createdAt} </CTableDataCell>
                       <CTableDataCell>
-                        {!item.attributes.status.data.attributes.update_status ? (
+                        {!item.attributes.current_status ? (
                           <CBadge color="warning">Chưa xác nhận</CBadge>
                         ) : (
                           <CBadge color="success">Đã xác nhận và nhập kho</CBadge>
                         )}
                       </CTableDataCell>
-                      <CTableDataCell>
-                        {item.attributes.status.data.attributes.update_time}
-                      </CTableDataCell>
+                      <CTableDataCell>{item.attributes.updatedAt}</CTableDataCell>
                     </CTableRow>
                   ))
                 ) : (

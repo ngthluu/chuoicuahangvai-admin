@@ -63,7 +63,7 @@ const Home = () => {
       branch: { id: { $eq: filterBranch } },
       customer: { id: { $eq: filterCustomer } },
       type: { $eq: filterType },
-      order_statuses: { status: { $eq: filterStatus } },
+      current_status: { $eq: filterStatus },
       isDebt: { $eq: filterIsDebt === '0' },
     }
     if (filterKeySearch === '') delete filters.$or
@@ -76,7 +76,7 @@ const Home = () => {
     if (filterBranch === '') delete filters.branch
     if (filterCustomer === '') delete filters.customer
     if (filterType === '') delete filters.type
-    if (filterStatus === '') delete filters.order_statuses
+    if (filterStatus === '') delete filters.current_status
     if (filterIsDebt === '') delete filters.isDebt
     return filters
   }
@@ -103,13 +103,7 @@ const Home = () => {
       {
         filters: buildFilters(),
         sort: ['createdAt:desc'],
-        populate: [
-          'customer',
-          'branch',
-          'order_statuses',
-          'order_invoice',
-          'order_invoice.order_payment_invoices',
-        ],
+        populate: ['customer', 'branch', 'order_invoice', 'order_invoice.order_payment_invoices'],
         pagination: {
           page: page,
         },
@@ -117,16 +111,8 @@ const Home = () => {
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/orders?${query}`)
-    setOrdersList(
-      response.data.data.map((item) => {
-        item.attributes.status = {
-          data: item.attributes.order_statuses.data.sort((a, b) => {
-            return Date.parse(a.attributes.createdAt) < Date.parse(b.attributes.createdAt) ? 1 : -1
-          })[0],
-        }
-        return item
-      }),
-    )
+    console.log(response.data.data)
+    setOrdersList(response.data.data)
     setTotalItems(response.data.meta.pagination.total)
   }
 
@@ -381,24 +367,24 @@ const Home = () => {
                       </CTableDataCell>
                       <CTableDataCell> {item.attributes.createdAt} </CTableDataCell>
                       <CTableDataCell>
-                        {item.attributes.status.data.attributes.status === 'initialize' ? (
+                        {item.attributes.current_status === 'initialize' ? (
                           <CBadge color="warning">
-                            {item.attributes.status.data.attributes.status.toUpperCase()}
+                            {item.attributes.current_status.toUpperCase()}
                           </CBadge>
-                        ) : item.attributes.status.data.attributes.status === 'confirmed' ||
-                          item.attributes.status.data.attributes.status === 'packaged' ||
-                          item.attributes.status.data.attributes.status === 'delivery' ? (
+                        ) : item.attributes.current_status === 'confirmed' ||
+                          item.attributes.current_status === 'packaged' ||
+                          item.attributes.current_status === 'delivery' ? (
                           <CBadge color="primary">
-                            {item.attributes.status.data.attributes.status.toUpperCase()}
+                            {item.attributes.current_status.toUpperCase()}
                           </CBadge>
-                        ) : item.attributes.status.data.attributes.status === 'return' ||
-                          item.attributes.status.data.attributes.status === 'canceled' ? (
+                        ) : item.attributes.current_status === 'return' ||
+                          item.attributes.current_status === 'canceled' ? (
                           <CBadge color="danger">
-                            {item.attributes.status.data.attributes.status.toUpperCase()}
+                            {item.attributes.current_status.toUpperCase()}
                           </CBadge>
                         ) : (
                           <CBadge color="success">
-                            {item.attributes.status.data.attributes.status.toUpperCase()}
+                            {item.attributes.current_status.toUpperCase()}
                           </CBadge>
                         )}
                       </CTableDataCell>
