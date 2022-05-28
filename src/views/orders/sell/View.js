@@ -80,6 +80,7 @@ const View = () => {
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
           'order_statuses',
+          'order_statuses.update_user',
           'receive_address',
           'receive_address.name',
           'receive_address.address',
@@ -341,6 +342,7 @@ const View = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Trạng thái </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Người cập nhật </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -361,6 +363,11 @@ const View = () => {
                           ) : (
                             <CBadge color="success">{item.attributes.status.toUpperCase()}</CBadge>
                           )}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {item.attributes.update_user.data
+                            ? item.attributes.update_user.data.attributes.username
+                            : ''}
                         </CTableDataCell>
                         <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
                       </CTableRow>
