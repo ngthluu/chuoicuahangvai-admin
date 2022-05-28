@@ -80,6 +80,7 @@ const ViewInvoice = () => {
           'products.inventory_item.sku_quantity.sku.origin',
           'products.inventory_item.sku_quantity.sku.images',
           'order_payment_invoices',
+          'order_payment_invoices.update_user',
           'delivery_method',
         ],
       },
@@ -300,6 +301,7 @@ const ViewInvoice = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col"> # </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Thời gian </CTableHeaderCell>
+                      <CTableHeaderCell scope="col"> Người cập nhật </CTableHeaderCell>
                       <CTableHeaderCell scope="col"> Số tiền (đ)</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -309,6 +311,11 @@ const ViewInvoice = () => {
                         <CTableDataCell> {index + 1} </CTableDataCell>
                         <CTableDataCell>{item.attributes.createdAt}</CTableDataCell>
                         <CTableDataCell>
+                          {item.attributes.update_user.data
+                            ? item.attributes.update_user.data.attributes.username
+                            : ''}
+                        </CTableDataCell>
+                        <CTableDataCell>
                           {parseInt(item.attributes.amount).toLocaleString()}
                         </CTableDataCell>
                       </CTableRow>
@@ -316,7 +323,7 @@ const ViewInvoice = () => {
                   </CTableBody>
                   <CTableFoot align="middle">
                     <CTableRow>
-                      <CTableHeaderCell colSpan={2}> Tổng giá trị </CTableHeaderCell>
+                      <CTableHeaderCell colSpan={3}> Tổng giá trị </CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return paymentHistory
@@ -326,13 +333,13 @@ const ViewInvoice = () => {
                       </CTableHeaderCell>
                     </CTableRow>
                     <CTableRow>
-                      <CTableHeaderCell colSpan={2}> Tổng giá trị hóa đơn</CTableHeaderCell>
+                      <CTableHeaderCell colSpan={3}> Tổng giá trị hóa đơn</CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {invoiceTotal.toLocaleString()}
                       </CTableHeaderCell>
                     </CTableRow>
                     <CTableRow>
-                      <CTableHeaderCell colSpan={2}> Còn nợ</CTableHeaderCell>
+                      <CTableHeaderCell colSpan={3}> Còn nợ</CTableHeaderCell>
                       <CTableHeaderCell scope="col">
                         {(() => {
                           return (
