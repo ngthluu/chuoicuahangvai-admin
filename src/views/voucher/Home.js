@@ -101,7 +101,11 @@ const Home = () => {
   const fetchData = async () => {
     await fetchPermissionData()
     const query = qs.stringify(
-      { sort: ['createdAt:desc'], filters: buildFilters() },
+      {
+        sort: ['createdAt:desc'],
+        filters: buildFilters(),
+        populate: ['voucher_uses', 'voucher_uses.customer'],
+      },
       { encodeValuesOnly: true },
     )
     const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/vouchers?${query}`)
@@ -192,6 +196,7 @@ const Home = () => {
                   <CTableHeaderCell scope="col"> Áp dụng cho </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian bắt đầu </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Thời gian kết thúc </CTableHeaderCell>
+                  <CTableHeaderCell scope="col"> Số lượng đã áp dụng </CTableHeaderCell>
                   <CTableHeaderCell scope="col"> Hành động </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -213,6 +218,7 @@ const Home = () => {
                     </CTableDataCell>
                     <CTableDataCell>{item.attributes.available_start_date}</CTableDataCell>
                     <CTableDataCell>{item.attributes.available_end_date}</CTableDataCell>
+                    <CTableDataCell>{item.attributes.voucher_uses.data.length}</CTableDataCell>
                     <CTableDataCell>
                       <CDropdown>
                         <CDropdownToggle color="info" variant="outline">
